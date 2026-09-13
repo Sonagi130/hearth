@@ -128,13 +128,16 @@
       return '<img class="msg-img" src="' + t.slice(7).replace(/"/g, '') + '" alt="">';
     }
     if (t.indexOf('__AUD__') === 0) {
-      var src = t.slice(7).replace(/["<>]/g, '');
+      var body = t.slice(7).replace(/["<>]/g, '');
+      var idb = body.indexOf('idb:') === 0 ? body.slice(4) : '';
+      var srcAttr = idb ? '' : ' src="' + body + '"';
       var bars = '';
       for (var i = 0; i < 26; i++) {
         var hh = 22 + ((i * 47) % 62);
         bars += '<i style="height:' + hh + '%"></i>';
       }
-      return '<div class="vaud"><audio preload="metadata" src="' + src + '"></audio>' +
+      return '<div class="vaud"' + (idb ? ' data-idb="' + idb + '"' : '') + '>' +
+             '<audio preload="metadata"' + srcAttr + '></audio>' +
              '<button class="vaud-play" type="button">▶</button>' +
              '<div class="vaud-wave">' + bars + '</div>' +
              '<span class="vaud-time">0:00</span></div>';
@@ -361,20 +364,41 @@
       if (!btn) return;
       var box = btn.closest('.vaud');
       if (!box) return;
-      wireOne(box);
       var au = box.querySelector('audio');
       if (!au) return;
-      if (au.paused) {
-        stopOthers(box);
-        box.classList.add('playing');
-        btn.textContent = '❚❚';
-        var p = au.play();
-        if (p && p.catch) p.catch(function () {});
-      } else {
-        au.pause();
-        box.classList.remove('playing');
-        btn.textContent = '▶';
+
+      var ready = Promise.resolve(au);
+      if (!au.getAttribute('src') && box.dataset.idb && window.VStore) {
+        btn.textContent = '…';
+        ready = window.VStore.resolve('__AUD__idb:' + box.dataset.idb).then(function (url) {
+          au.setAttribute('src', url);
+          wireOne(box);
+          return au;
+        }).catch(function () {
+          btn.textContent = '▶';
+          var t = box.querySelector('.vaud-time');
+          if (t) t.textContent = '丢了';
+          return null;
+        });
       }
+
+      ready.then(function (a) {
+        if (!a) return;
+        if (a.paused) {
+          stopOthers(box);
+          box.classList.add('playing');
+          btn.textContent = '❚❚';
+          var p = a.play();
+          if (p && p.catch) p.catch(function () {
+            box.classList.remove('playing');
+            btn.textContent = '▶';
+          });
+        } else {
+          a.pause();
+          box.classList.remove('playing');
+          btn.textContent = '▶';
+        }
+      });
     });
   }
 
