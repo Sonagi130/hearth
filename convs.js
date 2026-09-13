@@ -50,33 +50,36 @@
 
   /* ---------- 光标栏 ---------- */
   function mountBar() {
-    var page = $('page-chat');
-    if (!page || $('conv-bar')) return;
-    var bar = document.createElement('div');
-    bar.className = 'conv-bar';
-    bar.id = 'conv-bar';
-    bar.innerHTML =
-      '<span style="width:30px;flex-shrink:0;"></span>' +
-      '<div class="cb-mid" id="conv-title">' +
-        '<span class="cb-name">顾淮</span>' +
-        '<span class="cb-win" id="conv-win">对话</span>' +
-        '<span class="cb-caret">▾</span>' +
-      '</div>' +
-      '<button class="cb-new" id="conv-new">＋</button>';
-    page.insertBefore(bar, page.firstChild);
-    $('conv-title').addEventListener('click', openList);
-    $('conv-new').addEventListener('click', newConv);
+    var t = $('top-title');
+    if (!t || t.dataset.cb) return;
+    t.dataset.cb = '1';
+    t.addEventListener('click', openList);
+
+    var acts = document.querySelector('.top-bar .top-actions');
+    if (acts && !document.getElementById('conv-new')) {
+      var plus = document.createElement('button');
+      plus.className = 'icon-btn cb-new';
+      plus.id = 'conv-new';
+      plus.textContent = '＋';
+      plus.addEventListener('click', function (e) {
+        e.stopPropagation();
+        newConv();
+      });
+      acts.insertBefore(plus, acts.firstChild);
+    }
   }
 
   function renderTitle() {
-    var w = $('conv-win');
-    if (!w) return;
+    var t = $('top-title');
+    if (!t) return;
     var c = conc();
-    w.textContent = c.title || '对话';
+    t.classList.add('has-sub');
+    t.innerHTML = '顾淮<span class="tb-sub">' + esc(c.title || '对话') + '</span>';
   }
 
   /* ---------- 窗口列表 ---------- */
   function openList() {
+    if (!document.querySelector('#page-chat.active')) return;
     var list = load().slice().reverse();
     var h = '<div class="sheet-card wide">' +
       '<div class="sc-title">窗口</div>' +
@@ -288,16 +291,14 @@
     if (saved) curId = saved;
     mountBar();
     renderMessages();
-    try { pageTitles.chat = ''; } catch (e) {}
+    try { pageTitles.chat = '顾淮'; } catch (e) {}
     if (document.querySelector('#page-chat.active')) {
-      try { $('top-title').textContent = ''; } catch (e) {}
+      renderTitle();
     }
     var navChat = document.querySelector('.side-nav .nav-item[data-page=\'chat\']');
     if (navChat) {
       navChat.addEventListener('click', function () {
-        setTimeout(function () {
-          try { $('top-title').textContent = ''; } catch (e) {}
-        }, 0);
+        setTimeout(renderTitle, 0);
       });
     }
   }
