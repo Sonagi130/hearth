@@ -26,8 +26,8 @@
     '.st-ok{background:#4CAF7D;}.st-warn{background:#E0A33E;}.st-bad{background:#D9534F;}',
     '.st-name{font-size:14px;font-weight:600;color:var(--brown,#5B4636);}',
     '.st-det{font-size:12px;line-height:1.55;opacity:.75;margin-top:3px;word-break:break-all;}',
-    '.st-btns{display:flex;gap:10px;margin-top:14px;}',
-    '.st-btn{flex:1;padding:12px;border-radius:12px;border:1px solid var(--brown,#5B4636);background:transparent;color:var(--brown,#5B4636);font-size:14px;}',
+    '.st-btns{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;}',
+    '.st-btn{flex:1 1 40%;padding:12px;border-radius:12px;border:1px solid var(--brown,#5B4636);background:transparent;color:var(--brown,#5B4636);font-size:14px;}',
     '.st-btn.pri{background:var(--brown,#5B4636);color:#fff;}'
   ].join('');
 
@@ -279,6 +279,55 @@
     }
   }
 
+  /* ---------- 实测一次语音识别 ---------- */
+  function testSR(btn, out) {
+    var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+    if (!SR) { out('bad', '这台浏览器根本没有语音识别接口'); return; }
+    btn.disabled = true;
+    btn.textContent = '正在听…说句话';
+    var sr = new SR();
+    sr.lang = 'zh-CN';
+    sr.interimResults = false;
+    sr.maxAlternatives = 1;
+    sr.continuous = false;
+    var done = false;
+    var fin = function (st, txt) {
+      if (done) return;
+      done = true;
+      try { sr.stop(); } catch (e) {}
+      try { sr.abort(); } catch (e) {}
+      btn.disabled = false;
+      btn.textContent = '实测识别';
+      out(st, txt);
+    };
+    sr.onresult = function (e) {
+      var t = '';
+      for (var i = e.resultIndex; i < e.results.length; i++) t += e.results[i][0].transcript;
+      fin('ok', '识别成功：「' + t + '」——这条路是通的');
+    };
+    sr.onerror = function (e) {
+      var m = e.error || '未知';
+      var tips = {
+        'not-allowed': '麦克风被拒绝了（权限）',
+        'service-not-allowed': '系统不让用识别服务',
+        'network': '连不上识别服务器。浏览器自带的识别走的是谷歌的语音服务，国内网络到不了 —— 这就是识别失效的真身',
+        'audio-capture': '没抓到麦克风的声音',
+        'no-speech': '没听到人说话（靠近点、说大声点）',
+        'aborted': '被中断了（可能被别的录音抢了麦克风）'
+      };
+      fin('bad', '报错 ' + m + '：' + (tips[m] || ''));
+    };
+    sr.onend = function () {
+      setTimeout(function () {
+        if (!done) fin('bad', '结束了，一个字都没回来（多半是识别服务器连不上）');
+      }, 120);
+    };
+    try { sr.start(); } catch (e) { fin('bad', '启动就失败了：' + e.message); return; }
+    setTimeout(function () {
+      if (!done) fin('bad', '8 秒没动静，识别服务没回应');
+    }, 8000);
+  }
+
   function open() {
     injectStyle();
     var mask = document.createElement('div');
@@ -288,8 +337,10 @@
     panel.innerHTML = '<div class="st-h">工具自检</div>' +
       '<div class="st-sub">哪儿坏了、为什么坏，一次看清</div>' +
       '<div class="st-sum" id="st-sum">正在检测…</div>' +
+      '<div id="st-srout"></div>' +
       '<div id="st-list"></div>' +
       '<div class="st-btns">' +
+      '<button class="st-btn" id="st-srtest">实测识别</button>' +
       '<button class="st-btn" id="st-again">重新检测</button>' +
       '<button class="st-btn" id="st-copy">复制结果</button>' +
       '<button class="st-btn pri" id="st-close">关闭</button>' +
@@ -324,6 +375,15 @@
     }
 
     panel.querySelector('#st-again').onclick = start;
+    panel.querySelector('#st-srtest').onclick = function () {
+      var srout = panel.querySelector('#st-srout');
+      var b = this;
+      testSR(b, function (st, txt) {
+        srout.innerHTML = '';
+        srout.appendChild(row({ st: st, name: '语音识别实测', d: txt }));
+        srout.scrollIntoView({ block: 'nearest' });
+      });
+    };
     panel.querySelector('#st-copy').onclick = function () {
       var txt = last.map(function (r) {
         return '[' + r.st + '] ' + r.name + ' —— ' + r.d;
