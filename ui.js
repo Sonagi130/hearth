@@ -524,7 +524,8 @@
       { icon: ICONS.tool, name: '工具权限管理', sub: '允许 · 询问 · 禁止 · 白名单', on: shTools }
     ]));
     box.appendChild(mkGroup('AI 模型', [
-      { icon: ICONS.robot, name: 'AI 模型配置', sub: '接口 · 模型 · Key', on: shAI },
+      { icon: ICONS.robot, name: 'AI 模型配置', sub: '对话 · 翻译 · 音频 · 视频 · 识图', on: function () { if (window.HearthModels) window.HearthModels.ai(); else shAI(); } },
+      { icon: ICONS.bell, name: '语音配置', sub: '我说话的声音（TTS）', on: function () { if (window.HearthModels) window.HearthModels.tts(); } },
       { icon: ICONS.chat, name: 'AI 思考链展示', sub: '聊天里可展开思考过程',
         right: sw(Store.get('showThinking', false)), on: myThinking }
     ]));
