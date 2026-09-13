@@ -29,6 +29,32 @@
     var b = el.querySelector('.bubble');
     return b ? b.textContent : '';
   }
+  /* 原始内容（语音/图片的标记都在里面，收藏要用这个） */
+  function rawOf(el) {
+    var r = el.getAttribute('data-raw');
+    return r == null ? bubbleOf(el) : r;
+  }
+  function pad2(n) { return String(n).padStart(2, '0'); }
+  function nowStamp() {
+    var d = new Date();
+    return d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate()) +
+           ' ' + pad2(d.getHours()) + ':' + pad2(d.getMinutes());
+  }
+  function addFav(el) {
+    var list = Store.get('favs', []);
+    var tm = el.querySelector('.time');
+    var win = '';
+    try { win = (window.HearthConv.current() || {}).title || ''; } catch (e) {}
+    list.unshift({
+      id: 'f' + Date.now() + Math.floor(Math.random() * 100),
+      who: isAI(el) ? 'he' : 'me',
+      text: String(rawOf(el)),
+      from: tm ? String(tm.textContent) : '',
+      at: nowStamp(),
+      win: win
+    });
+    Store.set('favs', list.slice(0, 600));
+  }
 
   function isAI(el) { return el.classList.contains('he'); }
 
@@ -46,6 +72,7 @@
 
     var items = [
       { k: 'copy', t: '复制' },
+      { k: 'fav', t: '收藏' },
       { k: 'trans', t: '翻译' },
       { k: 'info', t: '信息' },
       { k: 'share', t: '分享' }
@@ -88,6 +115,10 @@
       copy(txt);
       closeCtx();
       toast('复制好了');
+    } else if (k === 'fav') {
+      closeCtx();
+      addFav(el);
+      toast('收进收藏夹了');
     } else if (k === 'del') {
       closeCtx();
       el.remove();
