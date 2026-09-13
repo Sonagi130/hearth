@@ -884,6 +884,7 @@
     <!-- 浮动添加按钮 -->
     <button class="note-add" id="note-add" style="display:none;">+</button>
 
+    <script src="vstore.js"></script>
     <script src="app.js"></script>
     <script src="ui.js"></script>
     <script src="convs.js"></script>
@@ -898,6 +899,24 @@
           navigator.serviceWorker.register('sw.js').catch(function () {});
         });
       }
+      /* 存储满了要说话，不能闷着 */
+      (function () {
+        if (typeof Store === 'undefined' || !Store.set) return;
+        var raw = Store.set;
+        Store.set = function (k, v) {
+          try { return raw.call(Store, k, v); }
+          catch (e) {
+            var msg = String((e && e.name) || e);
+            if (/Quota|quota/i.test(msg)) {
+              alert('存不下了。\n\n手机给这个网页的存储满了。去「设置 → 数据备份与导入 → 导出全部数据」先把东西存一份，' +
+                    '然后清掉一些老对话或老的语音（新录的语音已经不再占这个空间了）。');
+            } else {
+              alert('存东西出错了：' + msg);
+            }
+            throw e;
+          }
+        };
+      })();
     </script>
 </body>
 </html>
