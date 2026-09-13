@@ -372,6 +372,8 @@
          '<div class="book add-slot" id="add-book"><div style="font-size:22px;">＋</div>' +
          '<div style="font-size:11px;letter-spacing:.1em;">加一本书</div></div>' +
          '</div><div class="shelf-plank"></div>';
+    h += '<div class="fav-bar" id="fav-open">★ 收藏夹 · 共 ' +
+         ((Store.get('favs', []) || []).length) + ' 条<em>点开看</em></div>';
     box.innerHTML = h;
 
     box.querySelectorAll('[data-book]').forEach(function (el) {
@@ -395,6 +397,78 @@
     });
     var ab = $('add-book');
     if (ab) ab.addEventListener('click', importBook);
+    var fo = $('fav-open');
+    if (fo) fo.addEventListener('click', openFavs);
+  }
+
+  /* ---------- 收藏夹（全屏） ---------- */
+  function esc2(s) {
+    return String(s == null ? '' : s)
+      .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function favBody(t) {
+    t = String(t || '');
+    if (t.indexOf('__AUD__') === 0) {
+      var rest = t.slice(7);
+      var bar = rest.indexOf('|');
+      var said = bar >= 0 ? rest.slice(bar + 1) : '';
+      return '<span class="fav-tag">语音</span>' + esc2(said || '（没转出文字）');
+    }
+    if (t.indexOf('__IMG__') === 0) {
+      return '<img src="' + t.slice(7).replace(/"/g, '') + '" style="max-width:100%;border-radius:10px;">';
+    }
+    return esc2(t).replace(/\n/g, '<br>');
+  }
+  function renderFavList(kw) {
+    var out = $('fav-list');
+    if (!out) return;
+    var list = Store.get('favs', []) || [];
+    if (kw) {
+      list = list.filter(function (f) {
+        return String(f.text || '').indexOf(kw) >= 0 ||
+               String(f.at || '').indexOf(kw) >= 0 ||
+               String(f.win || '').indexOf(kw) >= 0;
+      });
+    }
+    if (!list.length) {
+      out.innerHTML = '<div class="fav-empty">' +
+        (kw ? '没找到。' : '还空着。长按一条消息（或语音），点「收藏」。') + '</div>';
+      return;
+    }
+    out.innerHTML = '<div class="fav-n">' + list.length + ' 条</div>' +
+      list.map(function (f) {
+        return '<div class="fav-item">' +
+          '<div class="fav-meta"><b>' + (f.who === 'me' ? '我' : '顾淮') + '</b> · ' +
+          esc2(f.at || '') + (f.win ? ' · ' + esc2(f.win) : '') +
+          '<button class="fav-del" data-id="' + f.id + '">删</button></div>' +
+          '<div class="fav-text">' + favBody(f.text) + '</div>' +
+          '</div>';
+      }).join('');
+    out.querySelectorAll('.fav-del').forEach(function (b) {
+      b.onclick = function () {
+        var id = this.getAttribute('data-id');
+        var arr = (Store.get('favs', []) || []).filter(function (x) { return x.id !== id; });
+        Store.set('favs', arr);
+        var inp = $('fav-find');
+        renderFavList(inp ? inp.value.trim() : '');
+      };
+    });
+  }
+  function openFavs() {
+    var mask = document.createElement('div');
+    mask.className = 'fav-mask';
+    mask.innerHTML =
+      '<div class="fav-top">' +
+      '<div class="fav-h">收藏夹</div>' +
+      '<input id="fav-find" class="cv-find" placeholder="搜内容 / 时间 / 窗口名…">' +
+      '</div>' +
+      '<div class="fav-list" id="fav-list"></div>' +
+      '<div class="fav-foot"><button class="sc-btn" id="fav-close">关</button></div>';
+    document.body.appendChild(mask);
+    $('fav-close').onclick = function () { mask.remove(); };
+    var inp = $('fav-find');
+    inp.oninput = function () { renderFavList(this.value.trim()); };
+    renderFavList('');
   }
 
   /* ---------- 阅读器 ---------- */
