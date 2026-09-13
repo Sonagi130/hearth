@@ -60,6 +60,7 @@
       '<div class="cb-mid" id="conv-title">' +
         '<span class="cb-name">顾淮</span>' +
         '<span class="cb-win" id="conv-win">对话</span>' +
+        '<span class="cb-caret">▾</span>' +
       '</div>' +
       '<button class="cb-new" id="conv-new">＋</button>';
     page.insertBefore(bar, page.firstChild);
@@ -287,6 +288,18 @@
     if (saved) curId = saved;
     mountBar();
     renderMessages();
+    try { pageTitles.chat = ''; } catch (e) {}
+    if (document.querySelector('#page-chat.active')) {
+      try { $('top-title').textContent = ''; } catch (e) {}
+    }
+    var navChat = document.querySelector('.side-nav .nav-item[data-page=\'chat\']');
+    if (navChat) {
+      navChat.addEventListener('click', function () {
+        setTimeout(function () {
+          try { $('top-title').textContent = ''; } catch (e) {}
+        }, 0);
+      });
+    }
   }
 
   window.loadChatHistory = function () { renderMessages(); };
