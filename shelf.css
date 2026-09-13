@@ -2,7 +2,7 @@
 
 /* --- 1. 顶栏：菜单按钮盖住了日夜开关，把内容往右挪 --- */
 .top-bar { padding-left: 64px !important; }
-.top-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; }
+.top-actions { display: flex; align-items: center; gap: 2px; flex-shrink: 0; margin-left: auto; }
 
 /* --- 2. 长文本不再溢出卡片 --- */
 .diary-card .content,
@@ -404,7 +404,33 @@
 }
 .think.open .think-b { display: block; }
 
-/* --- 16. 对话窗口栏 --- */
+/* --- 16. 顶栏里的「顾淮」 --- */
+.top-bar { position: relative; height: 54px; }
+.top-bar .title {
+  position: absolute; left: 50%; top: 50%;
+  transform: translate(-50%, -50%);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  max-width: 52%; padding: 2px 10px; border-radius: 10px;
+  line-height: 1.15; cursor: pointer;
+  font-size: 17px; font-weight: 700; color: var(--brown);
+  letter-spacing: .05em;
+}
+.top-bar .title:active { background: rgba(139,111,71,.12); }
+.top-bar .title .tb-sub {
+  display: none;
+  font-size: 11px; font-weight: 400; letter-spacing: 0;
+  color: var(--text-soft); margin-top: 2px;
+  max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.top-bar .title.has-sub .tb-sub { display: block; }
+.top-actions .cb-new {
+  width: 36px; height: 36px; border-radius: 50%; border: none;
+  background: rgba(232,151,92,.16); color: var(--orange);
+  font-size: 18px; line-height: 1; cursor: pointer; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+.conv-bar { display: none; }
 .conv-bar {
   display: flex; align-items: center; justify-content: space-between;
   gap: 8px; padding: 2px 2px 8px; flex-shrink: 0;
