@@ -158,6 +158,7 @@
       var who = m.who === 'me' ? 'me' : 'he';
       var div = document.createElement('div');
       div.className = 'msg ' + who;
+      div.setAttribute('data-raw', String(m.text == null ? '' : m.text));
       div.innerHTML = thinkHTML(who) +
         '<div class="bubble">' + bodyHTML(m.text) + '</div>' +
         '<div class="time">' + esc(m.time || '') + '</div>';
@@ -193,9 +194,10 @@
     box.querySelectorAll('.msg').forEach(function (m) {
       var b = m.querySelector('.bubble');
       var t = m.querySelector('.time');
+      var raw = m.getAttribute('data-raw');
       out.push({
         who: m.classList.contains('me') ? 'me' : 'he',
-        text: b ? b.textContent : '',
+        text: raw == null ? (b ? b.textContent : '') : raw,
         time: t ? t.textContent : ''
       });
     });
@@ -218,6 +220,7 @@
     var box = $('chat-messages');
     var div = document.createElement('div');
     div.className = 'msg ' + w;
+    div.setAttribute('data-raw', String(text));
     div.innerHTML = thinkHTML(w) +
       '<div class="bubble">' + bodyHTML(text) + '</div>' +
       '<div class="time">' + (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11) + '</div>';
