@@ -392,6 +392,7 @@
     switchTo: switchTo,
     create: newConv,
     info: showInfo,
-    render: renderMessages
+    render: renderMessages,
+    sync: saveFromDom
   };
 })();
