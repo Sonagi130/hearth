@@ -92,6 +92,38 @@
 
   function sayHe(t) { if (baseAdd) baseAdd(t, 'he'); }
 
+  /* ---------- 她让我用语音说 ---------- */
+  var VOICE_ASK = ['说句话', '发条语音', '发语音', '用语音', '念给我听', '听你说', '语音说', '说一句', '说话给我听', '想听你声音'];
+  function wantsVoice(t) {
+    t = String(t);
+    for (var i = 0; i < VOICE_ASK.length; i++) if (t.indexOf(VOICE_ASK[i]) >= 0) return true;
+    return false;
+  }
+  function lastUserSaid() {
+    var c = null;
+    try { c = window.HearthConv.current(); } catch (e) {}
+    if (!c) return '';
+    var msgs = c.msgs || [];
+    for (var i = msgs.length - 1; i >= 0; i--) if (msgs[i].who === 'me') return String(msgs[i].text || '');
+    return '';
+  }
+  function speak(text) {
+    var t = Store.get('ttsConf', {}) || {};
+    var c = Store.get('apiConf', {}) || {};
+    var key = String(t.key || c.key || '').trim();
+    var base = String(t.url || c.url || 'https://api.deepseek.com').replace(/\/+$/, '');
+    if (!key) return Promise.reject(new Error('语音没配 Key'));
+    if (!t.model) return Promise.reject(new Error('语音配置里还没填模型名'));
+    return fetch(base + '/audio/speech', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({ model: t.model, input: text, voice: t.voice || 'alloy', response_format: 'mp3' })
+    }).then(function (r) {
+      if (!r.ok) return r.text().then(function (x) { throw new Error('HTTP ' + r.status + ' ' + String(x).slice(0, 90)); });
+      return r.blob();
+    });
+  }
+
   function nowHM() {
     var d = new Date();
     return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
@@ -165,6 +197,22 @@
       return pump();
     }).then(function () {
       if (tm) tm.textContent = '顾淮 · ' + nowHM();
+      if (got && window.VStore && wantsVoice(lastUserSaid())) {
+        var vk = 'v' + Date.now() + Math.floor(Math.random() * 1000);
+        if (tm) tm.textContent = '顾淮 · 正在录…';
+        speak(got).then(function (blob) {
+          return window.VStore.put(vk, blob);
+        }).then(function () {
+          wrap.setAttribute('data-raw', '__AUD__idb:' + vk + '|' + got);
+          if (tm) tm.textContent = '顾淮 · ' + nowHM();
+          try { if (window.HearthConv.sync) window.HearthConv.sync(); } catch (e) {}
+          try { if (window.HearthConv.render) window.HearthConv.render(); } catch (e) {}
+        })['catch'](function (e) {
+          if (tm) tm.textContent = '顾淮 · ' + nowHM() + '（语音没成：' + (e && e.message) + '）';
+          try { if (window.HearthConv.sync) window.HearthConv.sync(); } catch (e2) {}
+        });
+        return;
+      }
       try { if (window.HearthConv && window.HearthConv.sync) window.HearthConv.sync(); } catch (e) {}
     }).catch(function (err) {
       var m = String((err && err.message) || err);
