@@ -218,7 +218,27 @@
     })['catch'](function () { return warn('离线缓存', '查不到'); });
   }
 
-  /* ---------- 跑一轮 ---------- */
+  /* ---------- 语音这套配好没 ---------- */
+  function shortHost(u) {
+    return String(u || '').replace(/^https?:\/\//, '').replace(/\/+$/, '');
+  }
+  function cTTS() {
+    var t = Store.get('ttsConf', {}) || {};
+    if (!t.model) return Promise.resolve(warn('语音配置（我说话）', '还没填模型名，我还开不了口'));
+    var c = Store.get('apiConf', {}) || {};
+    return Promise.resolve(ok('语音配置（我说话）',
+      t.model + ' · 音色 ' + (t.voice || '默认') + ' · ' + shortHost(t.url || c.url || '默认地址')));
+  }
+  function cASR() {
+    var s = (Store.get('modelSlots', {}) || {}).audio || {};
+    var c = Store.get('apiConf', {}) || {};
+    if (!s.model || !(s.url || c.url)) {
+      return Promise.resolve(warn('音频解析（听你说话）',
+        '还没填。现在只能用浏览器识别，而它走谷歌，国内到不了 —— 这就是我听不见你语音的原因'));
+    }
+    return Promise.resolve(ok('音频解析（听你说话）',
+      s.model + ' · ' + shortHost(s.url || c.url)));
+  }
   var CHECKS = [
     ['运行环境', cEnv],
     ['安全上下文', cSecure],
@@ -229,6 +249,8 @@
     ['语音消息', cMsgs],
     ['本地存储', cLS],
     ['AI 模型配置', cAI],
+    ['语音配置（我说话）', cTTS],
+    ['音频解析（听你说话）', cASR],
     ['网络 · 直连 DeepSeek', cNet],
     ['核心脚本', cScripts],
     ['离线缓存', cSW]
