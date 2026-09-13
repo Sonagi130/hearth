@@ -67,13 +67,15 @@
     try { c = window.HearthConv.current(); } catch (e) {}
     if (!c) return [];
     return (c.msgs || []).slice(-20).map(function (m) {
-      return {
-        role: m.who === 'me' ? 'user' : 'assistant',
-        content: String(m.text || '')
-      };
-    }).filter(function (m) {
-      return m.content.indexOf('__IMG__') !== 0 && m.content.indexOf('__AUD__') !== 0 && m.content;
-    });
+      var txt = String(m.text || '');
+      if (txt.indexOf('__AUD__') === 0) {
+        var bar = txt.indexOf('|');
+        txt = bar >= 0 ? '【语音】' + txt.slice(bar + 1) : '【她发了一段语音，没转出文字】';
+      } else if (txt.indexOf('__IMG__') === 0) {
+        txt = '【她发了一张照片】';
+      }
+      return { role: m.who === 'me' ? 'user' : 'assistant', content: txt };
+    }).filter(function (m) { return m.content && m.content.trim(); });
   }
 
   function endpoint(u) {
