@@ -7,6 +7,7 @@ var CORE = [
   './',
   './index.html',
   './shelf.css',
+  './vstore.js',
   './app.js',
   './ui.js',
   './convs.js',
