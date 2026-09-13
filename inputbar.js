@@ -101,32 +101,64 @@
   var rec = null, chunks = [];
 
   function startRec() {
+    if (rec) return;
     if (!navigator.mediaDevices || !window.MediaRecorder) { alert('这台手机不支持录音。'); return; }
+    var m = $('ib-mic');
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
       chunks = [];
       rec = new MediaRecorder(st);
+      rec.startedAt = Date.now();
       rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
       rec.onstop = function () {
+        var dur = Date.now() - rec.startedAt;
+        var type = rec.mimeType || 'audio/webm';
         st.getTracks().forEach(function (t) { t.stop(); });
-        if (!chunks.length) return;
-        var blob = new Blob(chunks, { type: rec.mimeType || 'audio/webm' });
+        hint(false);
+        var mm = $('ib-mic');
+        if (mm) mm.classList.remove('rec');
+        rec = null;
+        if (dur < 500) { hint2('太短了，按住说话——点一下开始，再点一下结束。'); return; }
+        if (!chunks.length) { hint2('没录到声音。'); return; }
+        var blob = new Blob(chunks, { type: type });
         var fr = new FileReader();
         fr.onload = function () { say('__AUD__' + fr.result); };
         fr.readAsDataURL(blob);
       };
       rec.start();
-      var m = $('ib-mic');
       if (m) m.classList.add('rec');
+      hint(true);
     }).catch(function () {
-      alert('麦克风被挡住了。\n\n去「设置 → 工具权限管理 → 重新请求麦克风授权」，那儿有一步步的说明。');
+      hint2('麦克风被挡住了。去「设置 → 工具权限管理 → 重新请求麦克风授权」。');
     });
   }
 
   function stopRec() {
     try { if (rec && rec.state !== 'inactive') rec.stop(); } catch (e) {}
-    rec = null;
-    var m = $('ib-mic');
-    if (m) m.classList.remove('rec');
+  }
+
+  function hint(on) {
+    var el = $('ib-rec');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'ib-rec';
+      el.className = 'ib-rec';
+      document.body.appendChild(el);
+    }
+    el.textContent = on ? '● 正在录，再点一下话筒结束' : '';
+    el.style.display = on ? 'block' : 'none';
+  }
+
+  function hint2(t) {
+    var el = $('ib-rec');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'ib-rec';
+      el.className = 'ib-rec';
+      document.body.appendChild(el);
+    }
+    el.textContent = t;
+    el.style.display = 'block';
+    setTimeout(function () { el.style.display = 'none'; }, 2400);
   }
 
   /* ---------- 装到输入栏上 ---------- */
@@ -158,12 +190,11 @@
       ]);
     };
 
-    mic.addEventListener('touchstart', function (e) { e.preventDefault(); startRec(); }, { passive: false });
-    mic.addEventListener('touchend', function (e) { e.preventDefault(); stopRec(); });
-    mic.addEventListener('touchcancel', stopRec);
-    mic.addEventListener('mousedown', startRec);
-    mic.addEventListener('mouseup', stopRec);
-    mic.addEventListener('mouseleave', stopRec);
+    mic.addEventListener('click', function (e) {
+      e.preventDefault();
+      if (rec && rec.state === 'recording') stopRec();
+      else startRec();
+    });
   }
 
   function init() { mount(); }
