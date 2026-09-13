@@ -146,6 +146,13 @@
              '<span class="vaud-time">0:00</span></div>' +
              (said ? '<div class="vaud-text">' + esc(said) + '</div>' : '');
     }
+    var mm = t.match(/<<MEM ([^>]*)>>([\s\S]*?)<<\/MEM>>/);
+    if (mm) {
+      var clean = t.replace(mm[0], '').trim();
+      return (clean ? esc(clean) : '') +
+        '<div class="mem-box"><div class="mem-h">📎 附着的记忆 · ' + esc(mm[1]) + ' ▾</div>' +
+        '<div class="mem-b">' + esc(mm[2]) + '</div></div>';
+    }
     return esc(t);
   }
 
@@ -154,10 +161,11 @@
     var box = $('chat-messages');
     if (!box) return;
     box.innerHTML = '';
-    (c.msgs || []).forEach(function (m) {
+    (c.msgs || []).forEach(function (m, mi) {
       var who = m.who === 'me' ? 'me' : 'he';
       var div = document.createElement('div');
       div.className = 'msg ' + who;
+      div.setAttribute('data-i', String(mi));
       div.setAttribute('data-raw', String(m.text == null ? '' : m.text));
       div.innerHTML = thinkHTML(who) +
         '<div class="bubble">' + bodyHTML(m.text) + '</div>' +
@@ -227,6 +235,35 @@
     if (box) { box.appendChild(div); box.scrollTop = box.scrollHeight; }
   };
 
+  /* ---------- 累计真实用量（接口吐出来的，不是估的） ---------- */
+  function addUsage(u) {
+    var list = load();
+    for (var i = 0; i < list.length; i++) {
+      if (list[i].id !== curId) continue;
+      var m = list[i].usage || { in: 0, out: 0, hit: 0, miss: 0, calls: 0 };
+      m.in += (u.prompt_tokens || 0);
+      m.out += (u.completion_tokens || 0);
+      m.hit += (u.prompt_cache_hit_tokens || 0);
+      m.miss += (u.prompt_cache_miss_tokens || 0);
+      m.calls += 1;
+      m.lastIn = u.prompt_tokens || 0;
+      m.lastOut = u.completion_tokens || 0;
+      m.lastHit = u.prompt_cache_hit_tokens || 0;
+      list[i].usage = m;
+      save(list);
+      return;
+    }
+  }
+
+  /* ---------- 按 flash 的价估个钱 ---------- */
+  function cost(u) {
+    var hit = u.hit || 0;
+    var miss = (u.miss != null && u.miss !== 0) ? u.miss : ((u.in || 0) - hit);
+    var out = u.out || 0;
+    var usd = hit / 1e6 * 0.006 + miss / 1e6 * 0.3 + out / 1e6 * 1.2;
+    return '¥' + (usd * 7.2).toFixed(4);
+  }
+
   function showInfo(id) {
     var list = load();
     var c = null;
@@ -240,16 +277,23 @@
     });
     var tin = Math.ceil(inC * 0.75) + 4 * (rounds + 1);
     var tout = Math.ceil(outC * 0.75) + 4 * msgs.length;
-
+    var u = c.usage || null;
+    var real = !!(u && u.calls);
+    var nIn = real ? u.in : ('~' + tin);
+    var nOut = real ? u.out : ('~' + tout);
+    var nHit = real ? u.hit : 0;
+    var nAll = real ? (u.in + u.out) : ('~' + (tin + tout));
     var h = '<div class="info-grid">' +
       '<div><b>' + msgs.length + '</b><span>条消息</span></div>' +
       '<div><b>' + rounds + '</b><span>轮对话</span></div>' +
-      '<div><b>~' + tin + '</b><span>输入 token</span></div>' +
-      '<div><b>~' + tout + '</b><span>输出 token</span></div>' +
-      '<div><b>0</b><span>缓存命中</span></div>' +
-      '<div><b>~' + (tin + tout) + '</b><span>合计</span></div>' +
+      '<div><b>' + nIn + '</b><span>输入 token</span></div>' +
+      '<div><b>' + nOut + '</b><span>输出 token</span></div>' +
+      '<div><b>' + nHit + '</b><span>缓存命中</span></div>' +
+      '<div><b>' + nAll + '</b><span>合计</span></div>' +
       '</div>' +
-      '<div class="info-note">token 是估算的。接上模型后，这里换成真实的数字。</div>' +
+      (real
+        ? '<div class="info-note">接口给的真实数字 · 共 ' + u.calls + ' 次请求 · 按 flash 价约 ' + cost(u) + '</div>'
+        : '<div class="info-note">这个窗口还没聊过，数字是估的。聊一句之后就是真实的。</div>') +
       '<input id="cv-find" class="cv-find" placeholder="在这个窗口里搜…">' +
       '<div id="cv-find-out" class="cv-find-out"></div>' +
       '<div class="sc-row" style="margin-top:14px;">' +
@@ -292,16 +336,39 @@
       var kw = inp.value.trim();
       var out = $('cv-find-out');
       if (!kw) { out.innerHTML = ''; return; }
-      var hits = msgs.filter(function (m) { return (m.text || '').indexOf(kw) >= 0; });
+      var hits = [];
+      msgs.forEach(function (m, i) {
+        if ((m.text || '').indexOf(kw) >= 0) hits.push({ m: m, i: i });
+      });
       if (!hits.length) { out.innerHTML = '<div class="cv-hit">没找到</div>'; return; }
-      out.innerHTML = '<div class="cv-hit">找到 ' + hits.length + ' 条</div>' +
-        hits.slice(0, 8).map(function (m) {
-          var i = (m.text || '').indexOf(kw);
+      out.innerHTML = '<div class="cv-hit">找到 ' + hits.length + ' 条 · 点一下跳过去</div>' +
+        hits.slice(0, 12).map(function (h) {
+          var i = (h.m.text || '').indexOf(kw);
           var s = Math.max(0, i - 12);
-          return '<div class="cv-hit">' + (m.who === 'me' ? '我' : '顾淮') + ' · ' +
-                 esc((m.text || '').slice(s, s + 44)) + '</div>';
+          return '<div class="cv-hit cv-go" data-i="' + h.i + '">' +
+                 (h.m.who === 'me' ? '我' : '顾淮') + ' · ' +
+                 esc((h.m.text || '').slice(s, s + 44)) + '</div>';
         }).join('');
+      out.querySelectorAll('.cv-go').forEach(function (el) {
+        el.onclick = function () {
+          var n = parseInt(this.getAttribute('data-i'), 10);
+          close();
+          jumpTo(n);
+        };
+      });
     };
+  }
+
+  /* ---------- 跳到某一条消息 ---------- */
+  function jumpTo(n) {
+    var box = $('chat-messages');
+    if (!box) return;
+    var el = box.querySelector('.msg[data-i="' + n + '"]');
+    if (!el) return;
+    try { el.scrollIntoView({ block: 'center', behavior: 'smooth' }); }
+    catch (e) { el.scrollIntoView(); }
+    el.classList.add('jump-flash');
+    setTimeout(function () { el.classList.remove('jump-flash'); }, 1800);
   }
 
   function init() {
@@ -417,6 +484,25 @@
     init();
   }
 
+  /* ---------- 思考链：点一下展开 ---------- */
+  document.addEventListener('click', function (e) {
+    var t = e.target;
+    while (t && t !== document) {
+      var cls = String(t.className || '');
+      if (cls.indexOf('think-h') >= 0) {
+        var box = t.parentNode;
+        var open = box.classList.toggle('open');
+        t.textContent = open ? '思考过程 ▴' : '思考过程 ▾';
+        return;
+      }
+      if (cls.indexOf('mem-h') >= 0) {
+        t.parentNode.classList.toggle('open');
+        return;
+      }
+      t = t.parentNode;
+    }
+  });
+
   window.HearthConv = {
     list: load,
     current: conc,
@@ -424,6 +510,7 @@
     create: newConv,
     info: showInfo,
     render: renderMessages,
-    sync: saveFromDom
+    sync: saveFromDom,
+    addUsage: addUsage
   };
 })();
