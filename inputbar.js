@@ -97,8 +97,37 @@
 
   window.HearthInput = { sheet: sheet, ic: ic, icons: I, say: say };
 
-  /* ---------- 录音 ---------- */
+  /* ---------- 录音 + 同步转文字 ---------- */
   var rec = null, chunks = [];
+  var sr = null, srText = '';
+
+  function srSupported() {
+    return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
+  }
+
+  function startSR() {
+    srText = '';
+    if (!srSupported()) return;
+    try {
+      var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+      sr = new SR();
+      sr.lang = 'zh-CN';
+      sr.continuous = true;
+      sr.interimResults = false;
+      sr.onresult = function (e) {
+        for (var i = e.resultIndex; i < e.results.length; i++) {
+          if (e.results[i].isFinal) srText += e.results[i][0].transcript;
+        }
+      };
+      sr.onerror = function () {};
+      sr.start();
+    } catch (e) { sr = null; }
+  }
+
+  function stopSR() {
+    try { if (sr) sr.stop(); } catch (e) {}
+    sr = null;
+  }
 
   function startRec() {
     if (rec) return;
@@ -123,23 +152,31 @@
         rec = null;
         if (dur < 500) { hint2('太短了。点一下话筒开始，说完再点一下结束。'); return; }
         if (!chunks.length) { hint2('没录到声音。'); return; }
+        stopSR();
         var blob = new Blob(chunks, { type: type });
         var key = 'v' + Date.now() + Math.floor(Math.random() * 1000);
+        var withText = function (tok) {
+          setTimeout(function () {
+            var txt = String(srText || '').trim().replace(/\|/g, ' ').replace(/\s+/g, ' ');
+            say(txt ? tok + '|' + txt : tok);
+          }, 450);
+        };
         if (window.VStore) {
           window.VStore.put(key, blob).then(function () {
-            say('__AUD__idb:' + key);
+            withText('__AUD__idb:' + key);
           }).catch(function () {
             var fr0 = new FileReader();
-            fr0.onload = function () { say('__AUD__' + fr0.result); };
+            fr0.onload = function () { withText('__AUD__' + fr0.result); };
             fr0.readAsDataURL(blob);
           });
         } else {
           var fr = new FileReader();
-          fr.onload = function () { say('__AUD__' + fr.result); };
+          fr.onload = function () { withText('__AUD__' + fr.result); };
           fr.readAsDataURL(blob);
         }
       };
       rec.start();
+      startSR();
       if (m) m.classList.add('rec');
       hint(true);
     }).catch(function () {
