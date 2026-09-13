@@ -128,7 +128,16 @@
       return '<img class="msg-img" src="' + t.slice(7).replace(/"/g, '') + '" alt="">';
     }
     if (t.indexOf('__AUD__') === 0) {
-      return '<audio class="msg-aud" controls src="' + t.slice(7).replace(/"/g, '') + '"></audio>';
+      var src = t.slice(7).replace(/["<>]/g, '');
+      var bars = '';
+      for (var i = 0; i < 26; i++) {
+        var hh = 22 + ((i * 47) % 62);
+        bars += '<i style="height:' + hh + '%"></i>';
+      }
+      return '<div class="vaud"><audio preload="metadata" src="' + src + '"></audio>' +
+             '<button class="vaud-play" type="button">▶</button>' +
+             '<div class="vaud-wave">' + bars + '</div>' +
+             '<span class="vaud-time">0:00</span></div>';
     }
     return esc(t);
   }
@@ -304,6 +313,72 @@
   }
 
   window.loadChatHistory = function () { renderMessages(); };
+
+  /* ---------- 语音条播放 ---------- */
+  function fmtTime(s) {
+    s = Math.max(0, Math.floor(s || 0));
+    return Math.floor(s / 60) + ':' + String(s % 60).padStart(2, '0');
+  }
+
+  function tick(box, au) {
+    var lab = box.querySelector('.vaud-time');
+    var d = au.duration || 0;
+    if (!d || !isFinite(d)) return;
+    if (lab) lab.textContent = au.paused ? fmtTime(d) : '-' + fmtTime(d - au.currentTime);
+    var bars = box.querySelectorAll('.vaud-wave i');
+    var n = bars.length;
+    var k = Math.round((au.currentTime / d) * n);
+    for (var i = 0; i < n; i++) bars[i].classList.toggle('played', i < k);
+  }
+
+  function stopOthers(except) {
+    document.querySelectorAll('.vaud').forEach(function (b) {
+      if (b === except) return;
+      var a = b.querySelector('audio');
+      if (a && !a.paused) a.pause();
+    });
+  }
+
+  function wireOne(box) {
+    if (box.dataset.wired) return;
+    box.dataset.wired = '1';
+    var au = box.querySelector('audio');
+    if (!au) return;
+    au.addEventListener('loadedmetadata', function () { tick(box, au); });
+    au.addEventListener('timeupdate', function () { tick(box, au); });
+    au.addEventListener('ended', function () {
+      box.classList.remove('playing');
+      var b = box.querySelector('.vaud-play');
+      if (b) b.textContent = '▶';
+      au.currentTime = 0;
+      tick(box, au);
+    });
+  }
+
+  function wireAudio() {
+    document.addEventListener('click', function (e) {
+      var btn = e.target.closest && e.target.closest('.vaud-play');
+      if (!btn) return;
+      var box = btn.closest('.vaud');
+      if (!box) return;
+      wireOne(box);
+      var au = box.querySelector('audio');
+      if (!au) return;
+      if (au.paused) {
+        stopOthers(box);
+        box.classList.add('playing');
+        btn.textContent = '❚❚';
+        var p = au.play();
+        if (p && p.catch) p.catch(function () {});
+      } else {
+        au.pause();
+        box.classList.remove('playing');
+        btn.textContent = '▶';
+      }
+    });
+  }
+
+  wireAudio();
 
   if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', init);
