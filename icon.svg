@@ -1,0 +1,31 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="512" height="512" viewBox="0 0 512 512">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#FFFBF5"/>
+      <stop offset="1" stop-color="#F4E6D4"/>
+    </linearGradient>
+    <linearGradient id="fl" x1="0" y1="1" x2="0" y2="0">
+      <stop offset="0" stop-color="#D97F45"/>
+      <stop offset="0.5" stop-color="#E8975C"/>
+      <stop offset="1" stop-color="#F3BC85"/>
+    </linearGradient>
+  </defs>
+
+  <rect width="512" height="512" rx="116" fill="url(#bg)"/>
+
+  <!-- 壁炉拱 -->
+  <path d="M120 396 V300 a136 136 0 0 1 272 0 v96 z" fill="#8B6F47" opacity="0.13"/>
+  <path d="M120 396 V300 a136 136 0 0 1 272 0 v96" fill="none"
+        stroke="#8B6F47" stroke-opacity="0.35" stroke-width="10" stroke-linecap="round"/>
+
+  <!-- 火苗 -->
+  <path d="M256 118 c62 74 96 122 96 174 a96 96 0 0 1-192 0 c0-52 34-100 96-174z"
+        fill="url(#fl)"/>
+  <!-- 内焰 -->
+  <path d="M256 214 c32 40 50 66 50 94 a50 50 0 0 1-100 0 c0-28 18-54 50-94z"
+        fill="#FFFBF5" opacity="0.92"/>
+
+  <!-- 炉底的柴 -->
+  <path d="M196 404 h120" stroke="#8B6F47" stroke-opacity="0.45"
+        stroke-width="14" stroke-linecap="round"/>
+</svg>
