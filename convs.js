@@ -128,7 +128,10 @@
       return '<img class="msg-img" src="' + t.slice(7).replace(/"/g, '') + '" alt="">';
     }
     if (t.indexOf('__AUD__') === 0) {
-      var body = t.slice(7).replace(/["<>]/g, '');
+      var rest = t.slice(7);
+      var bar = rest.indexOf('|');
+      var body = (bar >= 0 ? rest.slice(0, bar) : rest).replace(/["<>]/g, '');
+      var said = bar >= 0 ? rest.slice(bar + 1) : '';
       var idb = body.indexOf('idb:') === 0 ? body.slice(4) : '';
       var srcAttr = idb ? '' : ' src="' + body + '"';
       var bars = '';
@@ -140,7 +143,8 @@
              '<audio preload="metadata"' + srcAttr + '></audio>' +
              '<button class="vaud-play" type="button">▶</button>' +
              '<div class="vaud-wave">' + bars + '</div>' +
-             '<span class="vaud-time">0:00</span></div>';
+             '<span class="vaud-time">0:00</span></div>' +
+             (said ? '<div class="vaud-text">' + esc(said) + '</div>' : '');
     }
     return esc(t);
   }
