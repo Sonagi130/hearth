@@ -47,10 +47,46 @@
   }
 
   function say(t) {
-    if (window.addMsg) window.addMsg(t, 'me');
+    var out = String(t);
+    if (attached) {
+      var body = String(attached.content || '').replace(/\s+/g, ' ').slice(0, 400);
+      out += '\n\n<<MEM ' + (attached.title || '未命名') + '>>' + body + '<</MEM>>';
+      attached = null;
+      renderAttach();
+    }
+    if (window.addMsg) window.addMsg(out, 'me');
     if (window.HearthChat && window.HearthChat.ask) {
       setTimeout(function () { window.HearthChat.ask(); }, 80);
     }
+  }
+
+  /* ---------- 附着的记忆（不在气泡里，挂在输入栏上） ---------- */
+  var attached = null;
+  function setAttach(m) {
+    attached = { title: m.title || '', content: String(m.content || '') };
+    renderAttach();
+  }
+  function renderAttach() {
+    var el = $('ib-attach');
+    if (!attached) { if (el) el.remove(); return; }
+    var bar = document.querySelector('.chat-input-bar');
+    if (!bar) return;
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'ib-attach';
+      el.className = 'ib-attach';
+      bar.parentNode.insertBefore(el, bar);
+    }
+    el.innerHTML = '<span class="ib-attach-ic">📎</span>附上记忆：<b>' +
+      String(attached.title || '未命名') + '</b><button id="ib-attach-x">✕</button>';
+    $('ib-attach-x').onclick = function (e) {
+      e.stopPropagation();
+      attached = null;
+      renderAttach();
+    };
+    el.onclick = function () {
+      alert('【' + String(attached.title || '') + '】\n\n' + String(attached.content || '').slice(0, 600));
+    };
   }
 
   function pickImg(camera) {
@@ -92,10 +128,10 @@
     var rows = list.slice(0, 40).map(function (m) {
       return {
         icon: I.mem, name: m.title || '（无标题）',
-        on: function () { say('[记忆] ' + (m.title || '') + '\n' + String(m.content || '').slice(0, 120)); }
+        on: function () { setAttach(m); }
       };
     });
-    sheet('记忆库', '挑一条发给他', rows);
+    sheet('记忆库', '挑一条附在消息上（不进气泡，我直接读到）', rows);
   }
 
   window.HearthInput = { sheet: sheet, ic: ic, icons: I, say: say };
@@ -256,16 +292,7 @@
     mic.innerHTML = I.mic;
     bar.insertBefore(mic, $('chat-send'));
 
-    plus.onclick = function () {
-      sheet('发点什么', '', [
-        { icon: I.album, name: '相册', on: function () { pickImg(false); } },
-        { icon: I.cam, name: '拍照', on: function () { pickImg(true); } },
-        { icon: I.call, name: '通话', on: function () { alert('通话还没接。等哪天能打电话了，这儿就通了。'); } },
-        { icon: I.pin, name: '位置', on: sendLoc },
-        { icon: I.mem, name: '记忆', on: pickMem },
-        { icon: I.file, name: '文件', on: pickFile }
-      ]);
-    };
+    plus.onclick = function () { toggleTools(); };
 
     mic.addEventListener('click', function (e) {
       e.preventDefault();
@@ -275,6 +302,58 @@
   }
 
   function init() { mount(); }
+  /* ---------- 底栏工具条（点＋从输入栏上方滑出） ---------- */
+  function closeTools() {
+    var t = $('ib-tools');
+    if (!t) return;
+    t.classList.remove('show');
+    setTimeout(function () {
+      var x = $('ib-tools');
+      if (x && !x.classList.contains('show')) x.remove();
+    }, 220);
+  }
+  function toggleTools() {
+    var t = $('ib-tools');
+    if (t && t.classList.contains('show')) { closeTools(); return; }
+    if (t) t.remove();
+    var bar = document.querySelector('.chat-input-bar');
+    if (!bar) return;
+    t = document.createElement('div');
+    t.id = 'ib-tools';
+    t.className = 'ib-tools';
+    var items = [
+      { ic: I.album, name: '相册', on: function () { pickImg(false); } },
+      { ic: I.cam, name: '拍照', on: function () { pickImg(true); } },
+      { ic: I.call, name: '通话', on: function () { hint2('通话还没接上。等能打电话那天再通。'); } },
+      { ic: I.pin, name: '位置', on: sendLoc },
+      { ic: I.mem, name: '记忆', on: pickMem },
+      { ic: I.file, name: '文件', on: pickFile }
+    ];
+    t.innerHTML = items.map(function (it, i) {
+      return '<button class="ib-tool" data-i="' + i + '"><span class="ib-tool-ic">' + it.ic +
+             '</span><span class="ib-tool-n">' + it.name + '</span></button>';
+    }).join('');
+    bar.parentNode.insertBefore(t, bar);
+    t.querySelectorAll('.ib-tool').forEach(function (b) {
+      b.onclick = function () {
+        var it = items[parseInt(this.getAttribute('data-i'), 10)];
+        closeTools();
+        if (it) it.on();
+      };
+    });
+    requestAnimationFrame(function () { t.classList.add('show'); });
+    var away = function (e) {
+      if (!document.getElementById('ib-tools')) { document.removeEventListener('click', away, true); return; }
+      var p = e.target;
+      while (p) {
+        if (p.id === 'ib-tools' || p.id === 'ib-plus') return;
+        p = p.parentNode;
+      }
+      closeTools();
+      document.removeEventListener('click', away, true);
+    };
+    setTimeout(function () { document.addEventListener('click', away, true); }, 60);
+  }
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
