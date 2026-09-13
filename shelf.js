@@ -234,6 +234,7 @@
     else if (id === 'voice') body = buildVoice();
     else if (id === 'calls') body = buildCalls();
     else if (id === 'answer') body = buildAnswer();
+    else if (id === 'diary') body = buildDiary();
     else body = buildImported(id);
     var cv = coverPage(id);
     return cv ? [cv].concat(body) : body;
@@ -266,6 +267,19 @@
   }
 
   function imported() { return Store.get('ShelfBooks', []); }
+
+  function buildDiary() {
+    var n = Store.get('diaries', []).length;
+    return [{
+      date: '',
+      title: '',
+      html: '<div class="pg-empty">' +
+            '<div class="big">' + n + '</div>' +
+            '<div>' + (n ? '这本里记着 ' + n + ' 篇。' : '还是空的。点下面进去写第一篇。') + '</div>' +
+            '<button style="' + BTN + '" data-act="godiary">查看日记</button>' +
+            '</div>'
+    }];
+  }
 
   function buildImported(id) {
     var list = imported();
@@ -469,6 +483,12 @@
         t = setTimeout(function () { t = 0; }, 300);
       };
     });
+    pg.querySelectorAll('[data-act=\'godiary\']').forEach(function (el) {
+      el.onclick = function () {
+        closeReader();
+        setTimeout(goDiary, 120);
+      };
+    });
   }
 
   function delPhoto(i) {
@@ -593,7 +613,6 @@
   }
 
   function openBook(id) {
-    if (id === 'diary') { goDiary(); return; }
     mountReader();
     var b = byId(id);
     cur = id;
