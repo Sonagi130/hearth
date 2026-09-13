@@ -413,7 +413,13 @@
 .conv-bar .cb-mid {
   flex: 1; text-align: center; min-width: 0;
   display: flex; flex-direction: column; align-items: center;
-  cursor: pointer;
+  cursor: pointer; padding: 4px 10px; border-radius: 12px;
+  transition: background .15s;
+}
+.conv-bar .cb-mid:active { background: rgba(139,111,71,.12); }
+.conv-bar .cb-caret {
+  font-size: 10px; color: var(--text-soft);
+  line-height: 1; margin-top: 2px;
 }
 .conv-bar .cb-name {
   font-size: 16px; font-weight: 700; color: var(--brown);
@@ -496,9 +502,13 @@
 }
 #bg-layer::after {
   content: ''; position: absolute; inset: 0;
-  background: rgba(255,248,240,.72);
+  background: rgba(255,248,240, var(--bg-dim, 0.72));
 }
-[data-theme="dark"] #bg-layer::after { background: rgba(26,23,20,.74); }
+[data-theme="dark"] #bg-layer::after { background: rgba(26,23,20, var(--bg-dim, 0.74)); }
+
+/* 设置里的滑块行 */
+.settings-row.raw { display: block; cursor: default; }
+.settings-row.raw input[type="range"] { accent-color: #E8975C; }
 #app { position: relative; z-index: 1; }
 body.has-bg .top-bar,
 body.has-bg .page,
@@ -575,6 +585,16 @@ body.ui-sideborder .side-nav .nav-item {
 /* 相册背面的按钮排 */
 .pg-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
 .pg-btns button { margin-top: 0 !important; }
+
+/* 录音提示条 */
+.ib-rec {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: calc(var(--safe-bottom) + 84px); z-index: 640;
+  display: none; padding: 9px 16px; border-radius: 20px;
+  background: rgba(26,23,20,.84); color: #FFF8F0;
+  font-size: 12.5px; letter-spacing: .02em; max-width: 80vw;
+  text-align: center; line-height: 1.5;
+}
 
 /* --- 21. 顾淮专属空间 --- */
 .gs-lock {
