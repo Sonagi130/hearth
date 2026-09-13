@@ -159,12 +159,31 @@
         stopSR();
         var blob = new Blob(chunks, { type: type });
         var key = 'v' + Date.now() + Math.floor(Math.random() * 1000);
-        var withText = function (tok) {
+        var sendToken = function (tok, txt) {
+          var t = String(txt || '').trim().replace(/\|/g, ' ').replace(/\s+/g, ' ');
+          say(t ? tok + '|' + t : tok);
+        };
+        var delayed = function (tok) {
           setTimeout(function () {
             var txt = String(srText || '').trim().replace(/\|/g, ' ').replace(/\s+/g, ' ');
             if (!txt && srErr) hint2('没转出文字（' + srErr + '）——语音照样发出去了。');
             say(txt ? tok + '|' + txt : tok);
           }, 450);
+        };
+        var withText = function (tok) {
+          var HM = window.HearthModels;
+          if (HM && HM.hasASR && HM.hasASR()) {
+            hint2('正在把语音转成文字…');
+            HM.asr(blob).then(function (txt) {
+              if (!txt) { hint2('没听出内容，语音照样发出去了。'); sendToken(tok, ''); return; }
+              sendToken(tok, txt);
+            })['catch'](function (e) {
+              hint2('转文字失败（' + (e && e.message) + '），改用浏览器识别的结果。');
+              delayed(tok);
+            });
+            return;
+          }
+          delayed(tok);
         };
         if (window.VStore) {
           window.VStore.put(key, blob).then(function () {
@@ -181,7 +200,8 @@
         }
       };
       rec.start();
-      startSR();
+      var HM0 = window.HearthModels;
+      if (!(HM0 && HM0.hasASR && HM0.hasASR())) startSR();
       if (m) m.classList.add('rec');
       hint(true);
     }).catch(function () {
