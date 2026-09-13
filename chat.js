@@ -111,7 +111,9 @@
     var t = Store.get('ttsConf', {}) || {};
     var c = Store.get('apiConf', {}) || {};
     var key = String(t.key || c.key || '').trim();
-    var base = String(t.url || c.url || 'https://api.deepseek.com').replace(/\/+$/, '');
+    var base = String(t.url || c.url || 'https://api.deepseek.com')
+      .replace(/\/(audio\/speech|audio\/transcriptions)\/*$/i, '')
+      .replace(/\/+$/, '');
     if (!key) return Promise.reject(new Error('语音没配 Key'));
     if (!t.model) return Promise.reject(new Error('语音配置里还没填模型名'));
     return fetch(base + '/audio/speech', {
@@ -158,7 +160,8 @@
       body: JSON.stringify({
         model: c.model || 'deepseek-chat',
         messages: msgs,
-        stream: true
+        stream: true,
+        stream_options: { include_usage: true }
       })
     }).then(function (r) {
       if (!r.ok) {
@@ -183,6 +186,9 @@
             if (js === '[DONE]') return;
             try {
               var j = JSON.parse(js);
+              if (j.usage && window.HearthConv && window.HearthConv.addUsage) {
+                try { window.HearthConv.addUsage(j.usage); } catch (eu) {}
+              }
               var d = j.choices && j.choices[0] && j.choices[0].delta;
               if (d && d.content) {
                 got += d.content;
