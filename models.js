@@ -150,7 +150,12 @@
       return r.blob();
     }).then(function (b) {
       new Audio(URL.createObjectURL(b)).play();
-    })['catch'](function (e) { alert('试听失败：' + (e && e.message)); });
+    })['catch'](function (e) {
+      alert('试听失败：' + (e && e.message) +
+        '\n\n请求的地址：' + base + '/audio/speech' +
+        '\n模型：' + t.model +
+        '\n\n如果写的是 Failed to fetch：地址不对、或者这家没有语音接口。');
+    });
   }
   function tts() {
     function open() {
@@ -176,7 +181,34 @@
     open();
   }
 
-  window.HearthModels = { ai: ai, tts: tts, slot: getSlot, set: setSlot };
+  /* ---------- 云端语音转文字（音频解析那格） ---------- */
+  function asr(blob) {
+    var s = getSlot('audio');
+    var c = Store.get('apiConf', {}) || {};
+    var key = String(s.key || c.key || '').trim();
+    var base = String(s.url || c.url || '').replace(/\/+$/, '');
+    if (!key || !base || !s.model) return Promise.reject(new Error('没配音频解析模型'));
+    var fd = new FormData();
+    fd.append('file', blob, 'voice.webm');
+    fd.append('model', s.model);
+    return fetch(base + '/audio/transcriptions', {
+      method: 'POST',
+      headers: { 'Authorization': 'Bearer ' + key },
+      body: fd
+    }).then(function (r) {
+      if (!r.ok) return r.text().then(function (x) { throw new Error('HTTP ' + r.status + ' ' + String(x).slice(0, 90)); });
+      return r.json();
+    }).then(function (j) {
+      return String((j && (j.text || j.result)) || '').trim();
+    });
+  }
+  function hasASR() {
+    var s = getSlot('audio');
+    var c = Store.get('apiConf', {}) || {};
+    return !!(s.model && (s.url || c.url));
+  }
+
+  window.HearthModels = { ai: ai, tts: tts, asr: asr, hasASR: hasASR, slot: getSlot, set: setSlot };
 
   function init() {
     if (location.hash.indexOf('@models') > 0) setTimeout(ai, 400);
