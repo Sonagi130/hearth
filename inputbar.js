@@ -48,6 +48,9 @@
 
   function say(t) {
     if (window.addMsg) window.addMsg(t, 'me');
+    if (window.HearthChat && window.HearthChat.ask) {
+      setTimeout(function () { window.HearthChat.ask(); }, 80);
+    }
   }
 
   function pickImg(camera) {
@@ -99,7 +102,7 @@
 
   /* ---------- 录音 + 同步转文字 ---------- */
   var rec = null, chunks = [];
-  var sr = null, srText = '';
+  var sr = null, srText = '', srErr = '';
 
   function srSupported() {
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -107,6 +110,7 @@
 
   function startSR() {
     srText = '';
+    srErr = '';
     if (!srSupported()) return;
     try {
       var SR = window.SpeechRecognition || window.webkitSpeechRecognition;
@@ -119,7 +123,7 @@
           if (e.results[i].isFinal) srText += e.results[i][0].transcript;
         }
       };
-      sr.onerror = function () {};
+      sr.onerror = function (e) { srErr = (e && e.error) || 'unknown'; };
       sr.start();
     } catch (e) { sr = null; }
   }
@@ -158,6 +162,7 @@
         var withText = function (tok) {
           setTimeout(function () {
             var txt = String(srText || '').trim().replace(/\|/g, ' ').replace(/\s+/g, ' ');
+            if (!txt && srErr) hint2('没转出文字（' + srErr + '）——语音照样发出去了。');
             say(txt ? tok + '|' + txt : tok);
           }, 450);
         };
