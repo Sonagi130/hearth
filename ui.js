@@ -41,7 +41,7 @@
       bg: '', glass: false, bubbleColor: '',
       cardBg: '', cardInk: '',
       sideGlass: false, sideBorder: false,
-      toast: true, vibrate: false
+      toast: true, vibrate: false, bgDim: 72, autoBak: false, keepN: 3
     });
   }
   function setUI(k, v) { var u = ui(); u[k] = v; Store.set('uiSet', u); applyUI(); draw(); }
@@ -75,6 +75,7 @@
     r.setProperty('--my-bubble', u.bubbleColor || 'transparent');
     r.setProperty('--my-card-bg', u.cardBg || '');
     r.setProperty('--my-card-ink', u.cardInk || '');
+    r.setProperty('--bg-dim', String((u.bgDim == null ? 72 : u.bgDim) / 100));
     document.body.classList.toggle('ui-glass', !!u.glass);
     document.body.classList.toggle('ui-bubble', !!u.bubbleColor);
     document.body.classList.toggle('ui-sideglass', !!u.sideGlass);
@@ -96,12 +97,14 @@
 
   function mkRow(o) {
     var el = document.createElement('div');
-    el.className = 'settings-row';
-    el.innerHTML = '<div class="sr-left"><span class="sr-icon">' + (o.icon || '') + '</span>' + o.name +
-      (o.sub ? '<span class="settings-sub">' + o.sub + '</span>' : '') + '</div>' +
-      (o.right || '<span class="arrow">›</span>');
+    el.className = 'settings-row' + (o.raw ? ' raw' : '');
+    el.innerHTML = o.raw ? o.raw :
+      ('<div class="sr-left"><span class="sr-icon">' + (o.icon || '') + '</span>' + o.name +
+       (o.sub ? '<span class="settings-sub">' + o.sub + '</span>' : '') + '</div>' +
+       (o.right || '<span class="arrow">›</span>'));
     if (o.danger) el.style.color = '#c0392b';
-    if (o.on) el.onclick = o.on;
+    if (o.on && !o.raw) el.onclick = o.on;
+    if (o.mount) o.mount(el);
     return el;
   }
 
@@ -290,9 +293,31 @@
         right: sw(Store.get('theme', 'light') === 'dark'), on: myTheme },
       { icon: ICONS.image, name: '背景', sub: u.bg ? '自定义图' : '默认',
         on: function () {
+          var dim = (u.bgDim == null ? 72 : u.bgDim);
           sheet('背景', '', [
             { icon: ICONS.image, name: '从相册选一张', on: pickBg },
-            { icon: ICONS.refresh, name: '用默认背景', on: function () { setUI('bg', ''); } }
+            { icon: ICONS.refresh, name: '用默认背景', on: function () { setUI('bg', ''); } },
+            {
+              raw: '<div style="width:100%">' +
+                   '<div style="font-size:13.5px;color:var(--text-main);margin-bottom:10px;">' +
+                   '奶油层浓淡　<b id="bgdim-v">' + dim + '%</b></div>' +
+                   '<input id="bgdim-r" type="range" min="0" max="100" value="' + dim + '" style="width:100%">' +
+                   '<div style="font-size:11.5px;color:var(--text-soft);margin-top:8px;">' +
+                   '0% 是原图，100% 基本看不见背景。<br>背景太花就看不清字，调到舒服为止。</div>' +
+                   '</div>',
+              mount: function (el) {
+                var r = el.querySelector('#bgdim-r');
+                var v = el.querySelector('#bgdim-v');
+                r.oninput = function () {
+                  var n = parseInt(r.value, 10);
+                  v.textContent = n + '%';
+                  var x = ui();
+                  x.bgDim = n;
+                  Store.set('uiSet', x);
+                  applyUI();
+                };
+              }
+            }
           ]);
         } },
       { icon: ICONS.chat, name: '对话区', sub: '气泡 / 卡片', on: shChat },
