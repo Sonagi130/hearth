@@ -644,6 +644,12 @@ body.ui-sideborder .side-nav .nav-item {
   font-variant-numeric: tabular-nums; letter-spacing: .02em;
   min-width: 34px; text-align: right;
 }
+.vaud-text {
+  margin-top: 7px; padding-top: 7px;
+  border-top: 1px dashed rgba(139,111,71,.22);
+  font-size: 12.5px; line-height: 1.6; opacity: .78;
+  white-space: pre-wrap; overflow-wrap: anywhere;
+}
 
 /* 相册背面的按钮排 */
 .pg-btns { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
