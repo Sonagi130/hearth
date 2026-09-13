@@ -106,9 +106,13 @@
     var m = $('ib-mic');
     navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
       chunks = [];
-      rec = new MediaRecorder(st);
+      try { rec = new MediaRecorder(st, { audioBitsPerSecond: 24000 }); }
+      catch (e) { rec = new MediaRecorder(st); }
       rec.startedAt = Date.now();
       rec.ondataavailable = function (e) { if (e.data && e.data.size) chunks.push(e.data); };
+      rec.maxTimer = setTimeout(function () {
+        if (rec && rec.state === 'recording') { hint2('到一分钟了，先发出去。'); rec.stop(); }
+      }, 60000);
       rec.onstop = function () {
         var dur = Date.now() - rec.startedAt;
         var type = rec.mimeType || 'audio/webm';
@@ -117,12 +121,23 @@
         var mm = $('ib-mic');
         if (mm) mm.classList.remove('rec');
         rec = null;
-        if (dur < 500) { hint2('太短了，按住说话——点一下开始，再点一下结束。'); return; }
+        if (dur < 500) { hint2('太短了。点一下话筒开始，说完再点一下结束。'); return; }
         if (!chunks.length) { hint2('没录到声音。'); return; }
         var blob = new Blob(chunks, { type: type });
-        var fr = new FileReader();
-        fr.onload = function () { say('__AUD__' + fr.result); };
-        fr.readAsDataURL(blob);
+        var key = 'v' + Date.now() + Math.floor(Math.random() * 1000);
+        if (window.VStore) {
+          window.VStore.put(key, blob).then(function () {
+            say('__AUD__idb:' + key);
+          }).catch(function () {
+            var fr0 = new FileReader();
+            fr0.onload = function () { say('__AUD__' + fr0.result); };
+            fr0.readAsDataURL(blob);
+          });
+        } else {
+          var fr = new FileReader();
+          fr.onload = function () { say('__AUD__' + fr.result); };
+          fr.readAsDataURL(blob);
+        }
       };
       rec.start();
       if (m) m.classList.add('rec');
