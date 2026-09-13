@@ -347,8 +347,8 @@
       draw();
     };
     sheet('AI 模型配置', '接上模型，壁炉才有脑子', [
-      { icon: ICONS.key, name: 'API 地址', sub: a.url || '还没填', on: function () { edit('url', '接口地址'); } },
-      { icon: ICONS.robot, name: '模型名', sub: a.model || '还没填', on: function () { edit('model', '模型名'); } },
+      { icon: ICONS.key, name: 'API 地址', sub: a.url || '默认 api.deepseek.com', on: function () { edit('url', '接口地址（留空就用 https://api.deepseek.com）'); } },
+      { icon: ICONS.robot, name: '模型名', sub: a.model || '默认 deepseek-chat', on: function () { edit('model', '模型名（留空就用 deepseek-chat）'); } },
       { icon: ICONS.lock, name: 'API Key', sub: a.key ? a.key.slice(0, 4) + '****' : '还没填', on: function () { edit('key', '把 Key 粘进来'); } }
     ]);
   }
