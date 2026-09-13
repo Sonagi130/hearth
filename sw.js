@@ -10,6 +10,7 @@ var CORE = [
   './app.js',
   './ui.js',
   './convs.js',
+  './chat.js',
   './shelf.js',
   './chatmenu.js',
   './inputbar.js',
