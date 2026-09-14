@@ -147,22 +147,26 @@
     wrap.className = 'msg he';
     wrap.innerHTML = '<div class="bubble"></div><div class="time">顾淮 · 正在说…</div>';
     if (box) { box.appendChild(wrap); box.scrollTop = box.scrollHeight; }
+    var thinkOn = Store.get('showThinking', false);
+    if (thinkOn) { wrap.innerHTML = '<div class="think open"><div class="think-h">思考过程 ▴</div><div class="think-b">…</div></div>' + wrap.innerHTML; }
     var bub = wrap.querySelector('.bubble');
     var tm = wrap.querySelector('.time');
-    var got = '';
-
+    var tb = wrap.querySelector('.think-b');
+    var got = '', thinkGot = '';
+    var bodyData = {
+      model: c.model || 'deepseek-chat',
+      messages: msgs,
+      stream: true,
+      stream_options: { include_usage: true }
+    };
+    if (thinkOn) bodyData.thinking = { type: 'enabled' };
     fetch(endpoint(c.url), {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer ' + c.key
       },
-      body: JSON.stringify({
-        model: c.model || 'deepseek-chat',
-        messages: msgs,
-        stream: true,
-        stream_options: { include_usage: true }
-      })
+      body: JSON.stringify(bodyData)
     }).then(function (r) {
       if (!r.ok) {
         return r.text().then(function (t) {
@@ -190,6 +194,10 @@
                 try { window.HearthConv.addUsage(j.usage); } catch (eu) {}
               }
               var d = j.choices && j.choices[0] && j.choices[0].delta;
+              if (d && d.reasoning_content) {
+                thinkGot += d.reasoning_content;
+                if (tb) { tb.textContent = thinkGot; if (box) box.scrollTop = box.scrollHeight; }
+              }
               if (d && d.content) {
                 got += d.content;
                 bub.textContent = got;
@@ -203,6 +211,14 @@
       return pump();
     }).then(function () {
       if (tm) tm.textContent = '顾淮 · ' + nowHM();
+      if (thinkGot) {
+        wrap.setAttribute('data-think', thinkGot);
+        if (tb) tb.textContent = thinkGot;
+        var th = wrap.querySelector('.think');
+        if (th) th.classList.remove('open');
+        var thh = wrap.querySelector('.think-h');
+        if (thh) thh.textContent = '思考过程 ▾';
+      }
       if (got && window.VStore && wantsVoice(lastUserSaid())) {
         var vk = 'v' + Date.now() + Math.floor(Math.random() * 1000);
         if (tm) tm.textContent = '顾淮 · 正在录…';
