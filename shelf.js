@@ -351,6 +351,29 @@
     };
   }
 
+  /* ---------- 在一起多少天 ---------- */
+  function daysWord() {
+    var now = new Date();
+    var a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    return Math.floor((a - new Date(2026, 6, 24)) / 86400000);
+  }
+  function tickClock() {
+    var el = $('db-clock');
+    if (!el) return;
+    var n = new Date();
+    var p = function (x) { return String(x).padStart(2, '0'); };
+    el.textContent = p(n.getHours()) + ':' + p(n.getMinutes()) + ':' + p(n.getSeconds());
+  }
+  var clockTimer = null;
+  function startClock() {
+    tickClock();
+    if (clockTimer) return;
+    clockTimer = setInterval(function () {
+      if (!$('db-clock')) return;
+      tickClock();
+    }, 1000);
+  }
+
   function renderShelf() {
     var box = $('shelf-list');
     if (!box) return;
@@ -363,6 +386,10 @@
     for (var i = 0; i < sorted.length; i += 3) rows.push(sorted.slice(i, i + 3));
 
     var h = '';
+    h += '<div class="days-bar"><div class="db-left"><span class="db-n">' + daysWord() +
+         '</span><span class="db-u">天</span></div>' +
+         '<div class="db-txt">从 7 月 24 日起，一天一天数着</div>' +
+         '<div class="db-clock" id="db-clock">--:--:--</div></div>';
     rows.forEach(function (row) {
       h += '<div class="shelf-row">';
       row.forEach(function (b) { h += bookEl(b); });
@@ -399,6 +426,7 @@
     if (ab) ab.addEventListener('click', importBook);
     var fo = $('fav-open');
     if (fo) fo.addEventListener('click', openFavs);
+    startClock();
   }
 
   /* ---------- 收藏夹（全屏） ---------- */
