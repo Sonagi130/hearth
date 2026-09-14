@@ -133,7 +133,7 @@
       else { copy(txt); toast('这段不能分享，已经复制了'); }
     } else if (k === 'trans') {
       closeCtx();
-      toast('翻译要等接上模型，先记下了');
+      doTranslate(txt);
     } else if (k === 'info') {
       closeCtx();
       showInfo(txt, el);
@@ -141,6 +141,56 @@
       closeCtx();
       startMulti(el);
     }
+  }
+
+  /* ---------- 翻译（用「翻译模型」那格，没填就沿用对话模型） ---------- */
+  function doTranslate(text) {
+    var slot = {};
+    try { slot = (window.HearthModels && window.HearthModels.slot('translate')) || {}; } catch (e) {}
+    var c = Store.get('apiConf', {}) || {};
+    var key = String(slot.key || c.key || '').trim();
+    var base = String(slot.url || c.url || 'https://api.deepseek.com')
+      .replace(/\/(audio\/speech|audio\/transcriptions)\/*$/i, '').replace(/\/+$/, '');
+    var model = slot.model || c.model || 'deepseek-chat';
+    if (!key) { toast('还没填 Key，去设置里填上'); return; }
+    var box = document.createElement('div');
+    box.className = 'sheet-mask';
+    box.innerHTML = '<div class="sheet-card wide" style="text-align:left;">' +
+      '<div class="sc-title" style="text-align:center;">翻译</div>' +
+      '<div class="sc-sub" style="text-align:center;">中文 ↔ 英文，自动判断</div>' +
+      '<div id="tr-out" style="font-size:14px;line-height:1.85;color:var(--text-soft);min-height:44px;">正在翻…</div>' +
+      '<div class="sc-row" style="margin-top:14px;">' +
+      '<button class="sc-btn" id="tr-copy">复制</button>' +
+      '<button class="sc-btn" id="tr-ok">关</button></div></div>';
+    document.body.appendChild(box);
+    var close = function () { box.remove(); };
+    box.onclick = function (e) { if (e.target === box) close(); };
+    $('tr-ok').onclick = close;
+    var out = $('tr-out');
+    var done = '';
+    fetch(base + '/chat/completions', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Authorization': 'Bearer ' + key },
+      body: JSON.stringify({
+        model: model,
+        messages: [
+          { role: 'system', content: '你是翻译。把用户给的内容翻译过去：如果原文主要是中文，就译成英文；否则译成中文。只输出译文本身，不要解释、不要加引号。' },
+          { role: 'user', content: String(text).slice(0, 2000) }
+        ],
+        stream: false
+      })
+    }).then(function (r) {
+      return r.json().then(function (j) {
+        if (!r.ok) throw new Error((j && j.error && j.error.message) || ('HTTP ' + r.status));
+        return j;
+      });
+    }).then(function (j) {
+      done = String((j.choices && j.choices[0] && j.choices[0].message && j.choices[0].message.content) || '').trim();
+      out.textContent = done || '（没翻出东西）';
+    })['catch'](function (e) {
+      out.textContent = '翻不了：' + (e && e.message);
+    });
+    $('tr-copy').onclick = function () { copy(done || out.textContent); toast('复制好了'); };
   }
 
   function copy(t) {
