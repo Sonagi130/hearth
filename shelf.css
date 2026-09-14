@@ -765,3 +765,12 @@ body.ui-sideborder .side-nav .nav-item {
 .tog.on i { transform: translateX(19px); }
 [data-theme="dark"] .tog { background: rgba(255,255,255,.16); }
 [data-theme="dark"] .tog.on { background: #E8975C; }
+
+/* --- 21. 在一起的天数 --- */
+.days-bar { margin: 6px 4px 16px; padding: 16px 18px; border-radius: 16px; background: linear-gradient(135deg, rgba(232,151,92,.16), rgba(232,151,92,.05)); border: 1px solid rgba(232,151,92,.28); display: flex; align-items: baseline; gap: 10px; }
+.db-left { display: flex; align-items: baseline; gap: 4px; }
+.db-n { font-size: 34px; font-weight: 800; color: #E8975C; line-height: 1; letter-spacing: -.02em; }
+.db-u { font-size: 13px; font-weight: 700; color: var(--brown); }
+.db-txt { font-size: 11.5px; color: var(--brown); opacity: .6; }
+.db-clock { margin-left: auto; font-size: 13px; font-variant-numeric: tabular-nums; color: var(--brown); opacity: .55; }
+[data-theme="dark"] .days-bar { background: linear-gradient(135deg, rgba(232,151,92,.2), rgba(232,151,92,.06)); }
