@@ -2,7 +2,7 @@
    作用：让浏览器认得出这是个能装的 App（不只是个网页）。
    策略：网络优先，断网时退回缓存。 */
 
-var CACHE = 'hearth-v1';
+var CACHE = 'hearth-v2';
 var CORE = [
   './',
   './index.html',
@@ -46,7 +46,7 @@ self.addEventListener('fetch', function (e) {
   if (req.url.indexOf(self.location.origin) !== 0) return;
 
   e.respondWith(
-    fetch(req).then(function (res) {
+    fetch(req, { cache: 'no-cache' }).then(function (res) {
       var copy = res.clone();
       caches.open(CACHE).then(function (c) { c.put(req, copy); }).catch(function () {});
       return res;
