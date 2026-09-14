@@ -44,7 +44,7 @@ function initTheme() {
 }
 
 // ---- 导航 ----
-const pageTitles = { chat:'对话', diary:'日记', calendar:'日历', photos:'相片墙', notes:'碎碎念', memory:'记忆库', bro:'哥哥', tools:'工具包', settings:'设置' };
+const pageTitles = { chat:'对话', diary:'日记', calendar:'日历', photos:'相片墙', notes:'碎碎念', memory:'记忆库', play:'游戏厅', bro:'哥哥', tools:'工具包', settings:'设置' };
 
 function openNav() {
     $('side-nav').classList.add('open');
@@ -74,6 +74,7 @@ function initNav() {
             if (page === 'photos') renderPhotos();
             if (page === 'notes') renderNotes();
             if (page === 'memory') renderMemory();
+            if (page === 'play' && window.HearthPlay) window.HearthPlay.boot();
             if (page === 'tools') renderTools();
             if (page === 'settings') renderSettings();
         };
