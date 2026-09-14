@@ -116,10 +116,11 @@
     });
   }
 
-  function thinkHTML(who) {
+  function thinkHTML(who, think) {
     if (who === 'me' || !Store.get('showThinking', false)) return '';
+    var body = think ? esc(think) : '（这一条没有思考过程。）';
     return '<div class="think"><div class="think-h">思考过程 ▾</div>' +
-           '<div class="think-b">（接上模型后，这里显示我这一句是怎么想出来的。）</div></div>';
+           '<div class="think-b">' + body + '</div></div>';
   }
 
   function bodyHTML(t) {
@@ -167,7 +168,8 @@
       div.className = 'msg ' + who;
       div.setAttribute('data-i', String(mi));
       div.setAttribute('data-raw', String(m.text == null ? '' : m.text));
-      div.innerHTML = thinkHTML(who) +
+      if (m.think) div.setAttribute('data-think', String(m.think));
+      div.innerHTML = thinkHTML(who, m.think) +
         '<div class="bubble">' + bodyHTML(m.text) + '</div>' +
         '<div class="time">' + esc(m.time || '') + '</div>';
       box.appendChild(div);
@@ -203,10 +205,12 @@
       var b = m.querySelector('.bubble');
       var t = m.querySelector('.time');
       var raw = m.getAttribute('data-raw');
+      var th = m.getAttribute('data-think');
       out.push({
         who: m.classList.contains('me') ? 'me' : 'he',
         text: raw == null ? (b ? b.textContent : '') : raw,
-        time: t ? t.textContent : ''
+        time: t ? t.textContent : '',
+        think: th || ''
       });
     });
     for (var i = 0; i < list.length; i++) {
@@ -215,12 +219,12 @@
     save(list);
   }
 
-  window.addMsg = function (text, who) {
+  window.addMsg = function (text, who, think) {
     var list = load();
     var w = who === 'me' ? 'me' : 'he';
     for (var i = 0; i < list.length; i++) {
       if (list[i].id === curId) {
-        list[i].msgs.push({ who: w, text: String(text), time: (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11) });
+        list[i].msgs.push({ who: w, text: String(text), time: (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11), think: String(think || '') });
         break;
       }
     }
@@ -229,7 +233,8 @@
     var div = document.createElement('div');
     div.className = 'msg ' + w;
     div.setAttribute('data-raw', String(text));
-    div.innerHTML = thinkHTML(w) +
+    if (think) div.setAttribute('data-think', String(think));
+    div.innerHTML = thinkHTML(w, think) +
       '<div class="bubble">' + bodyHTML(text) + '</div>' +
       '<div class="time">' + (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11) + '</div>';
     if (box) { box.appendChild(div); box.scrollTop = box.scrollHeight; }
