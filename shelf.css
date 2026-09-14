@@ -794,3 +794,16 @@ body.ui-sideborder .side-nav .nav-item {
 .tt-tip { font-size: 11.5px; opacity: .5; color: var(--brown); }
 .tree-empty { position: absolute; inset: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; font-size: 13px; color: var(--brown); opacity: .55; line-height: 2; }
 [data-theme="dark"] .tree-wrap { background: linear-gradient(180deg, rgba(232,151,92,.08), rgba(232,151,92,.16)); }
+
+/* --- 23. 经期记录 --- */
+.p-strip { display: flex; align-items: center; gap: 8px; margin: 8px 10px 12px; padding: 12px 14px; border-radius: 14px; background: rgba(229,138,166,.14); border: 1px solid rgba(229,138,166,.3); color: var(--brown); font-size: 13.5px; font-weight: 600; }
+.p-strip.s-on { background: rgba(229,138,166,.32); }
+.p-strip.s-late { background: rgba(224,163,62,.2); border-color: rgba(224,163,62,.45); }
+.p-strip .p-ic { font-size: 15px; }
+.p-strip .p-t { flex: 1; }
+.p-strip .p-set { font-size: 12px; font-weight: 400; opacity: .6; }
+.cal-cell.p-on { background: rgba(229,138,166,.24); color: #7A3B52; font-weight: 700; }
+.cal-cell.p-pred { background: rgba(229,138,166,.08); box-shadow: inset 0 0 0 1px rgba(229,138,166,.5); }
+.cal-cell.p-start { background: #E58AA6 !important; color: #fff !important; }
+[data-theme="dark"] .p-strip { background: rgba(229,138,166,.2); }
+[data-theme="dark"] .cal-cell.p-on { color: #F3D3DD; }
