@@ -92,7 +92,7 @@
   }
 
   function sw(on) {
-    return '<span class="pill">' + (on ? '开' : '关') + '</span>';
+    return '<span class="tog' + (on ? ' on' : '') + '"><i></i></span>';
   }
 
   function mkRow(o) {
