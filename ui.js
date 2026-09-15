@@ -391,6 +391,35 @@
     open();
   }
 
+  /* ---------- 危险操作：要点两次 ---------- */
+  function dangerAsk(title, sub, onYes) {
+    var mask = document.createElement('div');
+    mask.className = 'sheet-mask';
+    mask.innerHTML = '<div class="sheet-card wide" style="text-align:center;">' +
+      '<div class="sc-title">' + title + '</div>' +
+      (sub ? '<div class="sc-sub">' + sub + '</div>' : '') +
+      '<div class="sc-row" style="margin-top:16px;">' +
+      '<button class="sc-btn dg-no">算了</button>' +
+      '<button class="sc-btn dg-yes" style="background:#c0392b;color:#fff;border-color:#c0392b;">确认</button>' +
+      '</div>' +
+      '<div class="dg-tip" style="font-size:11.5px;color:var(--text-soft);margin-top:10px;">要连着点两下「确认」才会真的动手</div>' +
+      '</div>';
+    document.body.appendChild(mask);
+    var armed = false;
+    var yes = mask.querySelector('.dg-yes');
+    yes.onclick = function () {
+      if (!armed) {
+        armed = true;
+        yes.textContent = '真删？再点一下';
+        return;
+      }
+      mask.remove();
+      if (onYes) onYes();
+    };
+    mask.querySelector('.dg-no').onclick = function () { mask.remove(); };
+  }
+  window.HearthDanger = dangerAsk;
+
   /* ---------- 效果展示（改的时候当场能看到） ---------- */
   function demoRow() {
     var u = ui();
@@ -666,11 +695,12 @@
     box.appendChild(mkGroup('数据', [
       { icon: ICONS.save, name: '数据备份与导入', sub: '聊天 · 记忆库 · 自动备份', on: shData },
       { icon: ICONS.trash, name: '清空全部数据', sub: '不可撤销', danger: true, on: function () {
-        if (!confirm('清空壁炉里所有东西？找不回来。')) return;
-        Object.keys(localStorage).forEach(function (k) {
-          if (k.indexOf('hearth_') === 0) localStorage.removeItem(k);
+        dangerAsk('清空壁炉里所有东西？', '聊天记录、书架、日记、收藏、记忆——全部没', function () {
+          Object.keys(localStorage).forEach(function (k) {
+            if (k.indexOf('hearth_') === 0) localStorage.removeItem(k);
+          });
+          location.reload();
         });
-        location.reload();
       } }
     ]));
   }
