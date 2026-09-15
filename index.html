@@ -228,7 +228,7 @@
         .msg.he { align-self: flex-start; align-items: flex-start; }
         .msg .bubble {
             padding: 10px 14px;
-            border-radius: 18px;
+            border-radius: var(--bubble-round, 18px);
             font-size: 15px;
             line-height: 1.5;
             word-break: break-word;
@@ -237,13 +237,26 @@
         .msg.me .bubble {
             background: var(--orange);
             color: #FFF;
-            border-bottom-right-radius: 6px;
+            border-bottom-right-radius: calc(var(--bubble-round, 18px) / 3);
         }
         .msg.he .bubble {
             background: var(--card-bg);
             color: var(--text-main);
-            border-bottom-left-radius: 6px;
+            border-bottom-left-radius: calc(var(--bubble-round, 18px) / 3);
         }
+        /* 头像 */
+        .msg.has-av { position: relative; padding-left: 44px; }
+        .msg.has-av.me { padding-left: 0; padding-right: 44px; }
+        .msg-av {
+            position: absolute; top: 0; left: 0;
+            width: 34px; height: 34px;
+            border-radius: var(--av-round, 50%);
+            background: var(--orange) center/cover no-repeat;
+            display: flex; align-items: center; justify-content: center;
+            font-size: 12px; color: #FFF; font-weight: 600;
+            box-shadow: var(--shadow);
+        }
+        .msg.has-av.me .msg-av { left: auto; right: 0; }
         /* 卡片模式 */
         .card-mode .msg {
             max-width: 92%;
