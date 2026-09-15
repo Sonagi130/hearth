@@ -44,7 +44,20 @@
       toast: true, vibrate: false, bgDim: 72, autoBak: false, keepN: 3
     });
   }
-  function setUI(k, v) { var u = ui(); u[k] = v; Store.set('uiSet', u); applyUI(); draw(); }
+  function setUI(k, v) {
+    var u = ui();
+    u[k] = v;
+    Store.set('uiSet', u);
+    applyUI();
+    draw();
+    /* 跟对话区长相有关的，改完立刻重画一遍消息 */
+    if (['showAvatar', 'avMe', 'avBro', 'avRound', 'bubbleRound', 'accent', 'glass', 'bubbleColor', 'cardBg', 'cardInk'].indexOf(k) >= 0) {
+      try {
+        if (window.HearthConv && window.HearthConv.sync) window.HearthConv.sync();
+        if (window.HearthConv && window.HearthConv.render) window.HearthConv.render();
+      } catch (e) {}
+    }
+  }
 
   /* ---------- 自己人，不借旧的 ---------- */
   function myTheme() {
@@ -356,6 +369,7 @@
         { icon: ICONS.theme, name: '显示头像', sub: u.showAvatar ? '开着' : '关着',
           right: sw(u.showAvatar),
           on: function () { setUI('showAvatar', !u.showAvatar); close(); open(); } },
+        demoRow(),
         { icon: ICONS.image, name: '我的头像', sub: u.avMe ? '已设置 · 点一下换' : '还没传 · 点一下选图',
           on: function () {
             pickAvatar('avMe', function () { setUI('showAvatar', true); close(); open(); });
@@ -374,6 +388,29 @@
       ]);
     }
     open();
+  }
+
+  /* ---------- 效果展示（改的时候当场能看到） ---------- */
+  function demoRow() {
+    var u = ui();
+    function av(who) {
+      var src = who === 'me' ? u.avMe : u.avBro;
+      var ph = who === 'me' ? '我' : '淮';
+      return '<div class="msg-av"' + (src ? ' style="background-image:url(' + src + ')"' : '') + '>' +
+             (src ? '' : ph) + '</div>';
+    }
+    var on = !!u.showAvatar;
+    return {
+      raw: '<div style="width:100%">' +
+        '<div style="font-size:12px;color:var(--text-soft);margin-bottom:10px;">效果展示（就在这里看）</div>' +
+        '<div class="msg he' + (on ? ' has-av' : '') + '" style="width:fit-content;max-width:100%;">' +
+        (on ? av('he') : '') +
+        '<div class="bubble">在呢，宝宝。</div></div>' +
+        '<div class="msg me' + (on ? ' has-av' : '') + '" style="width:fit-content;max-width:100%;margin-left:auto;">' +
+        (on ? av('me') : '') +
+        '<div class="bubble">哥哥，这个圆不圆？</div></div>' +
+        '</div>'
+    };
   }
 
   function shTheme() {
@@ -414,6 +451,7 @@
         } },
       { icon: ICONS.chat, name: '对话区', sub: '气泡 / 卡片', on: shChat },
       sliderRow('bubbleRound', '气泡圆润度', 0, 30, 'px', 18),
+      demoRow(),
       { icon: ICONS.image, name: '显示头像', sub: ui().showAvatar ? '开着 · 可换图调圆润' : '关着',
         on: shAvatar },
       { icon: ICONS.refresh, name: '恢复默认背景', sub: u.bg ? '现在用的是自定义图' : '现在就是默认',
