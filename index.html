@@ -257,6 +257,9 @@
             box-shadow: var(--shadow);
         }
         .msg.has-av.me .msg-av { left: auto; right: 0; }
+        /* 有头像时，尾巴角挪到上面（跟着头像走） */
+        .msg.he.has-av .bubble { border-bottom-left-radius: var(--bubble-round, 18px); border-top-left-radius: calc(var(--bubble-round, 18px) / 3); }
+        .msg.me.has-av .bubble { border-bottom-right-radius: var(--bubble-round, 18px); border-top-right-radius: calc(var(--bubble-round, 18px) / 3); }
         /* 卡片模式 */
         .card-mode .msg {
             max-width: 92%;
