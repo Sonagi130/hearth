@@ -123,6 +123,24 @@
            '<div class="think-b">' + body + '</div></div>';
   }
 
+  /* ---------- 头像 ---------- */
+  function avEl(who) {
+    var u = Store.get('uiSet', {}) || {};
+    if (!u.showAvatar) return null;
+    var d = document.createElement('div');
+    d.className = 'msg-av';
+    var src = who === 'me' ? u.avMe : u.avBro;
+    if (src) d.style.backgroundImage = 'url(' + src + ')';
+    else d.textContent = who === 'me' ? '我' : '淮';
+    return d;
+  }
+  function attachAv(div, who) {
+    var av = avEl(who);
+    if (!av) return;
+    div.classList.add('has-av');
+    div.insertBefore(av, div.firstChild);
+  }
+
   function bodyHTML(t) {
     t = String(t == null ? '' : t);
     if (t.indexOf('__IMG__') === 0) {
@@ -172,6 +190,7 @@
       div.innerHTML = thinkHTML(who, m.think) +
         '<div class="bubble">' + bodyHTML(m.text) + '</div>' +
         '<div class="time">' + esc(m.time || '') + '</div>';
+      attachAv(div, who);
       box.appendChild(div);
     });
     box.scrollTop = box.scrollHeight;
@@ -237,6 +256,7 @@
     div.innerHTML = thinkHTML(w, think) +
       '<div class="bubble">' + bodyHTML(text) + '</div>' +
       '<div class="time">' + (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11) + '</div>';
+    attachAv(div, w);
     if (box) { box.appendChild(div); box.scrollTop = box.scrollHeight; }
   };
 
