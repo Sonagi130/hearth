@@ -855,3 +855,14 @@ body.ui-sideborder .side-nav .nav-item {
 [data-theme="dark"] .mem-box { background: #3A302A; border-color: rgba(232,151,92,.45); }
 [data-theme="dark"] .mem-h { color: #F0B27A; }
 [data-theme="dark"] .mem-b { color: #E7DCCF; }
+
+/* --- 27. 记忆树的层次与纵深 --- */
+.tree-stage { perspective: 900px; }
+.tree-3d { position: absolute; inset: 0; transform-style: preserve-3d; animation: treeTurn 16s ease-in-out infinite; }
+@keyframes treeTurn {
+  0%,100% { transform: rotateY(-4deg) rotateX(1deg); }
+  50% { transform: rotateY(4deg) rotateX(-1deg); }
+}
+.leaf i { border-radius: 0 !important; }
+.leaf.lit i { box-shadow: none !important; filter: drop-shadow(0 0 5px rgba(255,205,110,.95)) drop-shadow(0 0 12px rgba(255,190,90,.55)); }
+.leaf.lit svg path { stroke: rgba(255,240,200,.9); }
