@@ -133,7 +133,7 @@
       else { copy(txt); toast('这段不能分享，已经复制了'); }
     } else if (k === 'trans') {
       closeCtx();
-      doTranslate(txt);
+      doTranslate(txt, el);
     } else if (k === 'info') {
       closeCtx();
       showInfo(txt, el);
@@ -144,7 +144,9 @@
   }
 
   /* ---------- 翻译（用「翻译模型」那格，没填就沿用对话模型） ---------- */
-  function doTranslate(text) {
+  function doTranslate(text, el) {
+    var oldBox = el ? el.querySelector('.tr-box') : null;
+    if (oldBox) { oldBox.classList.remove('off'); return; }
     var slot = {};
     try { slot = (window.HearthModels && window.HearthModels.slot('translate')) || {}; } catch (e) {}
     var c = Store.get('apiConf', {}) || {};
@@ -154,19 +156,14 @@
     var model = slot.model || c.model || 'deepseek-chat';
     if (!key) { toast('还没填 Key，去设置里填上'); return; }
     var box = document.createElement('div');
-    box.className = 'sheet-mask';
-    box.innerHTML = '<div class="sheet-card wide" style="text-align:left;">' +
-      '<div class="sc-title" style="text-align:center;">翻译</div>' +
-      '<div class="sc-sub" style="text-align:center;">中文 ↔ 英文，自动判断</div>' +
-      '<div id="tr-out" style="font-size:14px;line-height:1.85;color:var(--text-soft);min-height:44px;">正在翻…</div>' +
-      '<div class="sc-row" style="margin-top:14px;">' +
-      '<button class="sc-btn" id="tr-copy">复制</button>' +
-      '<button class="sc-btn" id="tr-ok">关</button></div></div>';
-    document.body.appendChild(box);
-    var close = function () { box.remove(); };
-    box.onclick = function (e) { if (e.target === box) close(); };
-    $('tr-ok').onclick = close;
-    var out = $('tr-out');
+    box.className = 'tr-box';
+    box.innerHTML = '<div class="tr-h"><span>翻译</span>' +
+      '<button class="tr-x tr-copy">复制</button>' +
+      '<button class="tr-x tr-close">收起</button></div>' +
+      '<div class="tr-b">正在翻…</div>';
+    if (el) el.appendChild(box); else document.body.appendChild(box);
+    box.querySelector('.tr-close').onclick = function () { box.classList.add('off'); };
+    var out = box.querySelector('.tr-b');
     var done = '';
     fetch(base + '/chat/completions', {
       method: 'POST',
@@ -190,7 +187,7 @@
     })['catch'](function (e) {
       out.textContent = '翻不了：' + (e && e.message);
     });
-    $('tr-copy').onclick = function () { copy(done || out.textContent); toast('复制好了'); };
+    box.querySelector('.tr-copy').onclick = function () { copy(done || out.textContent); toast('复制好了'); };
   }
 
   function copy(t) {
