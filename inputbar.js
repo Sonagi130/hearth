@@ -47,14 +47,7 @@
   }
 
   function say(t) {
-    var out = String(t);
-    if (attached) {
-      var body = String(attached.content || '').replace(/\s+/g, ' ').slice(0, 400);
-      out += '\n\n<<MEM ' + (attached.title || '未命名') + '>>' + body + '<</MEM>>';
-      attached = null;
-      renderAttach();
-    }
-    if (window.addMsg) window.addMsg(out, 'me');
+    if (window.addMsg) window.addMsg(String(t), 'me');
     if (window.HearthChat && window.HearthChat.ask) {
       setTimeout(function () { window.HearthChat.ask(); }, 80);
     }
@@ -88,6 +81,22 @@
       alert('【' + String(attached.title || '') + '】\n\n' + String(attached.content || '').slice(0, 600));
     };
   }
+
+  /* ---------- 让附件跟着消息走（打字发的也算） ---------- */
+  (function wrapAdd() {
+    if (!window.addMsg) return;
+    var inner = window.addMsg;
+    window.addMsg = function (text, who, think) {
+      var t = String(text == null ? '' : text);
+      if (who === 'me' && attached) {
+        var body = String(attached.content || '').replace(/\s+/g, ' ').slice(0, 400);
+        t += '\n\n<<MEM ' + (attached.title || '未命名') + '>>' + body + '<</MEM>>';
+        attached = null;
+        renderAttach();
+      }
+      return inner(t, who, think);
+    };
+  })();
 
   function pickImg(camera) {
     var inp = document.createElement('input');
