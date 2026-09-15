@@ -450,6 +450,12 @@
         right: sw(Store.get('theme', 'light') === 'dark'), on: myTheme },
       { icon: ICONS.palette, name: '系统配色', sub: u.accent ? '自定义' : '默认橙',
         on: function () { pickColor('accent', '选个主色'); } },
+      { icon: ICONS.palette, name: '界面风格', sub: (window.HearthSkin && window.HearthSkin.cur() === 'water') ? '水蓝 · 温柔' : '默认 · 暖橘',
+        on: function () { if (window.HearthSkin) { window.HearthSkin.toggle('skin'); close(); open(); } } },
+      { icon: ICONS.glass, name: '液体玻璃', sub: '半透明 · 磨砂质感', right: sw(!!u.glass),
+        on: function () { if (window.HearthSkin) { window.HearthSkin.toggle('glass'); close(); open(); } } },
+      { icon: ICONS.theme, name: '可爱装饰', sub: '圆润按钮 · 小点缀', right: sw(u.cute !== false),
+        on: function () { if (window.HearthSkin) { window.HearthSkin.toggle('cute'); close(); open(); } } },
       { icon: ICONS.image, name: '背景', sub: u.bg ? '自定义图' : '默认',
         on: function () {
           var dim = (u.bgDim == null ? 72 : u.bgDim);
