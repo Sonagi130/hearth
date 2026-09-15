@@ -347,13 +347,16 @@
       renderTitle();
     };
     $('cv-del').onclick = function () {
-      if (!confirm('删掉「' + (c.title || '对话') + '」？这个窗口的聊天记录全没。')) return;
       var arr = load().filter(function (x) { return x.id !== id; });
       if (!arr.length) { alert('就剩这一个窗口了，留着吧。'); return; }
-      save(arr);
-      if (id === curId) { curId = arr[arr.length - 1].id; Store.set('curConv', curId); }
-      close();
-      renderMessages();
+      var run = function () {
+        save(arr);
+        if (id === curId) { curId = arr[arr.length - 1].id; Store.set('curConv', curId); }
+        close();
+        renderMessages();
+      };
+      if (window.HearthDanger) window.HearthDanger('删掉这个窗口？', (c.title || '对话') + '的聊天记录会一起没', run);
+      else if (confirm('删掉这个窗口？')) run();
     };
 
     var inp = $('cv-find');
