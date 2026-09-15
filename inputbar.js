@@ -43,7 +43,8 @@
     });
     var c = function () { mask.remove(); };
     mask.onclick = function (e) { if (e.target === mask) c(); };
-    document.getElementById('ib-close').onclick = c;
+    var ibc = card.querySelector('#ib-close') || card.querySelector('.sc-btn');
+    if (ibc) ibc.onclick = c;
   }
 
   function say(t) {
