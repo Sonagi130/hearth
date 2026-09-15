@@ -144,14 +144,15 @@
     card.innerHTML = '<div class="sc-title" style="text-align:center;">' + title + '</div>' +
       (sub ? '<div class="sc-sub" style="text-align:center;">' + sub + '</div>' : '') +
       '<div class="sh-body"></div>' +
-      '<div class="sc-row" style="margin-top:14px;"><button class="sc-btn" id="sh-close">关闭</button></div>';
+      '<div class="sc-row" style="margin-top:14px;"><button class="sc-btn sh-close">关闭</button></div>';
     mask.appendChild(card);
     document.body.appendChild(mask);
     var box = card.querySelector('.sh-body');
     rows.forEach(function (r) { box.appendChild(mkRow(r)); });
     var c = function () { mask.remove(); };
     mask.onclick = function (e) { if (e.target === mask) c(); };
-    document.getElementById('sh-close').onclick = c;
+    var cbtn = card.querySelector('.sh-close');
+    if (cbtn) cbtn.onclick = c;
     return c;
   }
 
