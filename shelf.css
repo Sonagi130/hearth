@@ -866,3 +866,22 @@ body.ui-sideborder .side-nav .nav-item {
 .leaf i { border-radius: 0 !important; }
 .leaf.lit i { box-shadow: none !important; filter: drop-shadow(0 0 5px rgba(255,205,110,.95)) drop-shadow(0 0 12px rgba(255,190,90,.55)); }
 .leaf.lit svg path { stroke: rgba(255,240,200,.9); }
+
+/* --- 28. 水蓝皮肤 --- */
+body.skin-water { background: #F4FAFD; }
+body.skin-water .msg.me .bubble { color: #1F3547; }
+/* --- 29. 液体玻璃 --- */
+body.skin-glass::before { content: ""; position: fixed; inset: 0; z-index: -1; background: linear-gradient(160deg, #EAF5FC, #DDEBF7 45%, #F7EEF0); }
+body.skin-glass .settings-card, body.skin-glass .note-card, body.skin-glass .memory-card, body.skin-glass .fav-item, body.skin-glass .g-card, body.skin-glass .days-bar, body.skin-glass .sheet-card, body.skin-glass .chat-input-bar, body.skin-glass .side-nav { background: rgba(255,255,255,.56) !important; backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%); border: 1px solid rgba(255,255,255,.6); box-shadow: 0 8px 24px rgba(90,120,150,.10), inset 0 1px 0 rgba(255,255,255,.7); }
+body.skin-glass .msg.he .bubble { background: rgba(255,255,255,.62) !important; backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%); border: 1px solid rgba(255,255,255,.6); }
+body.skin-glass .msg.me .bubble { background: rgba(143,184,217,.66) !important; color: #16303F !important; backdrop-filter: blur(14px) saturate(160%); -webkit-backdrop-filter: blur(14px) saturate(160%); border: 1px solid rgba(255,255,255,.5); }
+/* --- 30. 可爱装饰 --- */
+body.skin-cute .sc-btn, body.skin-cute .tb-btn, body.skin-cute .tt-btn, body.skin-cute .g-cook, body.skin-cute .todo-add-btn, body.skin-cute .icon-btn, body.skin-cute .g-tab { border-radius: 14px; box-shadow: inset 0 2px 0 rgba(255,255,255,.6), 0 2px 6px rgba(120,140,160,.14); transition: transform .12s cubic-bezier(.3,1.4,.5,1); }
+body.skin-cute .sc-btn:active, body.skin-cute .g-cook:active, body.skin-cute .tb-btn:active, body.skin-cute .tt-btn:active, body.skin-cute .icon-btn:active, body.skin-cute .nav-item:active, body.skin-cute .g-chip:active { transform: scale(.95); }
+body.skin-cute .settings-card, body.skin-cute .note-card, body.skin-cute .memory-card, body.skin-cute .fav-item { border-radius: 18px; }
+body.skin-cute .settings-group-title::before { content: "❋"; color: var(--orange); margin-right: 6px; font-size: 11px; }
+body.skin-cute .tree-bar .tb-btn.on::after { content: " ✿"; }
+body.skin-cute .g-cook::after { content: " ✧"; }
+body.skin-cute .empty-state::before { content: "🌱 "; }
+body.skin-cute .fav-empty::before { content: "🌿 "; }
+body.skin-cute .tog i { transition: transform .26s cubic-bezier(.3,1.5,.5,1); }
