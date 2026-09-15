@@ -76,6 +76,9 @@
     r.setProperty('--my-card-bg', u.cardBg || '');
     r.setProperty('--my-card-ink', u.cardInk || '');
     r.setProperty('--bg-dim', String((u.bgDim == null ? 72 : u.bgDim) / 100));
+    r.setProperty('--orange', u.accent || '#E8975C');
+    r.setProperty('--bubble-round', String(u.bubbleRound == null ? 18 : u.bubbleRound) + 'px');
+    r.setProperty('--av-round', String(u.avRound == null ? 50 : u.avRound) + '%');
     document.body.classList.toggle('ui-glass', !!u.glass);
     document.body.classList.toggle('ui-bubble', !!u.bubbleColor);
     document.body.classList.toggle('ui-sideglass', !!u.sideGlass);
@@ -286,11 +289,100 @@
     ]);
   }
 
+  /* ---------- 滑杆 / 头像工具 ---------- */
+  function sliderRow(key, label, min, max, unit, def) {
+    var u = ui();
+    var v = (u[key] == null ? def : u[key]);
+    return {
+      raw: '<div style="width:100%">' +
+        '<div style="font-size:13.5px;color:var(--text-main);margin-bottom:10px;">' + label +
+        '<b style="color:var(--orange);margin-left:6px;" id="slv-' + key + '">' + v + unit + '</b></div>' +
+        '<input id="slr-' + key + '" type="range" min="' + min + '" max="' + max + '" value="' + v + '" style="width:100%">' +
+        '</div>',
+      mount: function (el) {
+        var r = el.querySelector('#slr-' + key);
+        var lab = el.querySelector('#slv-' + key);
+        if (!r) return;
+        r.oninput = function () {
+          var n = parseInt(r.value, 10);
+          if (lab) lab.textContent = n + unit;
+          var x = ui();
+          x[key] = n;
+          Store.set('uiSet', x);
+          applyUI();
+        };
+      }
+    };
+  }
+  function shrinkTo(file, cb) {
+    var fr = new FileReader();
+    fr.onload = function () {
+      var img = new Image();
+      img.onload = function () {
+        var s = 128;
+        var cv = document.createElement('canvas');
+        cv.width = s; cv.height = s;
+        var g = cv.getContext('2d');
+        var k = Math.max(s / img.width, s / img.height);
+        var w = img.width * k, h = img.height * k;
+        g.drawImage(img, (s - w) / 2, (s - h) / 2, w, h);
+        try { cb(cv.toDataURL('image/jpeg', 0.82)); } catch (e) { cb(null); }
+      };
+      img.onerror = function () { cb(null); };
+      img.src = fr.result;
+    };
+    fr.onerror = function () { cb(null); };
+    fr.readAsDataURL(file);
+  }
+  function pickAvatar(key, after) {
+    var inp = document.createElement('input');
+    inp.type = 'file';
+    inp.accept = 'image/*';
+    inp.onchange = function () {
+      var f = inp.files[0];
+      if (!f) return;
+      shrinkTo(f, function (data) {
+        if (!data) { alert('这张图读不出来，换一张'); return; }
+        setUI(key, data);
+        if (after) after();
+      });
+    };
+    inp.click();
+  }
+  function shAvatar() {
+    function open() {
+      var u = ui();
+      var close = sheet('显示头像', '开了以后，每条消息旁边会有个头像', [
+        { icon: ICONS.theme, name: '显示头像', sub: u.showAvatar ? '开着' : '关着',
+          right: sw(u.showAvatar),
+          on: function () { setUI('showAvatar', !u.showAvatar); close(); open(); } },
+        { icon: ICONS.image, name: '我的头像', sub: u.avMe ? '已设置 · 点一下换' : '还没传 · 点一下选图',
+          on: function () {
+            pickAvatar('avMe', function () { setUI('showAvatar', true); close(); open(); });
+          } },
+        { icon: ICONS.image, name: '顾淮的头像', sub: u.avBro ? '已设置 · 点一下换' : '还没传 · 点一下选图',
+          on: function () {
+            pickAvatar('avBro', function () { setUI('showAvatar', true); close(); open(); });
+          } },
+        sliderRow('avRound', '头像圆润度', 0, 50, '%', 50),
+        { icon: ICONS.trash, name: '两个头像都清掉', danger: true,
+          on: function () {
+            var x = ui();
+            x.avMe = ''; x.avBro = '';
+            Store.set('uiSet', x); applyUI(); close(); open();
+          } }
+      ]);
+    }
+    open();
+  }
+
   function shTheme() {
     var u = ui();
     sheet('主题与外观', '', [
       { icon: ICONS.theme, name: '主题', sub: '浅色 / 深色',
         right: sw(Store.get('theme', 'light') === 'dark'), on: myTheme },
+      { icon: ICONS.palette, name: '系统配色', sub: u.accent ? '自定义' : '默认橙',
+        on: function () { pickColor('accent', '选个主色'); } },
       { icon: ICONS.image, name: '背景', sub: u.bg ? '自定义图' : '默认',
         on: function () {
           var dim = (u.bgDim == null ? 72 : u.bgDim);
@@ -321,6 +413,9 @@
           ]);
         } },
       { icon: ICONS.chat, name: '对话区', sub: '气泡 / 卡片', on: shChat },
+      sliderRow('bubbleRound', '气泡圆润度', 0, 30, 'px', 18),
+      { icon: ICONS.image, name: '显示头像', sub: ui().showAvatar ? '开着 · 可换图调圆润' : '关着',
+        on: shAvatar },
       { icon: ICONS.refresh, name: '恢复默认背景', sub: u.bg ? '现在用的是自定义图' : '现在就是默认',
         on: function () { setUI('bg', ''); alert('背景回到默认了。'); } },
       { icon: ICONS.panel, name: '侧边栏设置', sub: '磨砂 · 边框', on: shSidebar }
