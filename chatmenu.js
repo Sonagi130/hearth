@@ -129,8 +129,7 @@
       if (b) b.textContent = '（还没接 API，接上就能重说一遍。）';
     } else if (k === 'share') {
       closeCtx();
-      if (navigator.share) navigator.share({ text: txt }).catch(function () {});
-      else { copy(txt); toast('这段不能分享，已经复制了'); }
+      shareOne(el);
     } else if (k === 'trans') {
       closeCtx();
       doTranslate(txt, el);
@@ -373,5 +372,104 @@
     document.addEventListener('DOMContentLoaded', init);
   } else {
     init();
+  }
+/* ---------- 画成一张气泡图 ---------- */
+  function roundRect(g, x, y, w, h, r) {
+    if (g.roundRect) { g.beginPath(); g.roundRect(x, y, w, h, r); return; }
+    g.beginPath();
+    g.moveTo(x + r, y);
+    g.arcTo(x + w, y, x + w, y + h, r);
+    g.arcTo(x + w, y + h, x, y + h, r);
+    g.arcTo(x, y + h, x, y, r);
+    g.arcTo(x, y, x + w, y, r);
+    g.closePath();
+  }
+  function bubbleCard(list) {
+    var W = 720, pad = 40, fs = 24, lh = 36;
+    var blocks = list.map(function (m) {
+      var t = String(m.text || '');
+      if (t.indexOf('__AUD__') === 0) {
+        var bar = t.indexOf('|');
+        t = '🎤 ' + (bar >= 0 ? t.slice(bar + 1) : '语音');
+      } else if (t.indexOf('__IMG__') === 0) {
+        t = '［图片］';
+      }
+      var per = Math.floor((W * 0.7) / fs);
+      return { who: m.who, lines: wrapText(t, per) };
+    });
+    var H = pad * 2 + 92;
+    blocks.forEach(function (b) { H += b.lines.length * lh + 56; });
+    var cv = document.createElement('canvas');
+    cv.width = W;
+    cv.height = Math.max(H, 420);
+    var g = cv.getContext('2d');
+    g.fillStyle = '#FFF8F0';
+    g.fillRect(0, 0, W, cv.height);
+    g.fillStyle = '#8B6F47';
+    g.font = '700 22px sans-serif';
+    g.fillText('Hearth', pad, pad + 8);
+    g.fillStyle = '#C4A882';
+    g.font = '13px sans-serif';
+    g.fillText(new Date().toLocaleString('zh-CN'), pad, pad + 32);
+    g.strokeStyle = 'rgba(139,111,71,.2)';
+    g.beginPath(); g.moveTo(pad, pad + 50); g.lineTo(W - pad, pad + 50); g.stroke();
+    var y = pad + 80;
+    blocks.forEach(function (b) {
+      g.font = fs + 'px sans-serif';
+      var maxW = 0;
+      b.lines.forEach(function (ln) { maxW = Math.max(maxW, g.measureText(ln).width); });
+      var bw = Math.min(W - pad * 2 - 40, maxW + 44);
+      var bh = b.lines.length * lh + 18;
+      var me = b.who === 'me';
+      var bx = me ? (W - pad - bw) : pad;
+      g.fillStyle = me ? '#E8975C' : '#FFFFFF';
+      roundRect(g, bx, y, bw, bh, 16);
+      g.fill();
+      if (!me) { g.strokeStyle = 'rgba(139,111,71,.16)'; g.stroke(); }
+      g.fillStyle = me ? '#FFFFFF' : '#3D2B1F';
+      g.font = fs + 'px sans-serif';
+      var ty = y + 28;
+      b.lines.forEach(function (ln) { g.fillText(ln, bx + 22, ty); ty += lh; });
+      y += bh + 8;
+      g.fillStyle = '#A89684';
+      g.font = '12px sans-serif';
+      var nm = me ? '我' : '顾淮';
+      g.fillText(nm, me ? (W - pad - g.measureText(nm).width) : bx, y + 14);
+      y += 34;
+    });
+    return cv;
+  }
+  function saveOrShare(cv, name) {
+    cv.toBlob(function (blob) {
+      if (!blob) return;
+      var file = null;
+      try { file = new File([blob], name, { type: 'image/png' }); } catch (e) {}
+      if (file && navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({ files: [file] })['catch'](function () { dlCard(cv, name); });
+        return;
+      }
+      dlCard(cv, name);
+    }, 'image/png');
+  }
+  function dlCard(cv, name) {
+    var a = document.createElement('a');
+    a.href = cv.toDataURL('image/png');
+    a.download = name;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    toast('图存下了，在相册里找');
+  }
+  function shareOne(el) {
+    var cv = bubbleCard([{ who: isAI(el) ? 'he' : 'me', text: rawOf(el) }]);
+    saveOrShare(cv, 'hearth-' + Date.now() + '.png');
+  }
+  function makeImage() {
+    if (!picked.length) { toast('先选几条'); return; }
+    var list = picked.map(function (m) {
+      return { who: m.classList.contains('me') ? 'me' : 'he', text: rawOf(m) };
+    });
+    saveOrShare(bubbleCard(list), 'hearth-' + Date.now() + '.png');
+    stopMulti();
   }
 })();
