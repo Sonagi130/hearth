@@ -67,15 +67,29 @@
         var j = (rnd(m.title, 1) - 0.5) * 18;
         px += -Math.sin(a) * j * 0.5;
         py += Math.cos(a) * j * 0.5;
+        var zz = (rnd(m.title, 4) - 0.5) * 44;
         out.leaves.push({
           m: m, x: px, y: py, cat: g.cat,
           deg: deg * 0.55,
-          size: 12 + rnd(m.title, 2) * 6,
-          delay: rnd(m.title, 3) * 3.2
+          size: 17 + rnd(m.title, 2) * 8,
+          delay: rnd(m.title, 3) * 3.2,
+          z: zz,
+          op: 0.84 + (zz + 22) / 44 * 0.16
         });
       });
     });
     return out;
+  }
+
+  /* ---------- 卡通叶子 ---------- */
+  function leafSVG(c, s) {
+    var wide = c.k === '习惯' ? 1.15 : (c.k === '故事' ? 0.78 : (c.k === '家规' ? 0.84 : 1));
+    return '<svg viewBox="0 0 24 24" width="' + s.toFixed(1) + '" height="' + s.toFixed(1) + '" style="display:block">' +
+      '<g transform="translate(12 12) scale(' + wide + ' 1) translate(-12 -12)">' +
+      '<path d="M12 2 C17.5 6.5 19.5 12.5 12 22 C4.5 12.5 6.5 6.5 12 2 Z" fill="' + c.c + '" stroke="rgba(70,45,20,.28)" stroke-width="1"/>' +
+      '<path d="M12 5.5 L12 19" stroke="rgba(255,255,255,.5)" stroke-width="1.1" stroke-linecap="round"/>' +
+      '<ellipse cx="10.6" cy="9.4" rx="1.7" ry="2.4" fill="rgba(255,255,255,.32)"/>' +
+      '</g></svg>';
   }
 
   /* ---------- 画 ---------- */
@@ -101,15 +115,17 @@
              '" fill="none" stroke-linecap="round" opacity=".75"/>';
     });
     svg += '</svg>';
-    var h = '<div class="tree-stage">' + svg;
+    var h = '<div class="tree-stage"><div class="tree-3d">' + svg;
     lay.leaves.forEach(function (lf, i) {
+      var s = lf.size * (1 + (lf.z || 0) / 70);
       h += '<div class="leaf" data-i="' + i + '" style="left:' + lf.x.toFixed(1) + 'px;top:' + lf.y.toFixed(1) +
-           'px;transform:rotate(' + lf.deg.toFixed(1) + 'deg)">' +
-           '<i style="width:' + lf.size.toFixed(1) + 'px;height:' + (lf.size * 0.68).toFixed(1) +
-           'px;margin-top:-' + (lf.size * 0.34).toFixed(1) + 'px;background:' + lf.cat.c +
-           ';animation-delay:' + lf.delay.toFixed(2) + 's"></i></div>';
+           'px;z-index:' + Math.round(20 + (lf.z || 0)) + ';transform:translateZ(' + (lf.z || 0).toFixed(1) +
+           'px) rotate(' + lf.deg.toFixed(1) + 'deg)">' +
+           '<i style="width:' + s.toFixed(1) + 'px;height:' + s.toFixed(1) + 'px;margin-top:-' + (s / 2).toFixed(1) +
+           'px;border-radius:0;opacity:' + (lf.op || 0.92).toFixed(2) +
+           ';animation-delay:' + lf.delay.toFixed(2) + 's">' + leafSVG(lf.cat, s) + '</i></div>';
     });
-    h += '</div>';
+    h += '</div></div>';
     wrap.innerHTML = h;
     wrap.__leaves = lay.leaves;
   }
