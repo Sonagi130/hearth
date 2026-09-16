@@ -1,4 +1,4 @@
-import {createRenderer} from './renderer.js';
+import {createRenderer} from './renderer.js?v=3';
 
 /** Mount an isolated constellation. Memory text stays in the supplied data. */
 export function createMemorySky(host, {data, title='记忆星穹', background, onOpen}={}) {
@@ -44,7 +44,7 @@ export function createMemorySky(host, {data, title='记忆星穹', background, o
   const shapeButtons=new Map(SHAPES.map(([value,text])=>{const b=button(text);b.dataset.value=value;b.setAttribute('aria-pressed','false');shapeRow.append(b);return [value,b];}));
   let shapeValue='free';
   function applyShape(value){shapeValue=['spiral','ring'].includes(value)?value:'free';for(const [v,b] of shapeButtons)b.setAttribute('aria-pressed',String(v===shapeValue));renderer.setShape(shapeValue);}
-  const BACKGROUNDS=[['#726786','星穹紫'],['#5c526b','暮紫'],['#454651','墨灰'],['#6c728e','夜蓝']];
+  const BACKGROUNDS=[['#5E7C93','雾蓝'],['#3E5468','夜蓝'],['#7C8FA3','灰蓝'],['#4A6274','深雾蓝']];
   const bgRow=group(settings,'背景');bgRow.classList.add('ms-swatches');
   const swatches=BACKGROUNDS.map(([color,name])=>{const b=button('',name);b.className='ms-swatch';b.style.background=color;b.dataset.value=color;b.setAttribute('aria-pressed','false');bgRow.append(b);return b;});
   function applyBackground(color){root.style.setProperty('--ms-bg',color);for(const b of swatches)b.setAttribute('aria-pressed',String(b.dataset.value===color));}
