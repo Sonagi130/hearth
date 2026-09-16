@@ -65,6 +65,25 @@
     })['catch'](function () { if (c) cb(c); });
   }
 
+  /* ---------- 数据：最近的东西 ---------- */
+  function esc(s) {
+    return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+  }
+  function lastDiary() {
+    var list = Store.get('diaries', []) || [];
+    if (!list.length) return null;
+    return list.slice().sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); })[0];
+  }
+  function lastMsg() {
+    var id = Store.get('curConv', null);
+    var list = Store.get('convs', []) || [];
+    var c = null, i;
+    for (i = 0; i < list.length; i++) if (list[i].id === id) c = list[i];
+    if (!c) c = list[0];
+    if (!c || !c.msgs || !c.msgs.length) return null;
+    return c.msgs[c.msgs.length - 1];
+  }
+
   /* ---------- 渲染 ---------- */
   var timer = null;
   function renderToday() {
@@ -73,13 +92,27 @@
     var d = new Date();
     var n = daysTogether();
     var h = '';
-    h += '<div class="td-head"><div class="td-avs">' + avHTML('he') + '<i class="amp">&amp;</i>' + avHTML('me') + '</div></div>';
-    h += '<div class="td-brand">HEARTH<em>since Jul 24</em></div>';
-    h += '<div class="td-days"><div class="td-num">' + n + '</div>' +
-      '<div class="td-sub"><em>days together</em></div></div>';
+    h += '<div class="td-head"><div class="td-avs">' + avHTML('he') + '<i class="amp">&amp;</i>' + avHTML('me') + '</div>' +
+      '<div class="td-tog"><em>together</em><b>' + n + '</b><em>days</em></div>' +
+      '<div class="td-since">since Jul 24, 2026</div></div>';
     h += '<div class="td-now"><div class="td-line1"><span class="td-date">' + (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + WK[d.getDay()] + '</span>' +
       '<span class="td-clock" id="td-clock">' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + '</span></div>' +
       '<div class="td-weather" id="td-weather"><span class="td-wx-s">看天…</span></div></div>';
+    var dn = lastDiary();
+    h += '<div class="th-grid">';
+    h += '<div class="th-card th-note" data-go="diary">' +
+      '<i class="th-bookmark"></i><i class="th-fold"></i><i class="th-star s1"></i><i class="th-star s2"></i>' +
+      '<div class="th-card-t">DIARY<em>日记</em></div>' +
+      '<div class="th-d-date">' + (dn ? esc(String(dn.date || '').slice(5, 10).replace('-', '/')) : ((d.getMonth() + 1) + '/' + d.getDate())) + '</div>' +
+      '<div class="th-d-title">' + (dn ? (esc(String(dn.title || '').trim()) || '没写标题') : '还没写') + '</div>' +
+      '<div class="th-d-text">' + (dn ? esc(String(dn.text || '').slice(0, 40)) : '点开写一句也算。') + '</div></div>';
+    h += '<div class="th-card th-vinyl">' +
+      '<div class="th-card-t">VINYL<em>唱片</em></div>' +
+      '<div class="th-disc" id="th-disc"><i></i><em></em></div>' +
+      '<i class="th-needle"></i>' +
+      '<div class="th-v-name" id="th-v-name">还没放歌</div>' +
+      '<div class="th-v-bar"><i></i></div></div>';
+    h += '</div>';
     var todayKey = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
     var todos = (Store.get('todos', []) || []).filter(function (x) { return x && x.date === todayKey; });
     var left = todos.filter(function (x) { return !x.done; });
@@ -94,9 +127,24 @@
     }
     h += '</div>';
     if (p && p.s) h += '<div class="td-card"><div class="td-card-t">BODY<em>身体</em></div><div class="td-pline">' + p.t + '</div></div>';
-    h += '<div class="td-quick">' +
-      '<button class="td-btn" data-go="diary">写一篇日记</button>' +
-      '<button class="td-btn ghost" data-go="chat">跟哥哥说句话</button></div>';
+    var lm = lastMsg();
+    if (lm) {
+      var ltxt = String(lm.text || '').replace(/\s+/g, ' ').slice(0, 42);
+      h += '<div class="th-chat" data-go="chat">' +
+        '<div class="th-bub ' + (lm.who === 'me' ? 'me' : 'he') + '">' +
+        '<span class="th-bub-who">' + (lm.who === 'me' ? '我' : '顾淮') + '</span>' + esc(ltxt) + '</div>' +
+        '<div class="th-bub-time">' + esc(String(lm.time || '')) + '<i class="th-heart"></i></div></div>';
+    }
+    h += '<div class="th-alarm" data-go="calendar"><i class="th-alarm-ic"></i><span>' +
+      (left.length ? ('还有 ' + left.length + ' 件没做完') : (todos.length ? '今天的事都清了' : '今天没安排')) +
+      '</span><em>' + WK[d.getDay()] + '</em></div>';
+    var ph = (Store.get('photos', []) || []).slice(-3);
+    if (ph.length) {
+      h += '<div class="th-photos">';
+      for (var pi = 0; pi < ph.length; pi++) h += '<div class="th-photo"><img src="' + ph[pi] + '" alt=""></div>';
+      h += '</div>';
+    }
+    h += '<div class="th-sign">Gu &amp; Xiao Mao<i class="th-pulse"></i></div>';
     box.innerHTML = h;
 
     if (timer) clearInterval(timer);
@@ -117,6 +165,27 @@
     box.querySelectorAll('[data-go]').forEach(function (b) {
       b.onclick = function () { if (window.HearthGo) window.HearthGo(b.getAttribute('data-go')); };
     });
+    var disc = $('th-disc');
+    if (disc) {
+      disc.onclick = function () {
+        var inp = document.createElement('input');
+        inp.type = 'file';
+        inp.accept = 'audio/*';
+        inp.onchange = function () {
+          var f = inp.files && inp.files[0];
+          if (!f) return;
+          var au = $('th-audio');
+          if (!au) { au = document.createElement('audio'); au.id = 'th-audio'; document.body.appendChild(au); }
+          au.src = URL.createObjectURL(f);
+          au.play();
+          var nm = $('th-v-name');
+          if (nm) nm.textContent = f.name.replace(/\.[^.]+$/, '');
+          disc.classList.add('spin');
+          au.onended = function () { disc.classList.remove('spin'); };
+        };
+        inp.click();
+      };
+    }
   }
   window.renderToday = renderToday;
 })();
