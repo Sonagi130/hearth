@@ -1,5 +1,5 @@
 // Copyright (c) 2026 mamo and contributors. MIT.
-import { ShaderMaterial, Vector3, NormalBlending } from './three.module.min.js';
+import { ShaderMaterial, Vector3, NormalBlending } from './three.module.min.js?v=3';
 const vertexShader = `
   varying vec2 vDisc;
   void main() {
