@@ -1175,3 +1175,33 @@ body[data-theme="dark"] .td-num { color: #A8CBE4; text-shadow: 0 3px 12px rgba(0
 body[data-theme="dark"] .td-av { border-color: #2E2A26; }
 body[data-theme="dark"] .td-card-t { color: #6E7A88; }
 body[data-theme="dark"] .top-bar .title::after { color: #4E5A66; }
+/* --- 35. 今天页重排：居中头像 + 复古花体天数 + 时间天气块 --- */
+.td-brand { text-align: center; font-size: 10px; letter-spacing: .34em; color: #BAC7D4; font-weight: 600; margin: 2px 0 12px; }
+.td-brand em { display: inline; font-style: normal; font-size: 9px; letter-spacing: .14em; color: #CBD6E0; margin-left: 7px; }
+.td-head { display: block; text-align: center; margin-bottom: 10px; }
+.td-avs { justify-content: center; gap: 9px; }
+.td-av { width: 46px; height: 46px; border: 2px solid #fff;
+  box-shadow: 0 0 0 2px rgba(143,184,217,.35), 0 4px 10px rgba(143,184,217,.26); }
+.td-av i { font-size: 15px; }
+.td-avs .amp { font-size: 17px; color: #B3C0CC; }
+.td-days { background: none; border: none; box-shadow: none; padding: 0; margin: 0 0 14px; text-align: center; }
+.td-days::before, .td-days::after { display: none; }
+.td-num { display: inline-block; font-family: Georgia, "Times New Roman", serif; font-style: normal; font-weight: 400;
+  font-size: 42px; line-height: 1.15; color: #7E93A3; letter-spacing: .10em; transform: none; text-shadow: none;
+  -webkit-text-stroke: .5px rgba(126,147,163,.40); }
+.td-sub { font-size: 10px; color: #9AAABB; margin-top: 3px; letter-spacing: .20em; }
+.td-sub em { font-family: Georgia, "Times New Roman", serif; font-style: italic; font-size: 13px; letter-spacing: .12em; color: #AD93C4; }
+.td-now { position: relative; padding: 14px 18px 13px; border-radius: 22px; margin-bottom: 14px; overflow: hidden;
+  background: linear-gradient(150deg, #EAF3FA 0%, #F6EFF8 100%);
+  border: 1px solid rgba(143,184,217,.30); box-shadow: 0 6px 18px rgba(143,184,217,.14); }
+.td-now::before, .td-now::after { content: ""; position: absolute; border-radius: 50%; pointer-events: none;
+  background: radial-gradient(circle, rgba(255,255,255,.95), rgba(216,192,242,.50) 60%, transparent 70%);
+  animation: dcFloat 5.6s ease-in-out infinite; }
+.td-now::before { width: 6px; height: 6px; right: 22px; top: 18px; }
+.td-now::after { width: 4px; height: 4px; left: 24px; bottom: 20px; animation-delay: 2.3s; }
+.td-now .td-line1 { margin-bottom: 5px; }
+.td-now .td-weather { margin: 0; }
+.td-now .td-clock { font-size: 21px; }
+body[data-theme="dark"] .td-now { background: linear-gradient(150deg, #2B3644 0%, #352F3E 100%); border-color: rgba(143,184,217,.20); }
+body[data-theme="dark"] .td-num { color: #A8CBE4; -webkit-text-stroke-color: rgba(168,203,228,.35); }
+body[data-theme="dark"] .td-sub { color: #6E7A88; }
