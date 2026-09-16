@@ -38,7 +38,8 @@
       en: 'HAND',
       style: 'spine w2',
       face: 'spine',
-      bg: 'linear-gradient(165deg,#8B6F47,#5C4A32)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 3px, rgba(0,0,0,.05) 3px 4px), linear-gradient(165deg,#8B6F47,#5C4A32)',
+      ink: '#EBD3A3'
     },
     {
       id: 'diary',
@@ -46,7 +47,8 @@
       en: 'DIARY',
       style: 'spine',
       face: 'spine',
-      bg: 'linear-gradient(165deg,#A98A5E,#6B563C)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0 3px, rgba(0,0,0,.05) 3px 4px), linear-gradient(165deg,#BE8695,#87545F)',
+      ink: '#F7E3E9'
     },
     {
       id: 'album',
@@ -54,7 +56,8 @@
       en: 'ALBUM',
       style: 'cover w2',
       face: 'cover',
-      bg: 'linear-gradient(165deg,#D9834A,#A85B2E)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 3px, rgba(0,0,0,.04) 3px 4px), linear-gradient(165deg,#D9955E,#A9662F)',
+      ink: '#FBEBD2'
     },
     {
       id: 'voice',
@@ -62,7 +65,8 @@
       en: 'VOICE',
       style: 'spine w3',
       face: 'spine',
-      bg: 'linear-gradient(165deg,#7E8E6E,#5A6B4C)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.06) 0 3px, rgba(0,0,0,.05) 3px 4px), linear-gradient(165deg,#6F9A94,#486A66)',
+      ink: '#DFF1EC'
     },
     {
       id: 'calls',
@@ -70,7 +74,8 @@
       en: 'CALLS',
       style: 'cover',
       face: 'cover',
-      bg: 'linear-gradient(165deg,#8A7A96,#5F5270)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 3px, rgba(0,0,0,.04) 3px 4px), linear-gradient(165deg,#9B88B8,#655278)',
+      ink: '#EFE4F8'
     },
     {
       id: 'answer',
@@ -78,7 +83,8 @@
       en: 'ANSWERS',
       style: 'spine',
       face: 'spine',
-      bg: 'linear-gradient(165deg,#3D4A5C,#232B36)'
+      bg: 'repeating-linear-gradient(180deg, rgba(255,255,255,.04) 0 3px, rgba(0,0,0,.06) 3px 4px), linear-gradient(165deg,#3D4A5C,#232B36)',
+      ink: '#D9C79A'
     }
   ];
 
@@ -300,7 +306,7 @@
       ? '<div class="t">' + esc(b.name) + '</div>'
       : '<div class="ribbon"></div><div class="t">' + esc(b.name) + '</div>' +
         '<div class="sub">' + esc(b.en) + '</div>';
-    return '<div class="' + cls + '" data-book="' + b.id + '" style="background:' + b.bg + '">' +
+    return '<div class="' + cls + '" data-book="' + b.id + '" style="background:' + b.bg + ';--ink:' + (b.ink || '#EBD3A3') + '">' +
            inner + '</div>';
   }
 
@@ -311,7 +317,8 @@
       return {
         id: b.id, name: b.name, en: b.en || 'BOOK',
         style: 'spine w3', face: 'spine',
-        bg: b.bg || 'linear-gradient(165deg,#6E6479,#40394A)'
+        bg: b.bg || 'repeating-linear-gradient(180deg, rgba(255,255,255,.05) 0 3px, rgba(0,0,0,.05) 3px 4px), linear-gradient(165deg,#6E6479,#40394A)',
+        ink: '#E9DCC8'
       };
     }));
   }
