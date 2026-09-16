@@ -1213,3 +1213,22 @@ body[data-theme="dark"] .td-sub { color: #6E7A88; }
 #page-today .td-head { margin-bottom: 0; margin-top: 0; }
 #page-today .td-av { margin-top: 0; }
 #page-today .td-brand { margin-top: 5px; margin-bottom: 10px; }
+/* --- 38. 把主页面容器的 padding 抢回来（shelf.css 第139行的书页 .page 会污染）--- */
+#app > .pages > .page { padding: 8px 16px 16px; }
+#app #page-chat { padding: 0; }
+#app #page-today { padding: 0 16px 10px; }
+/* --- 39. 彻底复位：书页 .page 的 pre-wrap / 背景 也会污染主页面 --- */
+#app > .pages > .page {
+  padding: 8px 16px 16px;
+  white-space: normal;
+  word-break: normal;
+  overflow-wrap: break-word;
+  background: transparent;
+  color: var(--text-main);
+  font-size: inherit;
+  line-height: normal;
+  border-radius: 0;
+  box-shadow: none;
+}
+#app #page-chat { padding: 0; }
+#app #page-today { padding: 0 16px 10px; }
