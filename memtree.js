@@ -231,76 +231,42 @@
   function boot() {
     var box = $('memory-list');
     if (!box) return;
+    if (document.getElementById('sky-wrap')) { if (window.HearthSky) window.HearthSky.show(); return; }
     box.innerHTML = '';
-    var mems = Store.get('memories', []) || [];
-
+    var host = document.createElement('div');
+    host.id = 'sky-wrap';
+    host.className = 'sky-wrap';
+    box.appendChild(host);
     var bar = document.createElement('div');
-    bar.className = 'tree-bar';
+    bar.className = 'tree-bar sky-bar';
     bar.innerHTML =
-      '<button class="tb-btn on" id="tb-tree">树</button>' +
+      '<button class="tb-btn on" id="tb-sky">星空</button>' +
       '<button class="tb-btn" id="tb-list">列表</button>' +
-      '<button class="tb-btn" id="tb-sky">星空</button>' +
-      '<input id="tb-find" class="memory-search" placeholder="搜记忆…">';
+      '<button class="tb-btn" id="tt-imp">＋</button>';
     box.appendChild(bar);
-
-    var stage = document.createElement('div');
-    stage.className = 'tree-wrap';
-    stage.id = 'tree-wrap';
-    box.appendChild(stage);
-
     var listBox = document.createElement('div');
     listBox.id = 'memory-cards';
     listBox.style.display = 'none';
     box.appendChild(listBox);
-
-    var tools = document.createElement('div');
-    tools.className = 'tree-tools';
-    tools.innerHTML = '<button class="tt-btn" id="tt-imp">＋ 导入记忆</button>' +
-                      '<span class="tt-tip">拖一个框 → 框住的叶子会亮</span>';
-    box.appendChild(tools);
-
-    render(stage, mems);
-    bindTree(stage, mems);
-
-    var find = $('tb-find');
-    if (find) {
-      find.oninput = function () {
-        var kw = this.value.trim().toLowerCase();
-        if (!kw) { setLit(stage, null); return; }
-        var hit = [];
-        mems.forEach(function (m, i) {
-          var t = (String(m.title || '') + String(m.content || '') + String(m.tags || '')).toLowerCase();
-          if (t.indexOf(kw) >= 0) hit.push(i);
-        });
-        setLit(stage, hit);
-      };
-    }
-    $('tb-tree').onclick = function () {
-      if (window.HearthSky) window.HearthSky.hide();
-      this.classList.add('on'); $('tb-list').classList.remove('on');
-      stage.style.display = ''; listBox.style.display = 'none';
-      render(stage, Store.get('memories', []) || []);
-      bindTree(stage, Store.get('memories', []) || []);
-    };
-    $('tb-list').onclick = function () {
-      if (window.HearthSky) window.HearthSky.hide();
-      this.classList.add('on'); $('tb-tree').classList.remove('on');
-      stage.style.display = 'none'; listBox.style.display = '';
-      if (typeof drawMemoryCards === 'function') drawMemoryCards(Store.get('memories', []) || []);
-    };
+    if (window.HearthSky) window.HearthSky.show();
     $('tb-sky').onclick = function () {
       this.classList.add('on');
-      $('tb-tree').classList.remove('on');
       $('tb-list').classList.remove('on');
-      stage.style.display = 'none'; listBox.style.display = 'none';
+      listBox.style.display = 'none';
       if (window.HearthSky) window.HearthSky.show();
+    };
+    $('tb-list').onclick = function () {
+      this.classList.add('on');
+      $('tb-sky').classList.remove('on');
+      if (window.HearthSky) window.HearthSky.hide();
+      listBox.style.display = '';
+      if (typeof drawMemoryCards === 'function') drawMemoryCards(Store.get('memories', []) || []);
     };
     $('tt-imp').onclick = function () {
       if (typeof importMemories === 'function') importMemories();
-      setTimeout(function () { if (typeof window.renderMemory === 'function') window.renderMemory(); }, 900);
+      setTimeout(function () { if (window.renderMemory === 'function') window.renderMemory(); }, 900);
     };
   }
-
   window.HearthTree = { render: render, boot: boot };
 
   /* 接管记忆页：以后切到「记忆库」就走这里 */
