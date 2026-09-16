@@ -239,6 +239,7 @@
     bar.innerHTML =
       '<button class="tb-btn on" id="tb-tree">树</button>' +
       '<button class="tb-btn" id="tb-list">列表</button>' +
+      '<button class="tb-btn" id="tb-sky">星空</button>' +
       '<input id="tb-find" class="memory-search" placeholder="搜记忆…">';
     box.appendChild(bar);
 
@@ -275,15 +276,24 @@
       };
     }
     $('tb-tree').onclick = function () {
+      if (window.HearthSky) window.HearthSky.hide();
       this.classList.add('on'); $('tb-list').classList.remove('on');
       stage.style.display = ''; listBox.style.display = 'none';
       render(stage, Store.get('memories', []) || []);
       bindTree(stage, Store.get('memories', []) || []);
     };
     $('tb-list').onclick = function () {
+      if (window.HearthSky) window.HearthSky.hide();
       this.classList.add('on'); $('tb-tree').classList.remove('on');
       stage.style.display = 'none'; listBox.style.display = '';
       if (typeof drawMemoryCards === 'function') drawMemoryCards(Store.get('memories', []) || []);
+    };
+    $('tb-sky').onclick = function () {
+      this.classList.add('on');
+      $('tb-tree').classList.remove('on');
+      $('tb-list').classList.remove('on');
+      stage.style.display = 'none'; listBox.style.display = 'none';
+      if (window.HearthSky) window.HearthSky.show();
     };
     $('tt-imp').onclick = function () {
       if (typeof importMemories === 'function') importMemories();
