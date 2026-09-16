@@ -1205,3 +1205,11 @@ body[data-theme="dark"] .top-bar .title::after { color: #4E5A66; }
 body[data-theme="dark"] .td-now { background: linear-gradient(150deg, #2B3644 0%, #352F3E 100%); border-color: rgba(143,184,217,.20); }
 body[data-theme="dark"] .td-num { color: #A8CBE4; -webkit-text-stroke-color: rgba(168,203,228,.35); }
 body[data-theme="dark"] .td-sub { color: #6E7A88; }
+/* --- 36. 今天页顶上别留空 --- */
+#page-today { padding-top: 0; }
+#page-today .today-wrap { padding-top: 0; }
+#page-today .td-brand { margin-top: -3px; margin-bottom: 8px; }
+/* --- 37. 头像贴顶 --- */
+#page-today .td-head { margin-bottom: 0; margin-top: 0; }
+#page-today .td-av { margin-top: 0; }
+#page-today .td-brand { margin-top: 5px; margin-bottom: 10px; }
