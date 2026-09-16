@@ -1,5 +1,5 @@
 /* ============ 壁炉 · 记忆星穹（适配层） ============ */
-import { createMemorySky } from './sky/index.js';
+import { createMemorySky } from './sky/index.js?v=3';
 
 function tagsOf(m) { return String(m.tags || '') + ' ' + String(m.title || ''); }
 function scoreImp(m) {
@@ -53,8 +53,7 @@ function show() {
     box.appendChild(host);
   }
   host.style.display = 'block';
-  if (booted) return;
-  booted = true;
+  if (host.querySelector('.memory-sky')) return;
   host.innerHTML = '<div class="sky-load">星穹点亮中…</div>';
   setTimeout(function () {
     try {
