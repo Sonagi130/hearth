@@ -1,29 +1,29 @@
-import {ringLayout} from './ring-layout.js';
+import {ringLayout} from './ring-layout.js?v=3';
 // Copyright (c) 2026 mamo and contributors. MIT.
-import { starAccents } from "./star-accents.js";
-import { orbitFor, orbitPosition } from "./orbit-layout.js";
-import { lensDust } from "./lens-dust.js";
-import { threadMaterial } from "./thread-material.js";
-import { lightMaterial } from "./light-materials.js";
-import * as Three from './three.module.min.js';
-import { TrackballControls } from './TrackballControls.js';
+import { starAccents } from "./star-accents.js?v=3";
+import { orbitFor, orbitPosition } from "./orbit-layout.js?v=3";
+import { lensDust } from "./lens-dust.js?v=3";
+import { threadMaterial } from "./thread-material.js?v=3";
+import { lightMaterial } from "./light-materials.js?v=3";
+import * as Three from './three.module.min.js?v=3';
+import { TrackballControls } from './TrackballControls.js?v=3';
 // Keep the artwork's display RGB values without changing the host's color management.
 class DisplayColor extends Three.Color {
   setHex(value){ return super.setHex(value, Three.LinearSRGBColorSpace); }
   setStyle(value){ return super.setStyle(value, Three.LinearSRGBColorSpace); }
 }
 const THREE = { ...Three, Color: DisplayColor, OrbitControls: TrackballControls };
-const Q = { hiNeg: [218, 161, 124], hiPos: [233.67977, 213.920617, 179.051499], loNeg: [190, 194, 236], loPos: [195, 167, 222] };
+const Q = { hiNeg: [225, 165, 150], hiPos: [238, 205, 170], loNeg: [150, 175, 205], loPos: [175, 160, 205] };
 const FINISH = {
-  hiNeg: { stroke: [230, 182, 137] },
-  hiPos: { stroke: [252.639065, 229.741372, 188.525637] },
-  loNeg: { stroke: [203, 218, 250] },
-  loPos: { stroke: [215, 192, 236] }
+  hiNeg: { stroke: [232, 176, 160] },
+  hiPos: { stroke: [246, 214, 176] },
+  loNeg: { stroke: [158, 188, 218] },
+  loPos: { stroke: [182, 170, 214] }
 };
 function nodeFinish(n) {
   return FINISH[(+n.arousal >= 0.5 ? "hi" : "lo") + (+n.valence >= 0 ? "Pos" : "Neg")];
 }
-const BLUE = [200, 214, 251];
+const BLUE = [168, 203, 228];
 const R5 = 10, STEP = 0.7;
 function impRadius(i) {
   return R5 * Math.pow(STEP, 5 - Math.max(1, Math.min(5, i)));
@@ -568,12 +568,12 @@ export function createRenderer(container, opts) {
     softSeg = seg(softlinks, 10985410, 0.07);
     lineSeg = seg(links, 15129798, 0.5);
     if (!SM_OFF.has("dust")) {
-      dustPoints = makeDust(1600, 2200);
+      dustPoints = makeDust(2600, 2400);
       scene.add(dustPoints);
       dustLayers.push(dustPoints);
     }
   }
-  const DUST_PALETTE = [[245, 228, 198], [190, 194, 236]];
+  const DUST_PALETTE = [[226, 238, 248], [168, 203, 228], [214, 200, 236]];
   const DUST_QUOTA = [297, 58, 35, 24, 9];
   const DUST_BANDS = [[0.8, 1.4], [1.4, 2.2], [2.2, 3.5], [3.5, 5], [5, 7]];
   const DUST_SCALE_REF = 246.4, DUST_DISTANCE_REF = 1250;
