@@ -6,9 +6,9 @@
     <meta name="theme-color" content="#FFF8F0">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="default">
-    <meta name="apple-mobile-web-app-title" content="Hearth">
+    <meta name="apple-mobile-web-app-title" content="Sonagi">
     <link rel="manifest" href="manifest.json">
-    <title>Hearth</title>
+    <title>Sonagi</title>
     <style>
         /* ===== 全局变量 ===== */
         :root {
@@ -734,6 +734,7 @@
         }
     </style>
     <link rel="stylesheet" href="shelf.css">
+    <link rel="stylesheet" href="sky/style.css">
 </head>
 <body>
     <!-- Loading -->
@@ -948,13 +949,14 @@
     <script src="guhuai.js"></script>
     <script src="selftest.js"></script>
     <script src="models.js"></script>
-    <script src="memtree.js"></script>
+    <script src="memtree.js?v=2"></script>
     <script src="period.js"></script>
     <script src="game.js"></script>
     <script src="skin.js"></script>
     <script src="diary.js"></script>
     <script src="tabs.js"></script>
     <script src="today.js"></script>
+    <script type="module" src="sky.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
