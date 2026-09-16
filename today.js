@@ -73,8 +73,8 @@
     var d = new Date();
     var n = daysTogether();
     var h = '';
-    h += '<div class="td-brand">HEARTH<em>since Jul 24</em></div>';
     h += '<div class="td-head"><div class="td-avs">' + avHTML('he') + '<i class="amp">&amp;</i>' + avHTML('me') + '</div></div>';
+    h += '<div class="td-brand">HEARTH<em>since Jul 24</em></div>';
     h += '<div class="td-days"><div class="td-num">' + n + '</div>' +
       '<div class="td-sub"><em>days together</em></div></div>';
     h += '<div class="td-now"><div class="td-line1"><span class="td-date">' + (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + WK[d.getDay()] + '</span>' +
