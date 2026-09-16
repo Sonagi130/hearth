@@ -12,7 +12,7 @@
     var u = ui();
     var src = who === 'he' ? u.avBro : u.avMe;
     var ph = who === 'he' ? '淮' : '宝';
-    var round = (u.avRound == null ? 50 : u.avRound);
+    var round = 50;
     return '<span class="td-av" style="border-radius:' + round + '%">' +
       (src ? '<img src="' + src + '" alt="">' : '<i>' + ph + '</i>') + '</span>';
   }
@@ -73,14 +73,13 @@
     var d = new Date();
     var n = daysTogether();
     var h = '';
-    h += '<div class="td-head"><div class="td-avs">' + avHTML('he') + '<i class="amp">&amp;</i>' + avHTML('me') + '</div>' +
-      '<div class="td-brand">HEARTH<em>since Jul 24</em></div></div>';
-    h += '<div class="td-line1"><span class="td-date">' + (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + WK[d.getDay()] + '</span>' +
-      '<span class="td-clock" id="td-clock">' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + '</span></div>';
-    h += '<div class="td-weather" id="td-weather"><span class="td-wx-s">看天…</span></div>';
-    h += '<div class="td-days"><div class="td-numwrap"><span class="td-num">' + n + '</span>' +
-      '<svg class="td-swash" viewBox="0 0 120 22" preserveAspectRatio="none"><path d="M3 15 C28 5, 62 20, 117 7"/></svg></div>' +
-      '<div class="td-sub"><em>days together</em> · 从 7 月 24 日算起</div></div>';
+    h += '<div class="td-brand">HEARTH<em>since Jul 24</em></div>';
+    h += '<div class="td-head"><div class="td-avs">' + avHTML('he') + '<i class="amp">&amp;</i>' + avHTML('me') + '</div></div>';
+    h += '<div class="td-days"><div class="td-num">' + n + '</div>' +
+      '<div class="td-sub"><em>days together</em></div></div>';
+    h += '<div class="td-now"><div class="td-line1"><span class="td-date">' + (d.getMonth() + 1) + '月' + d.getDate() + '日 ' + WK[d.getDay()] + '</span>' +
+      '<span class="td-clock" id="td-clock">' + pad2(d.getHours()) + ':' + pad2(d.getMinutes()) + '</span></div>' +
+      '<div class="td-weather" id="td-weather"><span class="td-wx-s">看天…</span></div></div>';
     var todayKey = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
     var todos = (Store.get('todos', []) || []).filter(function (x) { return x && x.date === todayKey; });
     var left = todos.filter(function (x) { return !x.done; });
