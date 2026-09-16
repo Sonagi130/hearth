@@ -16,6 +16,7 @@
     el.classList.add('active');
     var t = $('top-title');
     if (t) t.textContent = TITLES[page] || '';
+    document.body.classList.toggle('no-tabs', page === 'chat');
     document.querySelectorAll('.side-nav .nav-item').forEach(function (b) {
       b.classList.toggle('active', b.dataset.page === page);
     });
