@@ -25,7 +25,7 @@
     var nb = $('note-add');
     if (nb) nb.style.display = (page === 'diary') ? 'flex' : 'none';
     try {
-      if (page === 'today') renderToday();
+      if (page === 'today' && window.renderToday) window.renderToday();
       if (page === 'calendar' && window.renderCalendar) window.renderCalendar();
       if (page === 'diary' && window.renderDiary) window.renderDiary();
       if (page === 'photos' && window.renderPhotos) window.renderPhotos();
@@ -67,47 +67,4 @@
   });
   if (document.readyState === 'complete') { bindNav(); go('today'); }
 
-  /* ---------- 今天页 ---------- */
-  function pad2(n) { return String(n).padStart(2, '0'); }
-  function daysTogether() {
-    var now = new Date();
-    var a = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-    var b = new Date(2026, 6, 24);
-    return Math.round((a - b) / 86400000) + 1;
-  }
-  function renderToday() {
-    var box = $('today-wrap');
-    if (!box) return;
-    var d = new Date();
-    var WK = ['星期日', '星期一', '星期二', '星期三', '星期四', '星期五', '星期六'];
-    var todayKey = d.getFullYear() + '-' + pad2(d.getMonth() + 1) + '-' + pad2(d.getDate());
-    var todos = (Store.get('todos', []) || []).filter(function (t) { return t && t.date === todayKey; });
-    var left = todos.filter(function (t) { return !t.done; });
-    var p = (window.HearthPeriod && window.HearthPeriod.status) ? window.HearthPeriod.status() : null;
-    var h = '';
-    h += '<div class="td-hello"><div class="td-date">' + (d.getMonth() + 1) + '月' + d.getDate() + '日</div>' +
-      '<div class="td-wk">' + WK[d.getDay()] + '</div></div>';
-    h += '<div class="td-days"><span class="td-num">' + daysTogether() + '</span><span class="td-unit">天</span>' +
-      '<div class="td-sub">从 7 月 24 日算起，第 ' + daysTogether() + ' 天</div></div>';
-    h += '<div class="td-card"><div class="td-card-t">今天的事</div>';
-    if (!todos.length) h += '<div class="td-empty">今天还没安排。有要做的，去日历里加一条。</div>';
-    else {
-      todos.forEach(function (t) {
-        h += '<div class="td-todo' + (t.done ? ' done' : '') + '"><i></i><span>' + String(t.text || '').replace(/</g, '&lt;') + '</span></div>';
-      });
-      if (left.length) h += '<div class="td-left">还有 ' + left.length + ' 件没做</div>';
-      else h += '<div class="td-left ok">今天的事都做完了</div>';
-    }
-    h += '</div>';
-    if (p && p.s) h += '<div class="td-card td-p"><div class="td-card-t">身体</div><div class="td-pline">' + p.t + '</div></div>';
-    h += '<div class="td-quick">' +
-      '<button class="td-btn" data-go="diary">写一篇日记</button>' +
-      '<button class="td-btn ghost" data-go="chat">跟哥哥说句话</button>' +
-      '</div>';
-    box.innerHTML = h;
-    box.querySelectorAll('[data-go]').forEach(function (b) {
-      b.onclick = function () { go(b.getAttribute('data-go')); };
-    });
-  }
-  window.renderToday = renderToday;
 })();
