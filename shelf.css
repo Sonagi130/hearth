@@ -1459,3 +1459,7 @@ body.skin-star .td-av i { color: #C7D8EA; background: linear-gradient(160deg, #2
 body.skin-star .dc-av .ph { color: #C7D8EA; background: linear-gradient(160deg, #2E3B52, #3A4A63); }
 body.skin-star .td-hello .td-date { color: #DCEAF7; }
 body.skin-star .td-wk { color: #7E93A8; }
+
+/* --- 49. 梦境页 --- */
+#page-dream { padding: 0; }
+.dream-frame { display: block; width: 100%; height: 100%; border: 0; background: #0b0f1a; }
