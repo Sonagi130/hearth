@@ -40,6 +40,25 @@
     b.classList.toggle('skin-star', c === 'star');
     b.classList.toggle('skin-glass', !!s.glass);
     b.classList.toggle('skin-cute', s.cute !== false);
+    if (c === 'star') ensureFx();
+  }
+
+  /* 星空的粒子与流星：只在星空主题里养一池子 */
+  function ensureFx() {
+    if (!document.body || document.getElementById('star-fx')) return;
+    var fx = document.createElement('div');
+    fx.id = 'star-fx';
+    var html = '', i;
+    for (i = 0; i < 26; i++) {
+      var l = Math.round(Math.random() * 96) + 2;
+      var d = Math.round(Math.random() * 16);
+      var sz = (Math.random() * 1.6 + 0.8).toFixed(1);
+      var dur = (Math.random() * 14 + 10).toFixed(1);
+      html += '<i style="left:' + l + '%;animation-delay:-' + d + 's;width:' + sz + 'px;height:' + sz + 'px;animation-duration:' + dur + 's"></i>';
+    }
+    html += '<b class="m1"></b><b class="m2"></b>';
+    fx.innerHTML = html;
+    document.body.appendChild(fx);
   }
 
   function refresh() {
