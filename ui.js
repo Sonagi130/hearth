@@ -145,8 +145,7 @@
     card.innerHTML = '<button class="sc-x sh-close" aria-label="关闭">×</button>' +
       '<div class="sc-title" style="text-align:center;padding:0 36px;">' + title + '</div>' +
       (sub ? '<div class="sc-sub" style="text-align:center;">' + sub + '</div>' : '') +
-      '<div class="sh-body"></div>' +
-      '<div class="sc-row" style="margin-top:14px;"><button class="sc-btn sh-close">关闭</button></div>';
+      '<div class="sh-body"></div>';
     mask.appendChild(card);
     document.body.appendChild(mask);
     var box = card.querySelector('.sh-body');
