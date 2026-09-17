@@ -23,6 +23,33 @@
     '--text-soft': '#8FA2B8'
   };
   var KEYS = Object.keys(WATER);
+  var PATCH_A = [
+    '#star-fx{position:fixed;inset:0;z-index:-1;pointer-events:none;display:none;overflow:hidden;}',
+    'body.skin-star #star-fx{display:block;}',
+    '#star-fx i{position:absolute;bottom:-8px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,.25) 60%,transparent);animation-name:starUp;animation-timing-function:linear;animation-iteration-count:infinite;box-shadow:0 0 10px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,1);}',
+    '@keyframes starUp{0%{transform:translateY(0);opacity:0}12%{opacity:.9}88%{opacity:.8}100%{transform:translateY(-110vh);opacity:0}}',
+    '#star-fx u{position:absolute;border-radius:50%;background:#fff;opacity:.35;box-shadow:0 0 6px rgba(255,255,255,.85);animation:twinkle 3.4s ease-in-out infinite;}',
+    '@keyframes twinkle{0%,100%{opacity:.22;transform:scale(.75)}50%{opacity:1;transform:scale(1.3)}}',
+    '#star-fx b{position:absolute;width:200px;height:3px;border-radius:2px;opacity:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.98));box-shadow:0 0 8px rgba(255,255,255,.7);animation:meteor linear infinite;}',
+    '#star-fx b.m1{top:7%;left:46%;animation-duration:6.5s;}',
+    '#star-fx b.m2{top:26%;left:88%;animation-duration:8.5s;animation-delay:3.2s;}',
+    '@keyframes meteor{0%{transform:rotate(-32deg) translateX(0);opacity:0}4%{opacity:1}20%{transform:rotate(-32deg) translateX(-92vw);opacity:0}100%{opacity:0}}'
+  ].join('');
+  var PATCH_B = [
+    'body.skin-star .side-nav{background:rgba(16,23,38,.94) !important;}',
+    'body.skin-star .tog.on{background:#A8CBE4 !important;}',
+    'body.skin-star .think{border-left-color:rgba(168,203,228,.7) !important;background:rgba(168,203,228,.10) !important;}',
+    'body.skin-star .think-h{color:#A8CBE4 !important;}',
+    'body.skin-star .think-b{color:#B7C6D8 !important;}',
+    '.sheet-mask:has(> .sheet-card.wide){padding:0 !important;align-items:stretch !important;}',
+    '.sheet-card.wide{width:100% !important;max-width:100% !important;height:100dvh !important;max-height:100dvh !important;border-radius:0 !important;margin:0 !important;display:flex !important;flex-direction:column;}',
+    'body.skin-star .sheet-card.wide{background:rgba(12,18,32,.92) !important;}',
+    '.sheet-card.wide .sh-body{flex:1;overflow-y:auto;}',
+    'body.skin-star .md-card{background:rgba(12,18,32,.97) !important;color:#E6EDF6 !important;}',
+    'body.skin-star .md-row{background:rgba(255,255,255,.07) !important;}',
+    'body.skin-star .md-t, body.skin-star .md-l{color:#EAF1F8 !important;}',
+    'body.skin-star .md-btn{color:#E6EDF6 !important;border-color:rgba(168,203,228,.5) !important;}'
+  ].join('');
 
   function u() { return Store.get('uiSet', {}) || {}; }
   function save(o) { Store.set('uiSet', o); }
@@ -40,7 +67,16 @@
     b.classList.toggle('skin-star', c === 'star');
     b.classList.toggle('skin-glass', !!s.glass);
     b.classList.toggle('skin-cute', s.cute !== false);
-    if (c === 'star') ensureFx();
+    if (c === 'star') { ensurePatch(); ensureFx(); }
+  }
+
+  /* 星空补丁：把关键样式直接刻进页面，不怕样式表旧缓存 */
+  function ensurePatch() {
+    if (document.getElementById('star-patch')) return;
+    var s = document.createElement('style');
+    s.id = 'star-patch';
+    s.textContent = PATCH_A + PATCH_B;
+    document.head.appendChild(s);
   }
 
   /* 星空的粒子与流星：只在星空主题里养一池子 */
