@@ -56,6 +56,13 @@
       var dur = (Math.random() * 14 + 10).toFixed(1);
       html += '<i style="left:' + l + '%;animation-delay:-' + d + 's;width:' + sz + 'px;height:' + sz + 'px;animation-duration:' + dur + 's"></i>';
     }
+    for (i = 0; i < 22; i++) {
+      var lx = (Math.random() * 96 + 2).toFixed(1);
+      var ly = (Math.random() * 92 + 2).toFixed(1);
+      var ss = (Math.random() * 1.6 + 1).toFixed(1);
+      var dd = (Math.random() * 3.4).toFixed(1);
+      html += '<u style="left:' + lx + '%;top:' + ly + '%;width:' + ss + 'px;height:' + ss + 'px;animation-delay:-' + dd + 's"></u>';
+    }
     html += '<b class="m1"></b><b class="m2"></b>';
     fx.innerHTML = html;
     document.body.appendChild(fx);
