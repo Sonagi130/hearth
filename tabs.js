@@ -4,7 +4,7 @@
   var $ = function (id) { return document.getElementById(id); };
   var TITLES = {
     today: '今天', chat: '对话', diary: '日记', calendar: '日历', shelf: '书架',
-    photos: '相片墙', notes: '碎碎念', memory: '记忆库', play: '游戏厅',
+    photos: '相片墙', notes: '碎碎念', memory: '记忆库', play: '游戏厅', dream: '梦境',
     bro: '哥哥', tools: '工具包', settings: '设置'
   };
 
@@ -27,6 +27,7 @@
     if (nb) nb.style.display = (page === 'diary') ? 'flex' : 'none';
     try {
       if (page === 'today' && window.renderToday) window.renderToday();
+      if (page === 'dream') { var fr = document.getElementById('dream-frame'); if (fr && fr.getAttribute('src') === 'about:blank') fr.setAttribute('src', fr.getAttribute('data-src')); }
       if (page === 'calendar' && window.renderCalendar) window.renderCalendar();
       if (page === 'diary' && window.renderDiary) window.renderDiary();
       if (page === 'photos' && window.renderPhotos) window.renderPhotos();
