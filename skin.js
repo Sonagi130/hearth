@@ -49,17 +49,17 @@
     var fx = document.createElement('div');
     fx.id = 'star-fx';
     var html = '', i;
-    for (i = 0; i < 26; i++) {
+    for (i = 0; i < 40; i++) {
       var l = Math.round(Math.random() * 96) + 2;
       var d = Math.round(Math.random() * 16);
-      var sz = (Math.random() * 1.6 + 0.8).toFixed(1);
+      var sz = (Math.random() * 1.8 + 1.4).toFixed(1);
       var dur = (Math.random() * 14 + 10).toFixed(1);
       html += '<i style="left:' + l + '%;animation-delay:-' + d + 's;width:' + sz + 'px;height:' + sz + 'px;animation-duration:' + dur + 's"></i>';
     }
-    for (i = 0; i < 22; i++) {
+    for (i = 0; i < 30; i++) {
       var lx = (Math.random() * 96 + 2).toFixed(1);
       var ly = (Math.random() * 92 + 2).toFixed(1);
-      var ss = (Math.random() * 1.6 + 1).toFixed(1);
+      var ss = (Math.random() * 2 + 1.6).toFixed(1);
       var dd = (Math.random() * 3.4).toFixed(1);
       html += '<u style="left:' + lx + '%;top:' + ly + '%;width:' + ss + 'px;height:' + ss + 'px;animation-delay:-' + dd + 's"></u>';
     }
