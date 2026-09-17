@@ -24,7 +24,7 @@
   };
   var KEYS = Object.keys(WATER);
   var PATCH_A = [
-    '#star-fx{position:fixed;inset:0;z-index:-1;pointer-events:none;display:none;overflow:hidden;}',
+    '#star-fx{position:fixed;inset:0;z-index:0;pointer-events:none;display:none;overflow:hidden;}',
     'body.skin-star #star-fx{display:block;}',
     '#star-fx i{position:absolute;bottom:-8px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,.25) 60%,transparent);animation-name:starUp;animation-timing-function:linear;animation-iteration-count:infinite;box-shadow:0 0 10px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,1);}',
     '@keyframes starUp{0%{transform:translateY(0);opacity:0}12%{opacity:.9}88%{opacity:.8}100%{transform:translateY(-110vh);opacity:0}}',
@@ -46,13 +46,14 @@
     '@keyframes meteor{0%{opacity:0;margin-left:0;margin-top:0}2%{opacity:1}15%{opacity:1;margin-left:-88vw;margin-top:46vh}17%{opacity:0}100%{opacity:0;margin-left:-88vw;margin-top:46vh}}'
   ].join('');
   var PATCH_B = [
+    '#app{position:relative;z-index:1;}',
     'body.skin-star .side-nav{background:rgba(16,23,38,.94) !important;}',
     'body.skin-star .tog.on{background:#A8CBE4 !important;}',
     'body.skin-star .think{border-left-color:rgba(168,203,228,.7) !important;background:rgba(168,203,228,.10) !important;}',
     'body.skin-star .think-h{color:#A8CBE4 !important;}',
     'body.skin-star .think-b{color:#B7C6D8 !important;}',
     '.sheet-mask:has(> .sheet-card.wide){padding:0 !important;align-items:stretch !important;}',
-    '.sheet-card.wide{width:100% !important;max-width:100% !important;height:100svh !important;max-height:100svh !important;border-radius:0 !important;margin:0 !important;display:flex !important;flex-direction:column;}',
+    '.sheet-card.wide{position:absolute !important;left:0 !important;right:0 !important;top:0 !important;bottom:0 !important;width:auto !important;max-width:none !important;height:auto !important;max-height:none !important;border-radius:0 !important;margin:0 !important;display:flex !important;flex-direction:column;}',
     'body.skin-star .sheet-card.wide{background:rgba(12,18,32,.92) !important;}',
     '.sheet-card.wide .sh-body{flex:1;overflow-y:auto;}',
     '#app #page-today{padding-top:4px !important;}',
