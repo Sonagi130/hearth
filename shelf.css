@@ -1463,3 +1463,46 @@ body.skin-star .td-wk { color: #7E93A8; }
 /* --- 49. 梦境页 --- */
 #page-dream { padding: 0; }
 .dream-frame { display: block; width: 100%; height: 100%; border: 0; background: #0b0f1a; }
+
+/* --- 50. 星空主题 v2：底图 + 粒子 + 流星 --- */
+body.skin-star {
+  background:
+    linear-gradient(180deg, rgba(8,12,24,.52) 0%, rgba(8,12,24,.28) 45%, rgba(8,12,24,.62) 100%),
+    url("sky/bg-star.jpg") center / cover no-repeat fixed;
+  background-attachment: fixed, fixed;
+}
+#star-fx { position: fixed; inset: 0; z-index: -1; pointer-events: none; display: none; overflow: hidden; }
+body.skin-star #star-fx { display: block; }
+#star-fx i { position: absolute; bottom: -8px; border-radius: 50%; opacity: 0;
+  background: radial-gradient(circle, rgba(255,255,255,.95), rgba(255,255,255,.25) 60%, transparent);
+  animation-name: starUp; animation-timing-function: linear; animation-iteration-count: infinite; }
+@keyframes starUp { 0% { transform: translateY(0); opacity: 0; } 12% { opacity: .9; } 88% { opacity: .8; } 100% { transform: translateY(-110vh); opacity: 0; } }
+#star-fx b { position: absolute; width: 130px; height: 2px; border-radius: 2px; opacity: 0;
+  background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.92));
+  animation: meteor linear infinite; }
+#star-fx b.m1 { top: 7%; left: 46%; animation-duration: 9s; }
+#star-fx b.m2 { top: 26%; left: 88%; animation-duration: 12s; animation-delay: 4.5s; }
+@keyframes meteor { 0% { transform: rotate(-32deg) translateX(0); opacity: 0; } 4% { opacity: 1; } 20% { transform: rotate(-32deg) translateX(-92vw); opacity: 0; } 100% { opacity: 0; } }
+
+/* --- 51. 设置二级页全屏 --- */
+.sheet-mask:has(> .sheet-card.wide) { padding: 0; align-items: stretch; }
+.sheet-card.wide {
+  width: 100%; max-width: 100%; height: 100%; max-height: 100%;
+  border-radius: 0; margin: 0; position: relative;
+  display: flex; flex-direction: column;
+  padding: calc(14px + env(safe-area-inset-top)) 16px calc(12px + env(safe-area-inset-bottom));
+  overflow: hidden;
+}
+.sheet-card.wide .sh-body { flex: 1; overflow-y: auto; -webkit-overflow-scrolling: touch; }
+.sheet-card.wide .sc-row { flex-shrink: 0; }
+.sheet-card.wide .sc-x { position: absolute; right: 12px; top: calc(10px + env(safe-area-inset-top)); width: 34px; height: 34px;
+  border: none; border-radius: 50%; background: rgba(139,111,71,.12); color: var(--text-main); font-size: 18px; line-height: 1; cursor: pointer; }
+body.skin-star .sheet-card.wide { background: rgba(12,18,32,.88) !important; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); }
+body.skin-star .sheet-card.wide .sc-x { background: rgba(255,255,255,.10); color: #DCEAF7; }
+/* 星空下：对话区文字全亮 */
+body.skin-star #page-chat .bubble { color: #F2F8FE !important; }
+body.skin-star .card-mode .msg .bubble { background: rgba(255,255,255,.10) !important; border: 1px solid rgba(255,255,255,.15) !important; color: #F2F8FE !important; }
+body.skin-star .msg.me .bubble { color: #FFFFFF !important; }
+body.skin-star .msg .time { color: rgba(183,198,216,.85) !important; }
+body.skin-star #chat-input { color: #FFFFFF !important; }
+body.skin-star #chat-input::placeholder { color: rgba(184,200,220,.55); }
