@@ -1560,3 +1560,9 @@ body.skin-star .think-b { color: #B7C6D8; }
 #star-fx b { width: 200px; height: 3px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.98)); box-shadow: 0 0 8px rgba(255,255,255,.7); }
 #star-fx b.m1 { animation-duration: 6.5s; }
 #star-fx b.m2 { animation-duration: 8.5s; animation-delay: 3.2s; }
+/* --- 58. 双保险：星空下的侧边栏 / API面板 --- */
+body.skin-star .side-nav { background: rgba(16,23,38,.94) !important; }
+body.skin-star .md-card { background: rgba(12,18,32,.97) !important; color: #E6EDF6 !important; }
+body.skin-star .md-row { background: rgba(255,255,255,.07) !important; }
+body.skin-star .md-t, body.skin-star .md-l { color: #EAF1F8 !important; }
+body.skin-star .md-btn { color: #E6EDF6 !important; border-color: rgba(168,203,228,.5) !important; }
