@@ -2,7 +2,7 @@
    作用：让浏览器认得出这是个能装的 App（不只是个网页）。
    策略：网络优先，断网时退回缓存。 */
 
-var CACHE = 'hearth-v2';
+var CACHE = 'hearth-v3';
 var CORE = [
   './',
   './index.html',
