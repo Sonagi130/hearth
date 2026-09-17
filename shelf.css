@@ -1506,3 +1506,44 @@ body.skin-star .msg.me .bubble { color: #FFFFFF !important; }
 body.skin-star .msg .time { color: rgba(183,198,216,.85) !important; }
 body.skin-star #chat-input { color: #FFFFFF !important; }
 body.skin-star #chat-input::placeholder { color: rgba(184,200,220,.55); }
+/* --- 52. 一闪一闪的小星星（动效层） --- */
+#star-fx u { position: absolute; border-radius: 50%; background: #FFFFFF; opacity: .35;
+  box-shadow: 0 0 6px rgba(255,255,255,.85), 0 0 2px rgba(255,255,255,.95);
+  animation: twinkle 3.4s ease-in-out infinite; }
+@keyframes twinkle { 0%,100% { opacity: .22; transform: scale(.75); } 50% { opacity: 1; transform: scale(1.3); } }
+#star-fx i { box-shadow: 0 0 7px rgba(255,255,255,.9); }
+/* --- 53. 二级页全屏修复（不管屏幕怎么变都撑满） --- */
+.sheet-mask:has(> .sheet-card.wide) { position: fixed; inset: 0; padding: 0 !important; align-items: stretch !important; justify-content: stretch !important; }
+.sheet-card.wide {
+  height: 100dvh !important; max-height: 100dvh !important; min-height: 0 !important;
+  width: 100% !important; max-width: 100% !important;
+  margin: 0 !important; border-radius: 0 !important;
+}
+/* --- 54. 输入栏更深 + 顶栏清静 --- */
+body.skin-star .chat-input-bar { background: rgba(7,11,20,.95) !important; border-top-color: rgba(255,255,255,.10) !important; }
+body.skin-star .chat-input-bar textarea { background: rgba(255,255,255,.08) !important; color: #FFFFFF !important; }
+body.skin-star #chat-input::placeholder { color: rgba(255,255,255,.75) !important; }
+#theme-toggle, #view-toggle { display: none !important; }
+/* --- 55. 星空下文字全面提亮 --- */
+body.skin-star .settings-row { color: #EAF1F8; }
+body.skin-star .settings-sub { color: #9FB2C8; }
+body.skin-star .settings-group-title { color: #8FA2B8; }
+body.skin-star .arrow { color: #7C8FA6; }
+body.skin-star .sc-title { color: #F2F6FB; }
+body.skin-star .sc-sub { color: #A9BCD0; }
+body.skin-star .sc-btn { background: rgba(255,255,255,.10); color: #E6EDF6; }
+body.skin-star .conv-row { color: #E6EDF6; }
+body.skin-star .memory-card, body.skin-star .note-card, body.skin-star .fav-item, body.skin-star .g-card { color: #E6EDF6; }
+body.skin-star {
+  background:
+    radial-gradient(1.3px 1.3px at 12% 16%, rgba(255,255,255,.95), transparent 60%),
+    radial-gradient(1px 1px at 78% 8%, rgba(210,226,255,.85), transparent 60%),
+    radial-gradient(1.6px 1.6px at 31% 34%, rgba(255,255,255,.9), transparent 60%),
+    radial-gradient(1px 1px at 62% 22%, rgba(255,255,255,.75), transparent 60%),
+    radial-gradient(1.2px 1.2px at 88% 41%, rgba(225,236,255,.85), transparent 60%),
+    radial-gradient(1.4px 1.4px at 54% 66%, rgba(255,255,255,.8), transparent 60%),
+    radial-gradient(1px 1px at 22% 57%, rgba(255,255,255,.7), transparent 60%),
+    radial-gradient(1.3px 1.3px at 71% 88%, rgba(255,255,255,.85), transparent 60%),
+    linear-gradient(180deg, rgba(8,12,24,var(--veil,.45)) 0%, rgba(8,12,24,calc(var(--veil,.45) * .55)) 45%, rgba(8,12,24,var(--veil,.45)) 100%),
+    url("sky/bg-star.jpg") center / cover no-repeat fixed;
+}
