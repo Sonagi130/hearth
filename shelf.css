@@ -1547,3 +1547,16 @@ body.skin-star {
     linear-gradient(180deg, rgba(8,12,24,var(--veil,.45)) 0%, rgba(8,12,24,calc(var(--veil,.45) * .55)) 45%, rgba(8,12,24,var(--veil,.45)) 100%),
     url("sky/bg-star.jpg") center / cover no-repeat fixed;
 }
+/* --- 56. 全屏页去边 + 开关/思考链配色 --- */
+#app #page-dream, #app #page-memory { padding: 0 !important; }
+body.skin-star .tog { background: rgba(255,255,255,.14); }
+body.skin-star .tog.on { background: #A8CBE4; }
+body.skin-star .tog i { background: #FFFFFF; }
+body.skin-star .think { border-left-color: rgba(168,203,228,.7); background: rgba(168,203,228,.10); }
+body.skin-star .think-h { color: #A8CBE4; }
+body.skin-star .think-b { color: #B7C6D8; }
+/* --- 57. 星与流星：更大更亮 --- */
+#star-fx i { box-shadow: 0 0 10px rgba(255,255,255,.95), 0 0 4px rgba(255,255,255,1); }
+#star-fx b { width: 200px; height: 3px; background: linear-gradient(90deg, rgba(255,255,255,0), rgba(255,255,255,.98)); box-shadow: 0 0 8px rgba(255,255,255,.7); }
+#star-fx b.m1 { animation-duration: 6.5s; }
+#star-fx b.m2 { animation-duration: 8.5s; animation-delay: 3.2s; }
