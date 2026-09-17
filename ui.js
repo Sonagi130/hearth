@@ -89,6 +89,7 @@
     r.setProperty('--my-card-bg', u.cardBg || '');
     r.setProperty('--my-card-ink', u.cardInk || '');
     r.setProperty('--bg-dim', String((u.bgDim == null ? 72 : u.bgDim) / 100));
+    r.setProperty('--veil', String((u.bgDim == null ? 50 : u.bgDim) / 100 * 0.9));
     r.setProperty('--orange', u.accent || '#E8975C');
     r.setProperty('--bubble-round', String(u.bubbleRound == null ? 18 : u.bubbleRound) + 'px');
     r.setProperty('--av-round', String(u.avRound == null ? 50 : u.avRound) + '%');
@@ -483,10 +484,10 @@
             {
               raw: '<div style="width:100%">' +
                    '<div style="font-size:13.5px;color:var(--text-main);margin-bottom:10px;">' +
-                   '奶油层浓淡　<b id="bgdim-v">' + dim + '%</b></div>' +
+                   '图片透明度　<b id="bgdim-v">' + dim + '%</b></div>' +
                    '<input id="bgdim-r" type="range" min="0" max="100" value="' + dim + '" style="width:100%">' +
                    '<div style="font-size:11.5px;color:var(--text-soft);margin-top:8px;">' +
-                   '0% 是原图，100% 基本看不见背景。<br>背景太花就看不清字，调到舒服为止。</div>' +
+                   '0% 是原图，100% 几乎看不见图。<br>背景太花就看不清字，调到舒服为止。</div>' +
                    '</div>',
               mount: function (el) {
                 var r = el.querySelector('#bgdim-r');
