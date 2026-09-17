@@ -703,8 +703,7 @@
     box.innerHTML = '';
     var u = ui();
     box.appendChild(mkGroup('主题与外观', [
-      { icon: ICONS.theme, name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: shTheme },
-      { icon: ICONS.image, name: '背景', sub: u.bg ? '自定义图' : '默认', on: pickBg }
+      { icon: ICONS.theme, name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: shTheme }
     ]));
     box.appendChild(mkGroup('系统与权限', [
       { icon: ICONS.bell, name: '系统通知设置', sub: '提示音 · 振动', on: shNotify },
