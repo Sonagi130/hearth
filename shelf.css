@@ -1566,3 +1566,8 @@ body.skin-star .md-card { background: rgba(12,18,32,.97) !important; color: #E6E
 body.skin-star .md-row { background: rgba(255,255,255,.07) !important; }
 body.skin-star .md-t, body.skin-star .md-l { color: #EAF1F8 !important; }
 body.skin-star .md-btn { color: #E6EDF6 !important; border-color: rgba(168,203,228,.5) !important; }
+
+/* --- 59. fx 浮起 + 面板封顶 + 今天页呼吸 --- */
+#star-fx { z-index: 1; }
+.sheet-card.wide { height: 100svh !important; max-height: 100svh !important; }
+#app #page-today { padding-top: 4px !important; }
