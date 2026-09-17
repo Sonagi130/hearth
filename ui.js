@@ -141,7 +141,8 @@
     var card = document.createElement('div');
     card.className = 'sheet-card wide';
     card.style.textAlign = 'left';
-    card.innerHTML = '<div class="sc-title" style="text-align:center;">' + title + '</div>' +
+    card.innerHTML = '<button class="sc-x sh-close" aria-label="关闭">×</button>' +
+      '<div class="sc-title" style="text-align:center;padding:0 36px;">' + title + '</div>' +
       (sub ? '<div class="sc-sub" style="text-align:center;">' + sub + '</div>' : '') +
       '<div class="sh-body"></div>' +
       '<div class="sc-row" style="margin-top:14px;"><button class="sc-btn sh-close">关闭</button></div>';
@@ -151,8 +152,7 @@
     rows.forEach(function (r) { box.appendChild(mkRow(r)); });
     var c = function () { mask.remove(); };
     mask.onclick = function (e) { if (e.target === mask) c(); };
-    var cbtn = card.querySelector('.sh-close');
-    if (cbtn) cbtn.onclick = c;
+    card.querySelectorAll('.sh-close').forEach(function (b) { b.onclick = c; });
     return c;
   }
 
