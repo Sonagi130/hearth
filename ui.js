@@ -450,8 +450,26 @@
         right: sw(Store.get('theme', 'light') === 'dark'), on: myTheme },
       { icon: ICONS.palette, name: '系统配色', sub: u.accent ? '自定义' : '默认橙',
         on: function () { pickColor('accent', '选个主色'); } },
-      { icon: ICONS.palette, name: '界面风格', sub: (window.HearthSkin && window.HearthSkin.cur() === 'water') ? '水蓝 · 温柔' : '默认 · 暖橘',
-        on: function () { if (window.HearthSkin) { window.HearthSkin.toggle('skin'); close(); open(); } } },
+      {
+        raw: '<div style="width:100%">' +
+             '<div style="font-size:13.5px;color:var(--text-main);margin-bottom:6px;">主题</div>' +
+             '<div class="th-picks" id="th-picks">' +
+             '<button class="th-pick" data-skin="water"><i class="tpk tpk-water"></i><span>水蓝</span></button>' +
+             '<button class="th-pick" data-skin="star"><i class="tpk tpk-star"></i><span>星空</span></button>' +
+             '<button class="th-pick" data-skin="default"><i class="tpk tpk-plain"></i><span>原木</span></button>' +
+             '</div></div>',
+        mount: function (el) {
+          var cur = window.HearthSkin ? window.HearthSkin.cur() : 'water';
+          el.querySelectorAll('.th-pick').forEach(function (b) {
+            b.classList.toggle('on', b.getAttribute('data-skin') === cur);
+            b.onclick = function () {
+              if (window.HearthSkin) window.HearthSkin.set(b.getAttribute('data-skin'));
+              el.querySelectorAll('.th-pick').forEach(function (x) { x.classList.remove('on'); });
+              b.classList.add('on');
+            };
+          });
+        }
+      },
       { icon: ICONS.glass, name: '液体玻璃', sub: '半透明 · 磨砂质感', right: sw(!!u.glass),
         on: function () { if (window.HearthSkin) { window.HearthSkin.toggle('glass'); close(); open(); } } },
       { icon: ICONS.theme, name: '可爱装饰', sub: '圆润按钮 · 小点缀', right: sw(u.cute !== false),
