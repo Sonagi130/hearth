@@ -423,12 +423,12 @@
     cv.width = W;
     cv.height = Math.max(H, 420);
     var g = cv.getContext('2d');
-    g.fillStyle = '#FFF8F0';
+    g.fillStyle = P.bg;
     g.fillRect(0, 0, W, cv.height);
-    g.fillStyle = '#8B6F47';
+    g.fillStyle = P.title;
     g.font = '700 22px sans-serif';
     g.fillText('Hearth', pad, pad + 8);
-    g.fillStyle = '#C4A882';
+    g.fillStyle = P.sub;
     g.font = '13px sans-serif';
     g.fillText(new Date().toLocaleString('zh-CN'), pad, pad + 32);
     g.strokeStyle = P.line;
