@@ -527,16 +527,18 @@
     var bodyEl = sheet.querySelector('.hsheet-b');
     var emEl = sheet.querySelector('.hsheet-h em');
     var closeBtn = sheet.querySelector('.hsheet-h button');
-    var sy = 0, dy = 0, drag = false;
+    var sy = 0, dy = 0, drag = false, liveEl = null;
     function close() {
       if (!HS || !sheet.classList.contains('show')) return;
       sheet.classList.remove('show'); mask.classList.remove('show');
       sheet.style.transform = '';
+      liveEl = null;
       document.body.style.overflow = HS_PREV;
     }
-    function open(title, text, note) {
+    function open(title, text, note, el) {
       sheet.querySelector('.hsheet-h b').textContent = title || '';
       emEl.textContent = note || '';
+      liveEl = el || null;
       bodyEl.textContent = text || '（这一条没有思考过程。）';
       bodyEl.scrollTop = 0;
       HS_PREV = document.body.style.overflow;
@@ -560,11 +562,18 @@
       drag = false; sheet.style.transition = '';
       if (dy > 86) close(); else sheet.style.transform = '';
     });
-    HS = { mask: mask, sheet: sheet, close: close, open: open };
-    window.HearthSheet = { open: open, close: close };
+    /* 生成中：跟着长，并且自动滚到底（除非她自己往上翻了） */
+    function update(text) {
+      if (!liveEl || !sheet.classList.contains('show')) return;
+      var atEnd = (bodyEl.scrollHeight - bodyEl.scrollTop - bodyEl.clientHeight) < 52;
+      bodyEl.textContent = text || '';
+      if (atEnd) bodyEl.scrollTop = bodyEl.scrollHeight;
+    }
+    HS = { mask: mask, sheet: sheet, close: close, open: open, update: update };
+    window.HearthSheet = { open: open, close: close, update: update };
     return HS;
   }
-  function openSheet(title, text, note) { hsBuild().open(title, text, note); }
+  function openSheet(title, text, note, el) { hsBuild().open(title, text, note, el); }
   /* ---------- 点标题：弹底部；记忆块：就地展开 ---------- */
   document.addEventListener('click', function (e) {
     var t = e.target;
@@ -577,7 +586,7 @@
         var full = '';
         if (msg && msg.getAttribute) full = msg.getAttribute('data-think') || '';
         if (!full && hb) full = hb.textContent || '';
-        openSheet('思考过程', full, '顾淮');
+        openSheet('思考过程', full, '顾淮', msg);
         return;
       }
       if (cls.indexOf('mem-h') >= 0) {
