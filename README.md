@@ -249,3 +249,5 @@ icon.svg / icon-192.png / icon-512.png   图标
 **2026-09-18（下午）** — **记忆库整体换成「记忆银河」**（宝宝发来 galaxy-template.html + 搭建教程）：① 新目录 galaxy/（galaxy.html + lib/ 本地 three0.160 及 addons，共1.4MB，不依赖 CDN）；② 银河**直接读壁炉自己的记忆**（localStorage 的 hearth_memories），时间当半径、重要度分四档、按标签分四类配色（家规金/日子粉/习惯绿/故事紫）；③ 核心星固定为「我们的核心」（2026-07-24）；④ 记忆页改为全屏 iframe 挂载，旧的记忆树/星穹（sky.js、sky/style.css）已从页面摘除；⑤ memtree.js 升 v=7、shelf.css 升 v=8。
 
 **2026-09-18（下午二）** — 治「记忆库打开很慢」：① three.js 换成**压缩版**（1.27MB→671KB）；② 去掉 5 个 CDN 字体请求（它们阻塞渲染）；③ **service worker 升级 v5**：大件静态库（galaxy/lib/、three）改**缓存优先**，下载一次永久用，不再每次重下；④ memtree.js 空闲时**prefetch** 银河，第一次打开就不用等。
+
+**2026-09-18（晚）** — **思考链改成底部弹层（Bottom Sheet）**：点思考链标题→从底部升起弹层看全文（可滚动、可下拉关闭、点遮罩关闭、✕关闭），不再挤在气泡里；跟随主题（水蓝浅色/星空深蓝玻璃）、适配底部安全区；顶部小横条可拖拽关闭。shelf.css/convs.js/chat.js 升 v=9。
