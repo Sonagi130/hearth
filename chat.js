@@ -197,6 +197,7 @@
               if (d && d.reasoning_content) {
                 thinkGot += d.reasoning_content;
                 if (tb) { tb.textContent = thinkGot; if (box) box.scrollTop = box.scrollHeight; }
+              try { if (window.HearthSheet) window.HearthSheet.update(thinkGot); } catch (e2) {}
               }
               if (d && d.content) {
                 got += d.content;
