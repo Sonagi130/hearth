@@ -46,6 +46,9 @@
     '@keyframes meteor{0%{transform:rotate(-32deg) translateX(0);opacity:0}4%{opacity:1}20%{transform:rotate(-32deg) translateX(-92vw);opacity:0}100%{opacity:0}}'
   ].join('');
   var PATCH_B = [
+    'body.skin-star .gs-btn{background:rgba(168,203,228,.16) !important;border:1px solid rgba(168,203,228,.42) !important;color:#DCEBF7 !important;}',
+    'body.skin-star .cv-find{background:rgba(255,255,255,.08) !important;border-color:rgba(168,203,228,.32) !important;color:#E6EDF6 !important;}',
+    'body.skin-star .cv-find::placeholder{color:rgba(214,228,242,.45) !important;}',
     'body.skin-star .mem-box{background:rgba(168,203,228,.10) !important;border:1px solid rgba(168,203,228,.20) !important;border-left:3px solid #A8CBE4 !important;}',
     'body.skin-star .mem-h{color:#A8CBE4 !important;}',
     'body.skin-star .mem-b{color:#B7C6D8 !important;}',
