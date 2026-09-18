@@ -169,7 +169,7 @@
     if (mm) {
       var clean = t.replace(mm[0], '').trim();
       return (clean ? esc(clean) : '') +
-        '<div class="mem-box"><div class="mem-h">📎 附着的记忆 · ' + esc(mm[1]) + ' ▾</div>' +
+        '<div class="mem-box"><div class="mem-h">附着的记忆 · ' + esc(mm[1]) + ' ▾</div>' +
         '<div class="mem-b">' + esc(mm[2]) + '</div></div>';
     }
     return esc(t);
@@ -608,6 +608,7 @@
     create: newConv,
     info: showInfo,
     render: renderMessages,
+    title: renderTitle,
     sync: saveFromDom,
     addUsage: addUsage
   };
