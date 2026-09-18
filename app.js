@@ -67,7 +67,8 @@ function initNav() {
             btn.classList.add('active');
             document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
             $('page-'+page).classList.add('active');
-            $('top-title').textContent = pageTitles[page];
+            if (page === 'chat' && window.HearthConv && window.HearthConv.title) window.HearthConv.title();
+            else $('top-title').textContent = pageTitles[page];
             closeNav();
             if (page === 'calendar') renderCalendar();
             if (page === 'diary') renderDiary();
