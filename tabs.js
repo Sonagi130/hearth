@@ -15,7 +15,10 @@
     document.querySelectorAll('.page').forEach(function (p) { p.classList.remove('active'); });
     el.classList.add('active');
     var t = $('top-title');
-    if (t) t.textContent = TITLES[page] || '';
+    if (t) {
+      if (page === 'chat' && window.HearthConv && window.HearthConv.title) window.HearthConv.title();
+      else t.textContent = TITLES[page] || '';
+    }
     document.body.classList.toggle('no-tabs', page === 'chat');
     document.querySelectorAll('.side-nav .nav-item').forEach(function (b) {
       b.classList.toggle('active', b.dataset.page === page);
