@@ -46,6 +46,9 @@
     '@keyframes meteor{0%{transform:rotate(-32deg) translateX(0);opacity:0}4%{opacity:1}20%{transform:rotate(-32deg) translateX(-92vw);opacity:0}100%{opacity:0}}'
   ].join('');
   var PATCH_B = [
+    'body.skin-star .mem-box{background:rgba(168,203,228,.10) !important;border:1px solid rgba(168,203,228,.20) !important;border-left:3px solid #A8CBE4 !important;}',
+    'body.skin-star .mem-h{color:#A8CBE4 !important;}',
+    'body.skin-star .mem-b{color:#B7C6D8 !important;}',
     'body.skin-star .ctx{background:rgba(15,22,37,.98) !important;border:1px solid rgba(168,203,228,.22);}',
     'body.skin-star .multi-bar{background:rgba(15,22,37,.98) !important;}',
     'body.skin-star .sheet-card{background:rgba(15,22,37,.98) !important;}',
