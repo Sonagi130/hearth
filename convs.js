@@ -119,7 +119,7 @@
   function thinkHTML(who, think) {
     if (who === 'me' || !Store.get('showThinking', false)) return '';
     var body = think ? esc(think) : '（这一条没有思考过程。）';
-    return '<div class="think"><div class="think-h">思考过程 ▾</div>' +
+    return '<div class="think"><div class="think-h">思考过程 ▸</div>' +
            '<div class="think-b">' + body + '</div></div>';
   }
 
@@ -512,15 +512,72 @@
     init();
   }
 
-  /* ---------- 思考链：点一下展开 ---------- */
+  /* ---------- 底部弹层：思考链全文 ---------- */
+  var HS = null, HS_PREV = '';
+  function hsBuild() {
+    if (HS) return HS;
+    var mask = document.createElement('div'); mask.className = 'hsheet-mask';
+    var sheet = document.createElement('div'); sheet.className = 'hsheet';
+    sheet.innerHTML = '<div class="hsheet-grab"><i></i></div>' +
+      '<div class="hsheet-h"><b>思考过程</b><em></em><button type="button">✕</button></div>' +
+      '<div class="hsheet-b"></div>';
+    document.body.appendChild(mask);
+    document.body.appendChild(sheet);
+    var grab = sheet.querySelector('.hsheet-grab');
+    var bodyEl = sheet.querySelector('.hsheet-b');
+    var emEl = sheet.querySelector('.hsheet-h em');
+    var closeBtn = sheet.querySelector('.hsheet-h button');
+    var sy = 0, dy = 0, drag = false;
+    function close() {
+      if (!HS || !sheet.classList.contains('show')) return;
+      sheet.classList.remove('show'); mask.classList.remove('show');
+      sheet.style.transform = '';
+      document.body.style.overflow = HS_PREV;
+    }
+    function open(title, text, note) {
+      sheet.querySelector('.hsheet-h b').textContent = title || '';
+      emEl.textContent = note || '';
+      bodyEl.textContent = text || '（这一条没有思考过程。）';
+      bodyEl.scrollTop = 0;
+      HS_PREV = document.body.style.overflow;
+      document.body.style.overflow = 'hidden';
+      mask.classList.add('show');
+      sheet.classList.add('show');
+    }
+    mask.addEventListener('click', close);
+    closeBtn.addEventListener('click', close);
+    grab.addEventListener('touchstart', function (e) {
+      sy = e.touches[0].clientY; dy = 0; drag = true; sheet.style.transition = 'none';
+    }, { passive: true });
+    grab.addEventListener('touchmove', function (e) {
+      if (!drag) return;
+      dy = e.touches[0].clientY - sy;
+      if (dy < 0) dy = dy * 0.28;
+      sheet.style.transform = 'translateY(' + dy + 'px)';
+      if (e.cancelable) e.preventDefault();
+    }, { passive: false });
+    grab.addEventListener('touchend', function () {
+      drag = false; sheet.style.transition = '';
+      if (dy > 86) close(); else sheet.style.transform = '';
+    });
+    HS = { mask: mask, sheet: sheet, close: close, open: open };
+    window.HearthSheet = { open: open, close: close };
+    return HS;
+  }
+  function openSheet(title, text, note) { hsBuild().open(title, text, note); }
+  /* ---------- 点标题：弹底部；记忆块：就地展开 ---------- */
   document.addEventListener('click', function (e) {
     var t = e.target;
     while (t && t !== document) {
       var cls = String(t.className || '');
       if (cls.indexOf('think-h') >= 0) {
         var box = t.parentNode;
-        var open = box.classList.toggle('open');
-        t.textContent = open ? '思考过程 ▴' : '思考过程 ▾';
+        var hb = box.querySelector('.think-b');
+        var msg = box.closest ? box.closest('.msg') : null;
+        var full = '';
+        if (msg && msg.getAttribute) full = msg.getAttribute('data-think') || '';
+        if (!full && hb) full = hb.textContent || '';
+        openSheet('思考过程', full, '顾淮');
         return;
       }
       if (cls.indexOf('mem-h') >= 0) {
@@ -530,7 +587,6 @@
       t = t.parentNode;
     }
   });
-
   window.HearthConv = {
     list: load,
     current: conc,
