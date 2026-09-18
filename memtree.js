@@ -227,51 +227,27 @@
     stage.addEventListener('touchcancel', end);
   }
 
-  /* ---------- 接管记忆页 ---------- */
+  /* ---------- 接管记忆页：记忆银河 ---------- */
   function boot() {
-    var box = $('memory-list');
+    var box = document.getElementById('memory-list');
     if (!box) return;
-    if (document.getElementById('sky-wrap')) { if (window.HearthSky) window.HearthSky.show(); return; }
+    var old = document.getElementById('galaxy-frame');
+    if (old) return;
     box.innerHTML = '';
-    var host = document.createElement('div');
-    host.id = 'sky-wrap';
-    host.className = 'sky-wrap';
-    box.appendChild(host);
-    var bar = document.createElement('div');
-    bar.className = 'tree-bar sky-bar';
-    bar.innerHTML =
-      '<button class="tb-btn on" id="tb-sky">星空</button>' +
-      '<button class="tb-btn" id="tb-list">列表</button>' +
-      '<button class="tb-btn" id="tt-imp">＋</button>';
-    box.appendChild(bar);
-    var listBox = document.createElement('div');
-    listBox.id = 'memory-cards';
-    listBox.style.display = 'none';
-    box.appendChild(listBox);
-    if (window.HearthSky) window.HearthSky.show();
-    $('tb-sky').onclick = function () {
-      this.classList.add('on');
-      $('tb-list').classList.remove('on');
-      listBox.style.display = 'none';
-      if (window.HearthSky) window.HearthSky.show();
-    };
-    $('tb-list').onclick = function () {
-      this.classList.add('on');
-      $('tb-sky').classList.remove('on');
-      if (window.HearthSky) window.HearthSky.hide();
-      listBox.style.display = '';
-      if (typeof drawMemoryCards === 'function') drawMemoryCards(Store.get('memories', []) || []);
-    };
-    $('tt-imp').onclick = function () {
-      if (typeof importMemories === 'function') importMemories();
-      setTimeout(function () { if (window.renderMemory === 'function') window.renderMemory(); }, 900);
+    var fr = document.createElement('iframe');
+    fr.id = 'galaxy-frame';
+    fr.className = 'galaxy-frame';
+    fr.setAttribute('src', 'galaxy/galaxy.html?v=1');
+    box.appendChild(fr);
+    window.HearthGalaxy = {
+      reload: function () {
+        try { fr.contentWindow.location.reload(); }
+        catch (e) { fr.setAttribute('src', 'galaxy/galaxy.html?v=' + Date.now()); }
+      }
     };
   }
   window.HearthTree = { render: render, boot: boot };
-
-  /* 接管记忆页：以后切到「记忆库」就走这里 */
   window.renderMemory = function () { boot(); };
-
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
   else boot();
 })();
