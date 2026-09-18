@@ -1581,7 +1581,7 @@ body.skin-star .md-btn { color: #E6EDF6 !important; border-color: rgba(168,203,2
 /* --- 61. 思考链：底部弹层（Bottom Sheet） --- */
 .hsheet-mask{position:fixed;inset:0;z-index:690;background:rgba(24,18,14,.46);opacity:0;visibility:hidden;transition:opacity .28s ease,visibility .28s;}
 .hsheet-mask.show{opacity:1;visibility:visible;}
-.hsheet{position:fixed;left:0;right:0;bottom:0;z-index:691;max-height:74vh;display:flex;flex-direction:column;
+.hsheet{position:fixed;left:0;right:0;bottom:0;z-index:691;height:74vh;display:flex;flex-direction:column;
   background:var(--card-bg);border-radius:22px 22px 0 0;box-shadow:0 -14px 44px rgba(0,0,0,.26);
   transform:translateY(104%);transition:transform .34s cubic-bezier(.22,.85,.3,1);
   padding-bottom:calc(14px + env(safe-area-inset-bottom));will-change:transform;}
@@ -1592,7 +1592,7 @@ body.skin-star .md-btn { color: #E6EDF6 !important; border-color: rgba(168,203,2
 .hsheet-h b{font-size:14px;font-weight:600;color:var(--text-main);letter-spacing:.05em;}
 .hsheet-h em{font-style:normal;font-size:11px;color:var(--text-soft);letter-spacing:.04em;}
 .hsheet-h button{margin-left:auto;border:none;background:none;color:var(--text-soft);font-size:21px;line-height:1;padding:0 4px;cursor:pointer;}
-.hsheet-b{overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
+.hsheet-b{flex:1 1 auto;min-height:0;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;
   padding:15px 22px 24px;font-size:13.5px;line-height:1.92;color:var(--text-main);
   white-space:pre-wrap;overflow-wrap:anywhere;}
 .hsheet-b::-webkit-scrollbar{width:3px;}
