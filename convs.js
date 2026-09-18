@@ -570,10 +570,15 @@
       if (atEnd) bodyEl.scrollTop = bodyEl.scrollHeight;
     }
     HS = { mask: mask, sheet: sheet, close: close, open: open, update: update };
-    window.HearthSheet = { open: open, close: close, update: update };
     return HS;
   }
   function openSheet(title, text, note, el) { hsBuild().open(title, text, note, el); }
+  /* 对外接口：一开始就挂着，不用等点过一次 */
+  window.HearthSheet = {
+    open: function (t, x, n, e) { hsBuild().open(t, x, n, e); },
+    close: function () { if (HS) HS.close(); },
+    update: function (x) { if (HS && HS.update) HS.update(x); }
+  };
   /* ---------- 点标题：弹底部；记忆块：就地展开 ---------- */
   document.addEventListener('click', function (e) {
     var t = e.target;
