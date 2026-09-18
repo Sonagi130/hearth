@@ -3,6 +3,24 @@
   'use strict';
 
   var $ = function (id) { return document.getElementById(id); };
+  function themePalette() {
+    var c = (window.HearthSkin && window.HearthSkin.cur && window.HearthSkin.cur()) || 'water';
+    if (c === 'star') return {
+      bg: '#0F1626', title: '#A8CBE4', sub: '#7E93AC', name: '#8FA2B8', text: '#E6EDF6',
+      line: 'rgba(168,203,228,.20)', meBg: '#2E4763', meTx: '#EAF2FA', heBg: 'rgba(255,255,255,.08)',
+      heTx: '#E6EDF6', heBorder: 'rgba(168,203,228,.22)'
+    };
+    if (c === 'water') return {
+      bg: '#F4FAFD', title: '#5B7C93', sub: '#8FB8D9', name: '#74899A', text: '#3E4A57',
+      line: 'rgba(91,124,147,.20)', meBg: '#DCEBF7', meTx: '#2E4356', heBg: '#FFFFFF',
+      heTx: '#3E4A57', heBorder: 'rgba(91,124,147,.18)'
+    };
+    return {
+      bg: '#FFF8F0', title: '#8B6F47', sub: '#C4A882', name: '#9C8A79', text: '#3D2B1F',
+      line: 'rgba(139,111,71,.18)', meBg: '#E8975C', meTx: '#FFFFFF', heBg: '#FFFFFF',
+      heTx: '#3D2B1F', heBorder: 'rgba(139,111,71,.16)'
+    };
+  }
   var cur = null;       // 当前长按的 .msg
   var multiOn = false;
   var picked = [];
@@ -283,6 +301,7 @@
 
   function makeImage() {
     if (!picked.length) { toast('先选几条'); return; }
+    var P = themePalette();
     var W = 720, pad = 44, lh = 34, fs = 22;
     var blocks = picked.map(function (m) {
       var t = bubbleOf(m);
@@ -298,21 +317,21 @@
     var cv = document.createElement('canvas');
     cv.width = W; cv.height = H;
     var g = cv.getContext('2d');
-    g.fillStyle = '#FFF8F0'; g.fillRect(0, 0, W, H);
-    g.fillStyle = '#8B6F47'; g.font = '600 21px sans-serif';
+    g.fillStyle = P.bg; g.fillRect(0, 0, W, H);
+    g.fillStyle = P.title; g.font = '600 21px sans-serif';
     g.fillText('Hearth', pad, pad + 6);
-    g.fillStyle = '#C4A882'; g.font = '13px sans-serif';
+    g.fillStyle = P.sub; g.font = '13px sans-serif';
     g.fillText(new Date().toLocaleString(), pad, pad + 30);
 
     var y = pad + 76;
     blocks.forEach(function (b) {
-      g.fillStyle = '#9C8A79'; g.font = '13px sans-serif';
+      g.fillStyle = P.name; g.font = '13px sans-serif';
       g.fillText(b.who, pad, y);
       y += 24;
-      g.fillStyle = '#3D2B1F'; g.font = fs + 'px sans-serif';
+      g.fillStyle = P.text; g.font = fs + 'px sans-serif';
       b.lines.forEach(function (ln) { g.fillText(ln, pad, y); y += lh; });
       y += 18;
-      g.strokeStyle = 'rgba(139,111,71,.18)';
+      g.strokeStyle = P.line;
       g.beginPath(); g.moveTo(pad, y - 10); g.lineTo(W - pad, y - 10); g.stroke();
       y += 18;
     });
@@ -399,6 +418,7 @@
     });
     var H = pad * 2 + 92;
     blocks.forEach(function (b) { H += b.lines.length * lh + 56; });
+    var P = themePalette();
     var cv = document.createElement('canvas');
     cv.width = W;
     cv.height = Math.max(H, 420);
@@ -411,7 +431,7 @@
     g.fillStyle = '#C4A882';
     g.font = '13px sans-serif';
     g.fillText(new Date().toLocaleString('zh-CN'), pad, pad + 32);
-    g.strokeStyle = 'rgba(139,111,71,.2)';
+    g.strokeStyle = P.line;
     g.beginPath(); g.moveTo(pad, pad + 50); g.lineTo(W - pad, pad + 50); g.stroke();
     var y = pad + 80;
     blocks.forEach(function (b) {
@@ -422,16 +442,16 @@
       var bh = b.lines.length * lh + 18;
       var me = b.who === 'me';
       var bx = me ? (W - pad - bw) : pad;
-      g.fillStyle = me ? '#E8975C' : '#FFFFFF';
+      g.fillStyle = me ? P.meBg : P.heBg;
       roundRect(g, bx, y, bw, bh, 16);
       g.fill();
-      if (!me) { g.strokeStyle = 'rgba(139,111,71,.16)'; g.stroke(); }
-      g.fillStyle = me ? '#FFFFFF' : '#3D2B1F';
+      if (!me) { g.strokeStyle = P.heBorder; g.stroke(); }
+      g.fillStyle = me ? P.meTx : P.heTx;
       g.font = fs + 'px sans-serif';
       var ty = y + 28;
       b.lines.forEach(function (ln) { g.fillText(ln, bx + 22, ty); ty += lh; });
       y += bh + 8;
-      g.fillStyle = '#A89684';
+      g.fillStyle = P.name;
       g.font = '12px sans-serif';
       var nm = me ? '我' : '顾淮';
       g.fillText(nm, me ? (W - pad - g.measureText(nm).width) : bx, y + 14);
