@@ -148,7 +148,7 @@
     wrap.innerHTML = '<div class="bubble"></div><div class="time">顾淮 · 正在说…</div>';
     if (box) { box.appendChild(wrap); box.scrollTop = box.scrollHeight; }
     var thinkOn = Store.get('showThinking', false);
-    if (thinkOn) { wrap.innerHTML = '<div class="think open"><div class="think-h">思考过程 ▴</div><div class="think-b">…</div></div>' + wrap.innerHTML; }
+    if (thinkOn) { wrap.innerHTML = '<div class="think open"><div class="think-h">思考过程 · 正在想</div><div class="think-b">…</div></div>' + wrap.innerHTML; }
     var bub = wrap.querySelector('.bubble');
     var tm = wrap.querySelector('.time');
     var tb = wrap.querySelector('.think-b');
@@ -217,7 +217,7 @@
         var th = wrap.querySelector('.think');
         if (th) th.classList.remove('open');
         var thh = wrap.querySelector('.think-h');
-        if (thh) thh.textContent = '思考过程 ▾';
+        if (thh) thh.textContent = '思考过程 ▸';
       }
       if (got && window.VStore && wantsVoice(lastUserSaid())) {
         var vk = 'v' + Date.now() + Math.floor(Math.random() * 1000);
