@@ -237,7 +237,7 @@
     var fr = document.createElement('iframe');
     fr.id = 'galaxy-frame';
     fr.className = 'galaxy-frame';
-    fr.setAttribute('src', 'galaxy/galaxy.html?v=1');
+    fr.setAttribute('src', 'galaxy/galaxy.html?v=2');
     box.appendChild(fr);
     window.HearthGalaxy = {
       reload: function () {
@@ -246,6 +246,16 @@
       }
     };
   }
+  /* 空闲时提前把银河拉下来（第一次打开就不用等） */
+  function prefetch() {
+    ['galaxy/galaxy.html?v=2', 'galaxy/lib/three.module.js'].forEach(function (u) {
+      var l = document.createElement('link');
+      l.rel = 'prefetch'; l.href = u; l.as = 'script';
+      document.head.appendChild(l);
+    });
+  }
+  if (window.requestIdleCallback) requestIdleCallback(prefetch, { timeout: 4000 });
+  else setTimeout(prefetch, 2500);
   window.HearthTree = { render: render, boot: boot };
   window.renderMemory = function () { boot(); };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
