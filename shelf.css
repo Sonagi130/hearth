@@ -1572,3 +1572,8 @@ body.skin-star .md-btn { color: #E6EDF6 !important; border-color: rgba(168,203,2
 .sheet-card.wide { position: absolute !important; left: 0 !important; right: 0 !important; top: 0 !important; bottom: 0 !important; width: auto !important; max-width: none !important; height: auto !important; max-height: none !important; }
 #app #page-today { padding-top: 4px !important; }
 #app { position: relative; z-index: 1; }
+
+/* --- 60. 记忆页：银河 iframe 全屏 --- */
+#page-memory { padding: 0 !important; }
+#page-memory #memory-list { height: 100%; padding: 0 !important; }
+.galaxy-frame { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; display: block; background: #050209; }
