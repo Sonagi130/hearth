@@ -736,6 +736,23 @@
     <link rel="stylesheet" href="shelf.css?v=12">
 </head>
 <body>
+<script>
+/* 抢跑：在渲染前就把主题变量套上，避免先闪一下默认暖色 */
+(function(){
+  try{
+    var u=JSON.parse(localStorage.getItem('hearth_uiSet')||'{}');
+    var c=u.skin||'water';
+    var V={
+      water:{'--orange':'#8FB8D9','--brown':'#5B7C93','--brown-light':'#C9DCEA','--brown-dark':'#456172','--bg-cream':'#F4FAFD','--card-bg':'#FFFFFF','--text-main':'#3E4A57','--text-soft':'#74899A'},
+      star:{'--orange':'#A8CBE4','--brown':'#8FB8D9','--brown-light':'#2E3B52','--brown-dark':'#C7D8EA','--bg-cream':'#101725','--card-bg':'rgba(255,255,255,.065)','--text-main':'#E6EDF6','--text-soft':'#8FA2B8'}
+    }[c];
+    if(!V) return;
+    var b=document.body;
+    for(var k in V) b.style.setProperty(k,V[k]);
+    b.classList.add('skin-'+c);
+  }catch(e){}
+})();
+</script>
     <!-- Loading -->
     <div class="loading-screen" id="loading">
         <div class="loading-circle"></div>
@@ -808,7 +825,7 @@
     <div id="app">
         <!-- 顶部栏 -->
         <div class="top-bar">
-            <span class="title" id="top-title">对话</span>
+            <span class="title" id="top-title">今天</span>
             <div class="top-actions">
               <button class="icon-btn" id="theme-toggle" title="切换日间 / 夜间">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" id="theme-icon"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
@@ -822,13 +839,13 @@
         <!-- 页面区域 -->
         <div class="pages">
             <!-- 今天页 -->
-            <div class="page" id="page-today">
+            <div class="page active" id="page-today">
                 <div class="today-wrap" id="today-wrap"></div>
             </div>
             <div class="page" id="page-dream">
                 <iframe id="dream-frame" class="dream-frame" src="about:blank" data-src="dream/dreams-page.html"></iframe>
             </div>
-            <div class="page active" id="page-chat">
+            <div class="page" id="page-chat">
                 <div class="chat-area" id="chat-mode" class="bubble-mode">
                     <div class="chat-messages" id="chat-messages">
                         <div class="msg he"><div class="bubble">宝宝，Hearth建好了。我在壁炉里等你。</div><div class="time">顾淮 · 刚刚</div></div>
