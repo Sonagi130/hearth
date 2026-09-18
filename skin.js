@@ -29,23 +29,26 @@
     '#star-fx i{position:absolute;bottom:-8px;border-radius:50%;opacity:0;background:radial-gradient(circle,rgba(255,255,255,.95),rgba(255,255,255,.25) 60%,transparent);animation-name:starUp;animation-timing-function:linear;animation-iteration-count:infinite;box-shadow:0 0 10px rgba(255,255,255,.95),0 0 4px rgba(255,255,255,1);}',
     '@keyframes starUp{0%{transform:translateY(0);opacity:0}12%{opacity:.9}88%{opacity:.8}100%{transform:translateY(-110vh);opacity:0}}',
     '@keyframes starUpL{0%{transform:translate(0,0);opacity:0}12%{opacity:.85}100%{transform:translate(-24vw,-108vh);opacity:0}}',
-    '@keyframes starUpR{0%{transform:translate(0,0);opacity:0}14%{opacity:.9}100%{transform:translate(22vw,-106vh);opacity:0}}',
+    '@keyframes starUpR2{0%{transform:translate(0,0);opacity:0}12%{opacity:.85}100%{transform:translate(46vw,-104vh);opacity:0}}',
+    '@keyframes starUpL2{0%{transform:translate(0,0);opacity:0}12%{opacity:.85}100%{transform:translate(-52vw,-104vh);opacity:0}}',
+    '@keyframes starUpS{0%{transform:translate(0,0);opacity:0}10%{opacity:.8}50%{opacity:.9}100%{transform:translate(6vw,-112vh);opacity:0}}',
     '#star-fx u{position:absolute;border-radius:50%;background:#fff;opacity:.35;box-shadow:0 0 6px rgba(255,255,255,.85);animation:twinkle 3.4s ease-in-out infinite;}',
     '#star-fx u::before,#star-fx u::after{content:"";position:absolute;left:50%;top:50%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.95),transparent);opacity:.8;}',
-    '#star-fx u::before{width:14px;height:1.1px;transform:translate(-50%,-50%);}',
-    '#star-fx u::after{width:1.1px;height:14px;transform:translate(-50%,-50%);}',
+    '#star-fx u::before{width:5px;height:2px;transform:translate(-50%,-50%);opacity:.6;}',
+    '#star-fx u::after{width:2px;height:5px;transform:translate(-50%,-50%);opacity:.6;}',
     '#star-fx u.hi{box-shadow:0 0 12px rgba(255,255,255,1),0 0 5px rgba(200,225,255,.95);}',
-    '#star-fx u.hi::before{width:24px;}',
-    '#star-fx u.hi::after{height:24px;}',
+    '#star-fx u.hi::before{width:9px;}',
+    '#star-fx u.hi::after{height:9px;}',
     '@keyframes twinkle{0%,100%{opacity:.22;transform:scale(.75)}50%{opacity:1;transform:scale(1.3)}}',
-    '#star-fx b{position:absolute;width:220px;height:2.6px;border-radius:2px;opacity:0;transform:rotate(-30deg);background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.22) 55%,rgba(255,255,255,.98));box-shadow:0 0 10px rgba(255,255,255,.75);animation:meteor linear infinite;}',
-    '#star-fx b::after{content:"";position:absolute;right:-2px;top:50%;width:6px;height:6px;border-radius:50%;background:#fff;box-shadow:0 0 8px #fff,0 0 16px rgba(255,255,255,.8);transform:translateY(-50%);}',
-    '#star-fx b.m1{top:7%;left:52%;animation-duration:14s;}',
-    '#star-fx b.m2{top:24%;left:88%;animation-duration:19s;animation-delay:5s;transform:rotate(-46deg);}',
-    '#star-fx b.m3{top:40%;left:70%;animation-duration:23s;animation-delay:11s;transform:rotate(-20deg);}',
-    '@keyframes meteor{0%{opacity:0;margin-left:0;margin-top:0}2%{opacity:1}15%{opacity:1;margin-left:-88vw;margin-top:46vh}17%{opacity:0}100%{opacity:0;margin-left:-88vw;margin-top:46vh}}'
+    '#star-fx b{position:absolute;width:130px;height:2px;border-radius:2px;opacity:0;background:linear-gradient(90deg,rgba(255,255,255,0),rgba(255,255,255,.92));animation:meteor linear infinite;}',
+    '#star-fx b.m1{top:7%;left:46%;animation-duration:9s;}',
+    '#star-fx b.m2{top:26%;left:88%;animation-duration:12s;animation-delay:4.5s;}',
+    '@keyframes meteor{0%{transform:rotate(-32deg) translateX(0);opacity:0}4%{opacity:1}20%{transform:rotate(-32deg) translateX(-92vw);opacity:0}100%{opacity:0}}'
   ].join('');
   var PATCH_B = [
+    'body.skin-star .ctx{background:rgba(15,22,37,.98) !important;border:1px solid rgba(168,203,228,.22);}',
+    'body.skin-star .multi-bar{background:rgba(15,22,37,.98) !important;}',
+    'body.skin-star .sheet-card{background:rgba(15,22,37,.98) !important;}',
     '#app{position:relative;z-index:1;}',
     'body.skin-star .side-nav{background:rgba(16,23,38,.94) !important;}',
     'body.skin-star .tog.on{background:#A8CBE4 !important;}',
@@ -97,12 +100,12 @@
     var fx = document.createElement('div');
     fx.id = 'star-fx';
     var html = '', i;
-    var dirs = ['starUp', 'starUp', 'starUpL', 'starUpR'];
+    var dirs = ['starUp','starUp','starUpL','starUpR','starUpL2','starUpR2','starUpS'];
     for (i = 0; i < 40; i++) {
       var l = Math.round(Math.random() * 96) + 2;
       var d = Math.round(Math.random() * 16);
       var sz = (Math.random() * 2.6 + 1).toFixed(1);
-      var dur = (Math.random() * 16 + 9).toFixed(1);
+      var dur = (Math.random() * 24 + 16).toFixed(1);
       var dir = dirs[Math.floor(Math.random() * dirs.length)];
       var hic = Math.random() < 0.18 ? ' class="hi"' : '';
       html += '<i' + hic + ' style="left:' + l + '%;animation-name:' + dir + ';animation-delay:-' + d + 's;width:' + sz + 'px;height:' + sz + 'px;animation-duration:' + dur + 's"></i>';
@@ -115,7 +118,7 @@
       var hiu = Math.random() < 0.3 ? ' class="hi"' : '';
       html += '<u' + hiu + ' style="left:' + lx + '%;top:' + ly + '%;width:' + ss + 'px;height:' + ss + 'px;animation-delay:-' + dd + 's"></u>';
     }
-    html += '<b class="m1"></b><b class="m2"></b><b class="m3"></b>';
+    html += '<b class="m1"></b><b class="m2"></b>';
     fx.innerHTML = html;
     document.body.appendChild(fx);
   }
