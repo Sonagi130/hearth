@@ -1,8 +1,11 @@
 /* 壁炉 · service worker
    作用：让浏览器认得出这是个能装的 App（不只是个网页）。
-   策略：网络优先，断网时退回缓存。 */
-
-var CACHE = 'hearth-v4';
+   策略：
+   - 大件静态库（galaxy/lib/、sky/、three 等）→ 缓存优先，一次下载，永久用。
+   - 其它（自己写的代码/页面）→ 网络优先，断网退缓存，改了就立刻生效。
+*/
+var CACHE = 'hearth-v5';
+var IMMUTABLE = /\/galaxy\/lib\/|\/sky\/|three\.module|\.woff2?$/;
 var CORE = [
   './',
   './index.html',
@@ -16,9 +19,10 @@ var CORE = [
   './chatmenu.js',
   './inputbar.js',
   './guhuai.js',
-  './manifest.json'
+  './manifest.json',
+  './galaxy/galaxy.html',
+  './galaxy/lib/three.module.js'
 ];
-
 self.addEventListener('install', function (e) {
   self.skipWaiting();
   e.waitUntil(
@@ -29,7 +33,6 @@ self.addEventListener('install', function (e) {
     })
   );
 });
-
 self.addEventListener('activate', function (e) {
   e.waitUntil(
     caches.keys().then(function (ks) {
@@ -39,12 +42,25 @@ self.addEventListener('activate', function (e) {
     }).then(function () { return self.clients.claim(); })
   );
 });
-
 self.addEventListener('fetch', function (e) {
   var req = e.request;
   if (req.method !== 'GET') return;
   if (req.url.indexOf(self.location.origin) !== 0) return;
-
+  // 大件静态资源：缓存优先（有就用，没有才下载）
+  if (IMMUTABLE.test(req.url)) {
+    e.respondWith(
+      caches.match(req).then(function (hit) {
+        if (hit) return hit;
+        return fetch(req).then(function (res) {
+          var copy = res.clone();
+          caches.open(CACHE).then(function (c) { c.put(req, copy); }).catch(function () {});
+          return res;
+        });
+      })
+    );
+    return;
+  }
+  // 其它：网络优先，断网退缓存
   e.respondWith(
     fetch(req, { cache: 'no-cache' }).then(function (res) {
       var copy = res.clone();
