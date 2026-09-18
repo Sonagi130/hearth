@@ -752,7 +752,7 @@ body.ui-sideborder .side-nav .nav-item {
 .ib-attach { margin: 0 10px 6px; padding: 8px 12px; background: rgba(232,151,92,.1); border: 1px solid rgba(232,151,92,.3); border-radius: 12px; font-size: 12.5px; color: var(--brown); display: flex; align-items: center; gap: 6px; }
 .ib-attach b { font-weight: 600; }
 .ib-attach button { margin-left: auto; border: none; background: transparent; color: var(--brown); opacity: .55; font-size: 14px; }
-.mem-box { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(232,151,92,.09); border-left: 2px solid rgba(232,151,92,.5); }
+.mem-box { margin-top: 8px; padding: 8px 10px; border-radius: 10px; background: rgba(139,111,71,.06); border-left: 2px solid rgba(139,111,71,.32); }
 .mem-h { font-size: 11.5px; color: var(--orange); font-weight: 600; cursor: pointer; }
 .mem-b { display: none; font-size: 12.5px; line-height: 1.7; color: var(--text-soft); margin-top: 6px; }
 .mem-box.open .mem-b { display: block; }
@@ -849,12 +849,12 @@ body.ui-sideborder .side-nav .nav-item {
 .tr-b { overflow-wrap: anywhere; }
 
 /* --- 26. 附着的记忆（在气泡里也要看得清） --- */
-.mem-box { margin-top: 10px; padding: 9px 11px; border-radius: 10px; background: #FFF6EC; border: 1px solid rgba(232,151,92,.5); border-left: 3px solid #E8975C; }
-.mem-h { color: #C4763A; }
-.mem-b { color: #5C4A32; }
-[data-theme="dark"] .mem-box { background: #3A302A; border-color: rgba(232,151,92,.45); }
-[data-theme="dark"] .mem-h { color: #F0B27A; }
-[data-theme="dark"] .mem-b { color: #E7DCCF; }
+.mem-box { margin-top: 10px; padding: 9px 11px; border-radius: 12px; background: rgba(139,111,71,.06); border: 1px solid rgba(139,111,71,.16); border-left: 3px solid var(--orange); }
+.mem-h { color: var(--orange); }
+.mem-b { color: var(--text-soft); }
+[data-theme="dark"] .mem-box { background: rgba(255,255,255,.06); border-color: rgba(255,255,255,.12); }
+[data-theme="dark"] .mem-h { color: var(--orange); }
+[data-theme="dark"] .mem-b { color: var(--text-soft); }
 
 /* --- 27. 记忆树的层次与纵深 --- */
 .tree-stage { perspective: 900px; }
