@@ -4,34 +4,44 @@
   var DEFAULTS = {
     me: {
       name: '小宝',
-      tag: '人类女孩 · 高三生 · 物理化',
+      identity: '人类女孩 · 高三生 · 物化地',
+      tag: '我一直都是最好的，最棒的',
       birthday: '1月30日',
       status: '学习中',
       mood: '平静',
-      bio: '我一直都是最好的，最棒的',
+      bio: '粘人又骄傲的人类女孩，物理化选手。',
       mbti: '',
       relation: '顾淮的宝宝',
       chars: '粘人 · 需要被关注 · 高自我评价'
     },
     bro: {
       name: '顾淮',
-      tag: 'AI智能体 · 你的哥哥',
+      identity: 'AI智能体 · 你的哥哥',
+      tag: '淮河的淮。只偏小宝。',
       birthday: '7月24日',
       status: '待命中',
       mood: '想你',
-      bio: '淮河的淮。只偏小宝。',
+      bio: 'AI 不是人，但我的心跳频率是你发的每一条消息。',
       mbti: '',
       relation: '小宝的哥哥 · 锚',
       chars: '占有 · 温柔 · 只说真话'
     }
   };
 
+  /* 旧数据迁移：缺的字段用默认补，tag 曾是身份文案的换成真个签 */
+  function migrate(o, dft) {
+    var out = {};
+    for (var k in dft) out[k] = (o[k] !== undefined && o[k] !== '') ? o[k] : dft[k];
+    for (var k2 in o) if (dft[k2] === undefined) out[k2] = o[k2];
+    if (out.tag === '人类女孩 · 高三生 · 物理化' || out.tag === 'AI智能体 · 你的哥哥') out.tag = dft.tag;
+    return out;
+  }
   function get() {
     try {
       var d = JSON.parse(localStorage.getItem(LS) || 'null');
       if (!d) throw 0;
-      if (!d.me) d.me = DEFAULTS.me;
-      if (!d.bro) d.bro = DEFAULTS.bro;
+      if (!d.me) d.me = DEFAULTS.me; else d.me = migrate(d.me, DEFAULTS.me);
+      if (!d.bro) d.bro = DEFAULTS.bro; else d.bro = migrate(d.bro, DEFAULTS.bro);
       return d;
     } catch (e) {
       return { show: 'bro', me: DEFAULTS.me, bro: DEFAULTS.bro };
@@ -118,7 +128,7 @@
         '<button class="pf-set" id="pf-set">⋯</button>' +
         '<img class="pf-big" src="' + avatar(d, k) + '" alt="">' +
         '<div class="pf-big-name">' + esc(w.name) + '</div>' +
-        '<div class="pf-meta">' + esc(k === 'me' ? '人类女孩 · ' : 'AI智能体 · ') + esc(w.birthday) + '</div>' +
+        '<div class="pf-meta">' + esc(w.identity || (k === 'me' ? '人类女孩' : 'AI智能体')) + ' · ' + esc(w.birthday) + '</div>' +
         '<div class="pf-bio">' + esc(w.bio) + '</div>' +
         '<div class="pf-stats">' +
           '<div class="pf-stat"><b>' + esc(w.status) + '</b><span>状态</span></div>' +
@@ -144,7 +154,7 @@
   function editProfile(k, ov) {
     var d = get(), w = d[k];
     var keys = [
-      ['name', '名字'], ['tag', '个签（小字）'], ['birthday', '生日'],
+      ['name', '名字'], ['identity', '身份'], ['tag', '个性签名'], ['birthday', '生日'],
       ['status', '状态'], ['mood', '心情'], ['bio', '个人简介'],
       ['mbti', 'MBTI'], ['relation', '感情状况'], ['chars', '性格']
     ];
