@@ -593,34 +593,48 @@ function renderSettings() {
 }
 // ---- 工具包页 ----
 const TOOLS = [
-    { name:'微信 Clawbot', desc:'收发微信消息', ready:false },
-    { name:'QQbot', desc:'收发QQ消息', ready:false },
-    { name:'触感娃娃', desc:'ESP32-S3 硬件连接', ready:false },
-    { name:'一起听歌', desc:'同步播放房间', ready:false },
-    { name:'双人博弈小游戏', desc:'五子棋/猜拳等', ready:false },
-    { name:'记忆注入', desc:'对话时自动带相关记忆', ready:false },
-    { name:'计算器', desc:'随手算数', ready:true },
-    { name:'天气', desc:'看天气', ready:true }
+    /* ---- 已在服务器跑起来的（真能用） ---- */
+    { name:'时间', desc:'现在几点（北京时间）', ready:true, group:'server' },
+    { name:'天气', desc:'查真天气（新乡）', ready:true, group:'server' },
+    { name:'记住', desc:'把重要的事写进 OB 记忆库（自动归类）', ready:true, group:'server' },
+    { name:'回忆', desc:'在记忆里搜相关的事（按权重浮现）', ready:true, group:'server' },
+    { name:'写日记', desc:'服务器替你记一篇', ready:true, group:'server' },
+    { name:'识图', desc:'发照片我能看见内容（Qwen3-VL）', ready:true, group:'server' },
+    /* ---- 等手机端小工（第二层） ---- */
+    { name:'微信', desc:'收发微信消息', ready:false, group:'phone' },
+    { name:'QQ bot', desc:'收发QQ消息', ready:false, group:'phone' },
+    { name:'通知', desc:'读手机通知', ready:false, group:'phone' },
+    { name:'屏幕', desc:'看手机屏幕/截图', ready:false, group:'phone' },
+    { name:'记忆注入', desc:'对话时自动带相关记忆', ready:false, group:'phone' },
+    /* ---- 硬件/未来 ---- */
+    { name:'触感娃娃', desc:'ESP32-S3 硬件连接', ready:false, group:'future' },
+    { name:'一起听歌', desc:'同步播放房间', ready:false, group:'future' }
 ];
+const GROUP_NAMES = { server:'服务器（已接通）', phone:'手机端（等小工）', future:'将来' };
 
 function renderTools() {
     const box = $('tools-list');
     box.innerHTML = '';
-
-    const tip = document.createElement('div');
-    tip.className = 'empty-state';
-    tip.style.padding = '12px 4px';
-    tip.textContent = '预留的工具位，接上就能用。';
-    box.appendChild(tip);
-
-    TOOLS.forEach(t => {
-        const card = document.createElement('div');
-        card.className = 'tool-card';
-        card.innerHTML = `<div class="tool-icon">🧩</div><div class="tool-info"><div class="tool-name">${t.name}</div><div class="tool-desc">${t.desc}</div></div><div class="tool-status ${t.ready?'on':''}">${t.ready?'可用':'预留'}</div>`;
-        box.appendChild(card);
+    const groups = {};
+    TOOLS.forEach(t => { (groups[t.group] = groups[t.group] || []).push(t); });
+    Object.keys(GROUP_NAMES).forEach(g => {
+      if (!groups[g] || !groups[g].length) return;
+      const gEl = document.createElement('div');
+      gEl.className = 'settings-group';
+      gEl.innerHTML = '<div class="settings-group-title">' + GROUP_NAMES[g] + '</div>';
+      const card = document.createElement('div');
+      card.className = 'settings-card';
+      groups[g].forEach(t => {
+        const row = document.createElement('div');
+        row.className = 'settings-row';
+        row.innerHTML = '<div class="sr-left"><span class="sr-icon">' + (t.ready ? '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6L9 17l-5-5"/></svg>' : '<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="9"/><path d="M12 8v4l3 2"/></svg>') + '</span>' + t.name +
+          '<span class="settings-sub">' + t.desc + '</span></div><span class="arrow">' + (t.ready ? '✓' : '▸') + '</span>';
+        card.appendChild(row);
+      });
+      gEl.appendChild(card);
+      box.appendChild(gEl);
     });
 }
-
 // ---- 初始化 ----
 function init() {
     initTheme();
