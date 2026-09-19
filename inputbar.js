@@ -108,7 +108,29 @@
     } catch (e) {}
     return 'https://api.guhuai724.top';
   }
-  function describeImage(dataUrl) {
+  function compressImage(dataUrl) {
+    return new Promise(function (ok) {
+      var img = new Image();
+      img.onload = function () {
+        try {
+          var MAX = 1280;
+          var w = img.width, h = img.height;
+          var scale = Math.min(1, MAX / Math.max(w, h));
+          if (scale >= 1 && dataUrl.length < 700000) { ok(dataUrl); return; }
+          w = Math.round(w * scale); h = Math.round(h * scale);
+          var c = document.createElement('canvas');
+          c.width = w; c.height = h;
+          var cx = c.getContext('2d');
+          cx.drawImage(img, 0, 0, w, h);
+          var out = c.toDataURL('image/jpeg', 0.72);
+          ok(out.length < dataUrl.length ? out : dataUrl);
+        } catch (e) { ok(dataUrl); }
+      };
+      img.onerror = function () { ok(dataUrl); };
+      img.src = String(dataUrl || '');
+    });
+  }
+    function describeImage(dataUrl) {
     return new Promise(function (ok, no) {
       var img = String(dataUrl || '');
       if (!img) return no(new Error('no img'));
@@ -143,9 +165,11 @@
       var r = new FileReader();
       r.onload = function () {
         var data = String(r.result || '');
-        // 先传服务器拿 URL（不占手机存储），再识图描述，最后发一条轻量的
-        uploadImage(data).then(function (url) {
-          describeImage(data).then(function (desc) {
+        // 先压缩（手机照片太大，直接传会被服务器上限切断），再传服务器拿 URL，最后识图描述
+        compressImage(data).then(function (small) {
+          return uploadImage(small);
+        }).then(function (url) {
+          return describeImage(data).then(function (desc) {
             say('__IMG__' + url + '|' + String(desc).slice(0, 200));
           }).catch(function () {
             say('__IMG__' + url);
