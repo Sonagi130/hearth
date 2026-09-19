@@ -142,10 +142,28 @@
     div.insertBefore(av, div.firstChild);
   }
 
+  function apiBase() {
+    try {
+      var u = (Store.get('apiConf') || {}).url || '';
+      u = String(u).replace(/\/+$/, '').replace(/\/v\d+$/, '');
+      if (u) return u;
+    } catch (e) {}
+    return 'https://api.guhuai724.top';
+  }
   function bodyHTML(t) {
     t = String(t == null ? '' : t);
     if (t.indexOf('__IMG__') === 0) {
-      return '<img class="msg-img" src="' + t.slice(7).replace(/"/g, '') + '" alt="">';
+      var rest = t.slice(7);
+      var bar = rest.indexOf('|');
+      var src = bar >= 0 ? rest.slice(0, bar) : rest;
+      var desc = bar >= 0 ? rest.slice(bar + 1) : '';
+      src = src.replace(/"/g, '');
+      // 老的 data: 图片原样；新的是服务器路径，拼域名
+      if (src.indexOf('data:') !== 0 && src.indexOf('/uploads/') === 0) {
+        src = apiBase() + src;
+      }
+      return '<img class="msg-img" src="' + src + '" alt="">' +
+        (desc ? '<div class="msg-img-desc">' + String(desc).slice(0, 200) + '</div>' : '');
     }
     if (t.indexOf('__AUD__') === 0) {
       var rest = t.slice(7);
