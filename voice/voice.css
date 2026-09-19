@@ -34,3 +34,14 @@
 .vc-hang { background: #e74c3c; color: #fff; }
 .vc-btn:disabled { opacity: .4; cursor: not-allowed; }
 .vc-tip { font-size: 12px; color: var(--sub, #999); margin-top: 18px; }
+
+/* v2 通话 overlay */
+.vc-overlay .vc-banner {
+  position: absolute; top: 0; left: 0; right: 0; height: 30vh;
+  background: linear-gradient(160deg, #1b2a4a, rgba(20,20,30,0) 75%);
+  pointer-events: none;
+}
+.vc-overlay .vc-page {
+  position: relative; padding: 0 20px 40px; text-align: center; margin-top: 20vh;
+}
+.vc-overlay .vc-hero { font-size: 22px; font-weight: 800; margin: 18px 0 8px; }
