@@ -1,0 +1,36 @@
+/* ===== 通话 ===== */
+.vc-card { position: relative; }
+.vc-open {
+  margin-top: 8px; padding: 8px 14px;
+  background: var(--accent, #4a6cf7); color: #fff;
+  border: none; border-radius: 10px; font-size: 14px; cursor: pointer;
+}
+.voice-wrap { padding: 16px; text-align: center; }
+.vc-hero { font-size: 20px; font-weight: 700; margin: 18px 0 10px; }
+.vc-status {
+  font-size: 15px; min-height: 22px; margin: 10px 0;
+  color: var(--sub, #888);
+}
+.vc-level {
+  height: 8px; border-radius: 4px; background: rgba(128,128,128,.2);
+  margin: 12px auto; width: 70%; overflow: hidden;
+}
+.vc-level-fill {
+  height: 100%; width: 4%; border-radius: 4px;
+  background: linear-gradient(90deg, #4a6cf7, #7c5cf7);
+  transition: width .12s ease-out;
+}
+.vc-sub { min-height: 40px; margin: 14px auto; width: 90%; }
+.vc-line {
+  font-size: 13px; color: var(--sub, #777); padding: 3px 0;
+  border-bottom: 1px dashed rgba(128,128,128,.15);
+}
+.vc-btns { display: flex; gap: 14px; justify-content: center; margin: 16px 0; }
+.vc-btn {
+  padding: 12px 26px; border-radius: 24px; border: none;
+  font-size: 15px; cursor: pointer; font-weight: 600;
+}
+.vc-call { background: #2ecc71; color: #fff; }
+.vc-hang { background: #e74c3c; color: #fff; }
+.vc-btn:disabled { opacity: .4; cursor: not-allowed; }
+.vc-tip { font-size: 12px; color: var(--sub, #999); margin-top: 18px; }
