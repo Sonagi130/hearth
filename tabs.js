@@ -58,6 +58,13 @@
     document.querySelectorAll('.tab-bar .tab-item[data-page]').forEach(function (b) {
       b.onclick = function () { go(b.dataset.page); };
     });
+    document.querySelectorAll('.side-nav .nav-foot-btn[data-page]').forEach(function (b) {
+      b.onclick = function () {
+        go(b.dataset.page);
+        var n = $('side-nav'); if (n) n.classList.remove('open');
+        var o = $('nav-overlay'); if (o) o.classList.remove('show');
+      };
+    });
     var more = $('tab-more');
     if (more) more.onclick = function () {
       var n = $('side-nav'), o = $('nav-overlay');
