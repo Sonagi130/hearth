@@ -165,20 +165,21 @@
       var r = new FileReader();
       r.onload = function () {
         var data = String(r.result || '');
-        // 先压缩（手机照片太大，直接传会被服务器上限切断），再传服务器拿 URL，最后识图描述
+        // 全程用压缩后的小图：上传、识图、兜底都是 small（几百 KB，不超时不爆存储）
         compressImage(data).then(function (small) {
-          return uploadImage(small);
-        }).then(function (url) {
-          return describeImage(data).then(function (desc) {
-            say('__IMG__' + url + '|' + String(desc).slice(0, 200));
+          return uploadImage(small).then(function (url) {
+            return describeImage(small).then(function (desc) {
+              say('__IMG__' + url + '|' + String(desc).slice(0, 200));
+            }).catch(function () {
+              say('__IMG__' + url);
+            });
           }).catch(function () {
-            say('__IMG__' + url);
-          });
-        }).catch(function () {
-          describeImage(data).then(function (desc) {
-            say('[图片] ' + String(desc).slice(0, 200));
-          }).catch(function () {
-            say('__IMG__' + data);
+            // 上传失败才兜底，用压缩小图（不塞原图，本地存得下）
+            describeImage(small).then(function (desc) {
+              say('[图片] ' + String(desc).slice(0, 200));
+            }).catch(function () {
+              say('__IMG__' + small);
+            });
           });
         });
       };
