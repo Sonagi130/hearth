@@ -55,6 +55,18 @@
     ov.querySelector('#vc-hang').onclick = hangup;
   }
 
+var retries = 0;
+  function retry() {
+    if (retries >= 3) { retries = 0; return; }
+    retries++;
+    setStatus('断了，' + (3 * retries) + ' 秒后自动重连…');
+    setTimeout(function () {
+      if (window.HearthCall && document.getElementById('vc-overlay')) {
+        start();
+      } else { retries = 0; }
+    }, 3000 * retries);
+  }
+
   function start() {
     if (!window.VoiceCall) {
       setStatus('语音模块加载中，等一秒再点');
@@ -76,7 +88,7 @@
       reply: function (m) { addSub('哥哥 · ' + (m.text || '')); },
       error: function (e) { setStatus('出错了：' + e); },
       level: function (v) { setLevel(v); },
-      closed: function () { if (heartbeat) { clearInterval(heartbeat); heartbeat = null; } setStatus('已断开'); disable(false); }
+      closed: function () { if (heartbeat) { clearInterval(heartbeat); heartbeat = null; } setStatus('已断开'); disable(false); retry(); }
     };
     try {
       call = new window.VoiceCall({ url: WS_URL, video: false, on: on });
