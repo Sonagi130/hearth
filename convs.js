@@ -23,6 +23,39 @@
   }
 
   function save(list) { Store.set('convs', list); }
+  /* 启动自检：清掉历史超大 base64 图（一张几 MB，把 localStorage 撑爆的元凶） */
+  function purgeHuge() {
+    var list = Store.get('convs', null);
+    if (!list || !list.length) return;
+    var changed = false;
+    for (var i = 0; i < list.length; i++) {
+      var msgs = list[i].msgs || [];
+      for (var j = 0; j < msgs.length; j++) {
+        var t = String(msgs[j].text || '');
+        if (t.indexOf('__IMG__') === 0 && t.indexOf('data:') === 7) {
+          // 老式：整张 base64 存在消息里。若 2 秒都存不下就截断成占位。
+          var b64 = t.slice(7);
+          if (b64.length > 200000) {
+            msgs[j].text = '__IMG__[旧图片已清理，原图超大无法保留在本地]';
+            changed = true;
+          }
+        } else if (t.indexOf('__IMG__') === 0 && t.indexOf('/uploads/') === 7) {
+          // 新版：只存 URL，几字节，没事。
+        } else if (t.indexOf('__IMG__') === 0) {
+          var b2 = t.slice(7);
+          if (b2.length > 200000) {
+            msgs[j].text = '__IMG__[旧图片已清理]';
+            changed = true;
+          }
+        }
+      }
+    }
+    if (changed) {
+      try { Store.set('convs', list); } catch (e) { /* 还是存不下就到顶了 */ }
+    }
+  }
+  try { purgeHuge(); } catch (e) {}
+
 
   function conc() {
     var list = load();
