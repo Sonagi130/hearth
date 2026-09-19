@@ -33,6 +33,10 @@
     plus: I('<path d="M12 5v14"/><path d="M5 12h14"/>')
   };
 
+  ICONS.mic = I('<path d="M12 2a3 3 0 0 1 3 3v6a3 3 0 0 1-6 0V5a3 3 0 0 1 3-3z"/><path d="M19 10v1a7 7 0 0 1-14 0v-1"/><path d="M12 18v4"/>');
+  ICONS.chart = I('<path d="M18 20V10"/><path d="M12 20V4"/><path d="M6 20v-6"/>');
+  ICONS.home = I('<path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/>');
+  ICONS.cloud = I('<path d="M18 18a4 4 0 0 0-1-7.9A5.5 5.5 0 0 0 6.2 12 3.5 3.5 0 0 0 6 18z"/>');
   window.HearthIcons = ICONS;
 
   /* ---------- 外观状态 ---------- */
@@ -776,6 +780,7 @@
   }
     /* ---------- 对外暴露：让设置页可以调用这些真正的功能 ---------- */
   window.HearthUI = {
+    icons: ICONS,
     theme: shTheme, avatar: shAvatar, bubble: shBubble, card: shCard, chat: shChat, sidebar: shSidebar,
     notify: shNotify, tools: shTools, data: shData, usage: shUsage, server: shServer, about: shAbout,
     bg: pickBg, thinking: myThinking,
