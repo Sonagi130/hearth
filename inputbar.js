@@ -410,7 +410,10 @@
     var items = [
       { ic: I.album, name: '相册', on: function () { pickImg(false); } },
       { ic: I.cam, name: '拍照', on: function () { pickImg(true); } },
-      { ic: I.call, name: '通话', on: function () { hint2('通话还没接上。等能打电话那天再通。'); } },
+      { ic: I.call, name: '通话', on: function () {
+          if (window.HearthCall && window.HearthCall.open) { window.HearthCall.open(); }
+          else { hint2('通话模块没起来，刷新页面试试。'); }
+        } },
       { ic: I.pin, name: '位置', on: sendLoc },
       { ic: I.mem, name: '记忆', on: pickMem },
       { ic: I.file, name: '文件', on: pickFile }
