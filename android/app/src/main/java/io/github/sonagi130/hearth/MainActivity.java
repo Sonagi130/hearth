@@ -80,7 +80,7 @@ public class MainActivity extends Activity {
         if (req == REQ_FILE) {
             if (filePathCallback != null) {
                 Uri[] uris = (res == RESULT_OK && data != null)
-                        ? FileChooserParams.parseResult(res, data) : null;
+                        ? WebChromeClient.FileChooserParams.parseResult(res, data) : null;
                 filePathCallback.onReceiveValue(uris);
                 filePathCallback = null;
             }
