@@ -121,6 +121,17 @@
       }).catch(no);
     });
   }
+  function uploadImage(dataUrl) {
+    return new Promise(function (ok, no) {
+      fetch(visionBase() + '/api/upload', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ img: String(dataUrl || '') })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.ok && j.url) ok(j.url); else no(new Error((j && j.error) || 'upload no url'));
+      }).catch(no);
+    });
+  }
   function pickImg(camera) {
     var inp = document.createElement('input');
     inp.type = 'file';
@@ -132,18 +143,26 @@
       var r = new FileReader();
       r.onload = function () {
         var data = String(r.result || '');
-        describeImage(data).then(function (desc) {
-          say('[图片] ' + String(desc).slice(0, 200));
+        // 先传服务器拿 URL（不占手机存储），再识图描述，最后发一条轻量的
+        uploadImage(data).then(function (url) {
+          describeImage(data).then(function (desc) {
+            say('__IMG__' + url + '|' + String(desc).slice(0, 200));
+          }).catch(function () {
+            say('__IMG__' + url);
+          });
         }).catch(function () {
-          say('__IMG__' + data);
+          describeImage(data).then(function (desc) {
+            say('[图片] ' + String(desc).slice(0, 200));
+          }).catch(function () {
+            say('__IMG__' + data);
+          });
         });
       };
       r.readAsDataURL(f);
     };
     inp.click();
   }
-
-  function pickFile() {
+    function pickFile() {
     var inp = document.createElement('input');
     inp.type = 'file';
     inp.onchange = function () {
