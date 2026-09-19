@@ -183,7 +183,10 @@
     if (rec) return;
     if (!navigator.mediaDevices || !window.MediaRecorder) { alert('这台手机不支持录音。'); return; }
     var m = $('ib-mic');
-    navigator.mediaDevices.getUserMedia({ audio: true }).then(function (st) {
+    navigator.mediaDevices.getUserMedia({ audio: true }).catch(function (e) {
+      hint2('麦克风打不开（' + ((e && e.name) || e) + '）——去「设置 → 工具权限」点一下重新授权。');
+      throw e;
+    }).then(function (st) {
       chunks = [];
       try { rec = new MediaRecorder(st, { audioBitsPerSecond: 24000 }); }
       catch (e) { rec = new MediaRecorder(st); }
