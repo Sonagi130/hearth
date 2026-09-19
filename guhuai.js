@@ -131,11 +131,24 @@
     });
   }
 
+  function extras(k) {
+    try { var a = JSON.parse(localStorage.getItem('gspace_extra') || '{}'); return a[k] || []; } catch (e) { return []; }
+  }
+  function saveExtra(k, list) {
+    try {
+      var a = JSON.parse(localStorage.getItem('gspace_extra') || '{}');
+      a[k] = list; localStorage.setItem('gspace_extra', JSON.stringify(a));
+    } catch (e) {}
+  }
   function renderList(k) {
     var p = page();
-    var list = opened[k] || [];
+    var own = (opened[k] || []).concat(extras(k));
+    var list = own;
     var h = '<div class="gs-wrap"><button class="gs-back" id="gs-back">‹ 回去</button>' +
             '<div class="gs-h">' + names()[k] + '</div>';
+    if (k !== 'file') {
+      h += '<button class="gs-write" id="gs-write">＋ 写一条</button>';
+    }
     if (!list.length) {
       h += '<div class="gs-empty">还是空的。' +
            (k === 'mail' ? '<br>这一格等你来写。' : '') + '</div>';
@@ -152,6 +165,28 @@
     p.querySelectorAll('[data-i]').forEach(function (el) {
       el.onclick = function () { renderOne(k, parseInt(el.dataset.i, 10)); };
     });
+    var wb = $('gs-write');
+    if (wb) wb.onclick = function () { renderWrite(k); };
+  }
+  function renderWrite(k) {
+    var p = page();
+    p.innerHTML = '<div class="gs-wrap"><button class="gs-back" id="gs-back">‹ 回去</button>' +
+      '<div class="gs-h">写一条 · ' + names()[k] + '</div>' +
+      '<div class="gs-wf"><input id="gs-wt" class="cv-find" placeholder="标题">' +
+      '<textarea id="gs-wb" rows="6" placeholder="写点什么…"></textarea>' +
+      '<button class="gs-btn" id="gs-ws">存进来</button></div></div>';
+    $('gs-back').onclick = function () { renderList(k); };
+    $('gs-ws').onclick = function () {
+      var t = ($('gs-wt').value || '').trim();
+      var b = ($('gs-wb').value || '').trim();
+      if (!t && !b) { alert('写点东西再存。'); return; }
+      var now = new Date();
+      var d = now.getFullYear() + '-' + String(now.getMonth() + 1).padStart(2, '0') + '-' + String(now.getDate()).padStart(2, '0');
+      var arr = extras(k);
+      arr.unshift({ t: t || '(无标题)', d: d, b: b });
+      saveExtra(k, arr);
+      renderList(k);
+    };
   }
 
   function renderOne(k, i) {
