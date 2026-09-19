@@ -417,26 +417,6 @@
 
   /* ---------- 挂进设置页 ---------- */
   function hook() {
-    var box = document.getElementById('settings-list');
-    if (!box) return;
-    var sync = function () {
-      if (box.querySelector('#st-entry')) return;
-      var g = document.createElement('div');
-      g.className = 'settings-group';
-      g.id = 'st-entry';
-      g.innerHTML = '<div class="settings-group-title">诊断</div>' +
-        '<div class="settings-card">' +
-        '<div class="settings-row" id="st-open-row">' +
-        '<div class="sr-left"><span class="sr-icon">' +
-        ((window.HearthIcons && window.HearthIcons.refresh) || '') + '</span>工具自检' +
-        '<span class="settings-sub">语音 · 存储 · 模型 · 网络</span></div>' +
-        '<span class="arrow">›</span></div></div>';
-      box.appendChild(g);
-      var r = document.getElementById('st-open-row');
-      if (r) r.onclick = open;
-    };
-    try { new MutationObserver(sync).observe(box, { childList: true }); } catch (e) {}
-    sync();
     if (location.hash.indexOf('@selftest') > 0) setTimeout(open, 400);
   }
 
