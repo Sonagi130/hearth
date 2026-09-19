@@ -1,0 +1,43 @@
+{
+  "packageId": "io.github.sonagi130.hearth",
+  "host": "sonagi130.github.io",
+  "name": "壁炉",
+  "launcherName": "壁炉",
+  "display": "standalone",
+  "themeColor": "#E8975C",
+  "themeColorDark": "#101725",
+  "navigationColor": "#FFFFFF",
+  "navigationColorDark": "#101725",
+  "navigationDividerColor": "#EEEEEE",
+  "navigationDividerColorDark": "#101725",
+  "backgroundColor": "#FFF8F0",
+  "enableNotifications": true,
+  "startUrl": "/hearth/index.html",
+  "iconUrl": "https://sonagi130.github.io/hearth/icon-512.png",
+  "maskableIconUrl": "https://sonagi130.github.io/hearth/icon-512.png",
+  "splashScreenFadeOutDuration": 300,
+  "signingKey": {
+    "path": "./android.keystore",
+    "alias": "android"
+  },
+  "appVersionName": "1.0.0",
+  "appVersionCode": 1,
+  "shortcuts": [],
+  "generatorApp": "bubblewrap-cli",
+  "webManifestUrl": "https://sonagi130.github.io/hearth/manifest.json",
+  "fallbackType": "customtabs",
+  "features": {
+    "locationDelegation": { "enabled": true }
+  },
+  "alphaDependencies": { "enabled": false },
+  "enableSiteSettingsShortcut": true,
+  "isChromeOSOnly": false,
+  "isMetaQuest": false,
+  "fullScopeUrl": "https://sonagi130.github.io/hearth/",
+  "minSdkVersion": 23,
+  "orientation": "portrait",
+  "fingerprints": [],
+  "additionalTrustedOrigins": [],
+  "retainedBundles": [],
+  "appVersion": "1.0.0"
+}
