@@ -609,13 +609,41 @@
           n = Math.max(1, Math.min(10, parseInt(n, 10) || 3));
           setUI('keepN', n);
         } },
+      { icon: ICONS.trash, name: '清理图片缓存', sub: '清历史超大图片，释放存储', on: cleanImgCache },
       { icon: ICONS.refresh, name: '最近数据恢复', sub: '看历史备份', on: listBak },
       { icon: ICONS.bell, name: '为什么要备份', sub: '换手机、清缓存、误删——有它就丢不了' },
       { icon: ICONS.bell, name: '备份在哪', sub: '就在你导出的那个文件里，不上传任何地方' },
       { icon: ICONS.bell, name: '导入重复怎么办', sub: '同一条自动跳过，不会变两份' }
     ]);
   }
-  /* ---------- 备份 ---------- */
+  function cleanImgCache() {
+    var freed = 0, cleaned = 0;
+    try {
+      var list = Store.get('convs', null);
+      if (list && list.length) {
+        for (var i = 0; i < list.length; i++) {
+          var msgs = list[i].msgs || [];
+          for (var j = 0; j < msgs.length; j++) {
+            var t = String(msgs[j].text || '');
+            if (t.indexOf('__IMG__') === 0 && t.indexOf('/uploads/') !== 7) {
+              // 不是新格式（URL），是老式 base64 或其它，size 大就清
+              var body = t.slice(7);
+              if (body.length > 50000) {
+                freed += body.length;
+                msgs[j].text = '__IMG__[历史图片已清理]';
+                cleaned++;
+              }
+            }
+          }
+        }
+        Store.set('convs', list);
+      }
+    } catch (e) { alert('清理出错：' + (e && e.message)); return; }
+    alert(cleaned
+      ? '清掉 ' + cleaned + ' 张历史大图，释放约 ' + Math.round(freed / 1024) + ' KB。\n旧图片被替换成占位符，新的不受影响。'
+      : '没有发现需要清理的历史大图。');
+  }
+    /* ---------- 备份 ---------- */
   function dumpKeys() {
     var o = {};
     Object.keys(localStorage).forEach(function (k) {
