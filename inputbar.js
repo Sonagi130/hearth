@@ -113,7 +113,7 @@
       var img = new Image();
       img.onload = function () {
         try {
-          var MAX = 1280;
+          var MAX = 1600;
           var w = img.width, h = img.height;
           var scale = Math.min(1, MAX / Math.max(w, h));
           if (scale >= 1 && dataUrl.length < 700000) { ok(dataUrl); return; }
@@ -122,7 +122,7 @@
           c.width = w; c.height = h;
           var cx = c.getContext('2d');
           cx.drawImage(img, 0, 0, w, h);
-          var out = c.toDataURL('image/jpeg', 0.72);
+          var out = c.toDataURL("image/jpeg", 0.85);
           ok(out.length < dataUrl.length ? out : dataUrl);
         } catch (e) { ok(dataUrl); }
       };
