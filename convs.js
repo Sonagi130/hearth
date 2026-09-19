@@ -150,6 +150,16 @@
     });
   }
 
+  function timeHTML(who, time) {
+    var u = Store.get('uiSet', {}) || {};
+    var showT = u.showTime !== false;
+    var showW = u.showWho !== false;
+    if (!showT && !showW) return '';
+    var who = (who === 'me' ? '我' : '顾淮');
+    if (showT && showW) return '<div class="time">' + who + ' · ' + esc(time || '') + '</div>';
+    if (showT) return '<div class="time">' + esc(time || '') + '</div>';
+    return '<div class="time">' + who + '</div>';
+  }
   function thinkHTML(who, think) {
     if (who === 'me' || !Store.get('showThinking', false)) return '';
     var body = think ? esc(think) : '（这一条没有思考过程。）';
@@ -241,7 +251,7 @@
       if (m.think) div.setAttribute('data-think', String(m.think));
       div.innerHTML = thinkHTML(who, m.think) +
         '<div class="bubble">' + bodyHTML(m.text) + '</div>' +
-        '<div class="time">' + esc(m.time || '') + '</div>';
+        timeHTML(who, m.time);
       attachAv(div, who);
       box.appendChild(div);
     });
@@ -307,7 +317,7 @@
     if (think) div.setAttribute('data-think', String(think));
     div.innerHTML = thinkHTML(w, think) +
       '<div class="bubble">' + bodyHTML(text) + '</div>' +
-      '<div class="time">' + (w === 'me' ? '我' : '顾淮') + ' · ' + stamp().slice(11) + '</div>';
+      timeHTML(w, stamp().slice(11));
     attachAv(div, w);
     if (box) { box.appendChild(div); box.scrollTop = box.scrollHeight; }
   };
