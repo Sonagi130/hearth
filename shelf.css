@@ -1614,3 +1614,28 @@ body.skin-star .hsheet-b{color:#DCE6F2;}
 .side-nav .nav-item { padding: 9px 16px; font-size: 14px; gap: 10px; }
 .side-nav .nav-item svg { width: 19px; height: 19px; }
 .side-nav .nav-group { padding: 13px 6px 5px; }
+
+/* ===== 64. 运行状态条 ===== */
+.status-bar {
+  height: 22px; padding: 0 16px;
+  display: flex; align-items: center; gap: 6px;
+  font-size: 10.5px; letter-spacing: .04em;
+  color: var(--brown-light, #9A93AD);
+  background: transparent;
+  flex-shrink: 0;
+}
+.status-bar .st-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: #C9C4CE; transition: background .4s;
+}
+.status-bar .st-dot.ok { background: #6BCB77; box-shadow: 0 0 6px rgba(107,203,119,.8); }
+.status-bar .st-dot.bad { background: #E86A6A; box-shadow: 0 0 6px rgba(232,106,106,.8); }
+
+/* ===== 65. 底部方形按钮（工具/设置） ===== */
+.tab-bar .tab-corner {
+  flex: 0 0 58px; max-width: 64px;
+  border-left: 1px solid rgba(143,184,217,.18);
+}
+body.skin-water .tab-bar .tab-corner { border-left-color: rgba(143,184,217,.18); }
+body.skin-star .tab-bar .tab-corner { border-left-color: rgba(168,203,228,.18); }
+.tab-bar .tab-corner:active { background: rgba(143,184,217,.12); }
