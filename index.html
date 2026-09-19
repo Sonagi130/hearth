@@ -733,7 +733,7 @@
             font-size: 14px;
         }
     </style>
-    <link rel="stylesheet" href="shelf.css?v=18">
+    <link rel="stylesheet" href="shelf.css?v=19">
 </head>
 <body>
 <script>
@@ -779,6 +779,12 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
                 <span class="nav-label">对话</span>
             </button>
+<div class="nav-group">每天</div>
+            <button class="nav-item" data-page="today">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 10.5L12 3l9 7.5"/><path d="M5 9.5V21h14V9.5"/></svg>
+                <span class="nav-label">今天</span>
+            </button>
+            <div class="nav-group">记录</div>
             <button class="nav-item" data-page="diary">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/><line x1="9" y1="7" x2="15" y2="7"/></svg>
                 <span class="nav-label">日记</span>
@@ -795,6 +801,7 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="8" y1="13" x2="16" y2="13"/><line x1="8" y1="17" x2="13" y2="17"/></svg>
                 <span class="nav-label">碎碎念</span>
             </button>
+            <div class="nav-group">我们的</div>
             <button class="nav-item" data-page="memory">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a7 7 0 0 0-7 7c0 2.4 1.2 4.5 3 5.7V17a2 2 0 0 0 2 2h4a2 2 0 0 0 2-2v-2.3c1.8-1.2 3-3.3 3-5.7a7 7 0 0 0-7-7z"/><line x1="10" y1="22" x2="14" y2="22"/></svg>
                 <span class="nav-label">记忆库</span>
@@ -807,13 +814,14 @@
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2c1-3 5-3 6 0 .5 1.5-.5 3-2 4 2 1 3 2.5 2 4-1 1.5-3 1.5-4 0-1 3-5 3-6 0-.5-1.5.5-3 2-4-2-1-3-2.5-2-4 1-3 5-3 6 0z"/><path d="M12 14v8"/><path d="M9 18l3-2 3 2"/></svg>
                 <span class="nav-label">哥哥</span>
             </button>
-            <button class="nav-item" data-page="tools">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
-                <span class="nav-label">工具包</span>
-            </button>
             <button class="nav-item" data-page="dream">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/></svg>
                 <span class="nav-label">梦境</span>
+            </button>
+            <div class="nav-group">系统</div>
+            <button class="nav-item" data-page="tools">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 0 0 0 1.4l1.6 1.6a1 1 0 0 0 1.4 0l3.77-3.77a6 6 0 0 1-7.94 7.94l-6.91 6.91a2.12 2.12 0 0 1-3-3l6.91-6.91a6 6 0 0 1 7.94-7.94l-3.76 3.76z"/></svg>
+                <span class="nav-label">工具包</span>
             </button>
             <button class="nav-item" data-page="settings">
                 <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
@@ -962,22 +970,22 @@
     </nav>
 
     <script src="vstore.js"></script>
-    <script src="app.js?v=21"></script>
-    <script src="ui.js?v=21"></script>
-    <script src="convs.js?v=19"></script>
-    <script src="chat.js?v=16"></script>
+    <script src="app.js?v=22"></script>
+    <script src="ui.js?v=22"></script>
+    <script src="convs.js?v=20"></script>
+    <script src="chat.js?v=17"></script>
     <script src="shelf.js"></script>
-    <script src="chatmenu.js?v=14"></script>
-    <script src="inputbar.js?v=20"></script>
+    <script src="chatmenu.js?v=15"></script>
+    <script src="inputbar.js?v=21"></script>
     <script src="guhuai.js"></script>
     <script src="selftest.js"></script>
     <script src="models.js"></script>
-    <script src="memtree.js?v=16"></script>
+    <script src="memtree.js?v=17"></script>
     <script src="period.js"></script>
     <script src="game.js"></script>
-    <script src="skin.js?v=15"></script>
+    <script src="skin.js?v=16"></script>
     <script src="diary.js"></script>
-    <script src="tabs.js?v=18"></script>
+    <script src="tabs.js?v=19"></script>
     <script src="today.js"></script>
     <script>
       if ('serviceWorker' in navigator) {
