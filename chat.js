@@ -78,7 +78,9 @@
         var bar = txt.indexOf('|');
         txt = bar >= 0 ? '【语音】' + txt.slice(bar + 1) : '【她发了一段语音，没转出文字】';
       } else if (txt.indexOf('__IMG__') === 0) {
-        txt = '【她发了一张照片】';
+        var bar = txt.indexOf('|');
+        var desc = bar >= 0 ? txt.slice(bar + 1) : '';
+        txt = desc ? '【她发了一张照片，描述：' + desc + '】' : '【她发了一张照片】';
       }
       return { role: m.who === 'me' ? 'user' : 'assistant', content: txt };
     }).filter(function (m) { return m.content && m.content.trim(); });
