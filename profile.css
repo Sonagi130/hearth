@@ -1,0 +1,180 @@
+/* ===== 侧边栏资料卡片 ===== */
+.pf-slot {
+  padding: 12px 14px 4px;
+}
+.pf-card {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: rgba(128,128,128,.08);
+  border: 1px solid rgba(128,128,128,.14);
+  border-radius: 14px;
+  padding: 10px;
+  cursor: pointer;
+  transition: background .2s;
+}
+.pf-card:active { background: rgba(128,128,128,.16); }
+.pf-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  border: 2px solid rgba(255,255,255,.65);
+  object-fit: cover;
+  flex: none;
+  background: #eee;
+}
+.pf-right { flex: 1; min-width: 0; }
+.pf-name {
+  font-size: 16px; font-weight: 800;
+  color: var(--ink, #222);
+  line-height: 1.2;
+}
+.pf-tag {
+  font-size: 11px; color: var(--sub, #888);
+  margin: 2px 0 6px;
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pf-badges {
+  display: flex; gap: 6px;
+}
+.pf-badge {
+  flex: 1;
+  font-size: 10px;
+  text-align: center;
+  padding: 3px 0;
+  border-radius: 8px;
+  background: rgba(74,108,247,.1);
+  color: var(--sub, #666);
+  white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+}
+.pf-switch {
+  position: absolute;
+  top: 6px; right: 8px;
+  font-size: 12px;
+  color: var(--sub, #999);
+  padding: 2px 4px;
+  cursor: pointer;
+  border-radius: 6px;
+}
+.pf-switch:hover { background: rgba(128,128,128,.15); }
+
+/* ===== 个人主页 ===== */
+.pf-overlay {
+  position: fixed; inset: 0; z-index: 999;
+  background: var(--bg, #fdf6ec);
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+.pf-banner {
+  position: absolute; top: 0; left: 0; right: 0;
+  height: 32vh;
+  background: linear-gradient(160deg, #4a6cf7, rgba(20,20,30,0) 70%);
+  pointer-events: none;
+}
+.pf-page {
+  position: relative;
+  padding: 0 20px 40px;
+  text-align: center;
+  margin-top: 26vh;
+}
+.pf-x, .pf-set {
+  position: fixed;
+  top: 14px;
+  width: 34px; height: 34px;
+  border-radius: 50%;
+  border: none;
+  background: rgba(0,0,0,.25);
+  color: #fff;
+  font-size: 15px;
+  cursor: pointer;
+  z-index: 10;
+}
+.pf-x { left: 14px; }
+.pf-set { right: 14px; font-size: 18px; letter-spacing: 1px; }
+.pf-big {
+  width: 22vw; max-width: 96px; min-width: 72px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  border: 4px solid var(--bg, #fdf6ec);
+  object-fit: cover;
+  margin: -8px auto 10px;
+  display: block;
+  background: #eee;
+  box-shadow: 0 6px 20px rgba(0,0,0,.12);
+}
+.pf-big-name {
+  font-size: 24px; font-weight: 900;
+  color: var(--ink, #222);
+}
+.pf-meta {
+  font-size: 12px; color: var(--sub, #888);
+  margin-top: 4px;
+}
+.pf-bio {
+  font-size: 13px; color: var(--sub, #777);
+  margin: 12px auto 18px;
+  max-width: 300px;
+}
+.pf-stats {
+  display: flex;
+  justify-content: space-around;
+  margin: 16px 0 22px;
+}
+.pf-stat {
+  display: flex; flex-direction: column; gap: 3px;
+}
+.pf-stat b {
+  font-size: 15px; color: var(--ink, #222);
+  font-weight: 800;
+  max-width: 90px;
+  overflow: hidden; text-overflow: ellipsis; white-space: nowrap;
+}
+.pf-stat span {
+  font-size: 11px; color: var(--sub, #999);
+}
+.pf-info {
+  text-align: left;
+  border-top: 1px solid rgba(128,128,128,.15);
+  padding-top: 14px;
+}
+.pf-row {
+  display: flex; justify-content: space-between;
+  padding: 10px 2px;
+  border-bottom: 1px solid rgba(128,128,128,.08);
+}
+.pf-row-k { font-size: 13px; color: var(--sub, #999); flex: none; }
+.pf-row-v { font-size: 13px; color: var(--ink, #333); text-align: right; }
+
+/* 编辑 */
+.pf-edit-wrap {
+  position: relative;
+  padding: 60px 20px 40px;
+}
+.pf-edit {
+  display: flex; flex-direction: column; gap: 10px;
+  max-width: 400px; margin: 0 auto;
+}
+.pf-e-h {
+  font-size: 18px; font-weight: 800;
+  text-align: center; margin-bottom: 8px;
+}
+.pf-edit label {
+  font-size: 12px; color: var(--sub, #888);
+  display: flex; flex-direction: column; gap: 4px;
+}
+.pf-in {
+  padding: 9px 12px;
+  border-radius: 10px;
+  border: 1px solid rgba(128,128,128,.25);
+  background: var(--card, #fff);
+  color: var(--ink, #222);
+  font-size: 14px;
+}
+.pf-e-save {
+  margin-top: 14px;
+  padding: 12px;
+  border: none; border-radius: 12px;
+  background: var(--accent, #4a6cf7);
+  color: #fff; font-size: 15px; font-weight: 700;
+  cursor: pointer;
+}
