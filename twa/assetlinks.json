@@ -1,0 +1,8 @@
+[{
+      "relation": ["delegate_permission/common.handle_all_urls"],
+      "target": {
+        "namespace": "android_app",
+        "package_name": "io.github.sonagi130.hearth",
+        "sha256_cert_fingerprints": ["81:F2:AC:FD:CE:5A:58:74:8A:5F:97:8D:16:51:1E:0D:39:B2:20:79:61:C1:7C:F5:90:9D:8A:FE:67:A8:6A:64"]
+      }
+    }]
