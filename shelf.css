@@ -1602,3 +1602,7 @@ body.skin-star .hsheet{background:rgba(14,21,36,.98);}
 body.skin-star .hsheet-h{border-bottom-color:rgba(168,203,228,.14);}
 body.skin-star .hsheet-grab i{background:#A8CBE4;opacity:.42;}
 body.skin-star .hsheet-b{color:#DCE6F2;}
+
+/* --- 62. 二级页：内容区撑满 + 底部让开安全区 --- */
+.sheet-card.wide .sh-body { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
+.sheet-card.wide { padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important; }
