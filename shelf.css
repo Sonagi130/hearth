@@ -1606,3 +1606,4 @@ body.skin-star .hsheet-b{color:#DCE6F2;}
 /* --- 62. 二级页：内容区撑满 + 底部让开安全区 --- */
 .sheet-card.wide .sh-body { flex: 1 1 auto; min-height: 0; max-height: none; overflow-y: auto; }
 .sheet-card.wide { padding-bottom: calc(14px + env(safe-area-inset-bottom)) !important; }
+.side-nav .nav-group { font-size: 11px; letter-spacing: .16em; color: var(--text-soft); opacity: .7; padding: 15px 6px 6px; }
