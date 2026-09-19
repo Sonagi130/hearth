@@ -762,16 +762,34 @@
   }
   /* ---------- 服务器 ---------- */
   function shServer() {
-    var api = (Store.get('apiConf', {}) || {}).url || '（没设，默认 DeepSeek）';
-    sheet('服务器', '壁炉的后半间屋子', [
-      { icon: ICONS.key, name: '接口地址', sub: api },
-      { icon: ICONS.robot, name: '自有域名', sub: 'api.guhuai724.top（HTTPS）' },
-      { icon: ICONS.refresh, name: '检查连通', sub: '点一下试试', on: function () {
-        fetch('https://api.guhuai724.top/api/health').then(function (r) { return r.json(); }).then(function (j) {
-          alert('通了 ✓\n服务器时间戳：' + j.t);
-        })['catch'](function (e) { alert('连不上：' + e.message); });
-      } }
+    var api = (Store.get('apiConf', {}) || {}).url || '（默认 DeepSeek）';
+    var close = sheet('服务器', api, [
+      { icon: ICONS.refresh, name: '正在检查…', sub: 'api.guhuai724.top' }
     ]);
+    fetch('https://api.guhuai724.top/api/status').then(function (r) { return r.json(); }).then(function (j) {
+      try { close(); } catch (e) {}
+      var rows = [
+        { icon: ICONS.cloud, name: '在线', sub: '已运行 ' + Math.round(j.up / 60) + ' 分钟 · 内存 ' + j.rssMB + ' MB' },
+        { icon: ICONS.clock, name: '启动于', sub: j.start }
+      ];
+      (j.tasks || []).forEach(function (t) {
+        rows.push({ icon: ICONS.refresh, name: '定时任务 · ' + t.name, sub: '每天 ' + t.at + ' · 上次：' + (t.last || '—') });
+      });
+      var logs = (j.logs || []).slice().reverse();
+      rows.push({ icon: ICONS.panel, name: '日志', sub: '最近 ' + logs.length + ' 条（新的在上）' });
+      logs.slice(0, 14).forEach(function (l) {
+        rows.push({ icon: ICONS.chat, name: String(l).slice(11), sub: String(l).slice(0, 10) });
+      });
+      rows.push({ icon: ICONS.tool, name: '重新检查', sub: '刷新一下', on: shServer });
+      sheet('服务器', api, rows);
+    })['catch'](function (e) {
+      try { close(); } catch (e2) {}
+      sheet('服务器', '连不上', [
+        { icon: ICONS.cloud, name: '离线', sub: String((e && e.message) || e) },
+        { icon: ICONS.tool, name: '再试一次', on: shServer },
+        { icon: ICONS.bell, name: '可能的原因', sub: '服务器未开机 / 网络 / 日志里有错' }
+      ]);
+    });
   }
   /* ---------- 关于 ---------- */
   function shAbout() {
