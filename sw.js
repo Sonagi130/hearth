@@ -4,7 +4,7 @@
    - 大件静态库（galaxy/lib/、sky/、three 等）→ 缓存优先，一次下载，永久用。
    - 其它（自己写的代码/页面）→ 网络优先，断网退缓存，改了就立刻生效。
 */
-var CACHE = 'hearth-v13';
+var CACHE = 'hearth-v14';
 var IMMUTABLE = /\/galaxy\/lib\/|\/sky\/|three\.module|\.woff2?$/;
 var CORE = [
   './',
