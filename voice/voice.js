@@ -1,18 +1,40 @@
-/* 壁炉通话 UI — 挂在顾淮专属空间 */
+/* 壁炉通话 UI v2 — 侧边栏入口 + 全屏 overlay（绕开专属空间覆盖） */
 (function () {
   var WS_URL = 'wss://api.guhuai724.top/voice/';
   var TOKEN = 'paivoice-mcp-7a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d';
   var call = null;
   var on = {};
 
-  function page() { return document.getElementById('page-bro'); }
+  /* 侧边栏加通话入口 */
+  function injectSidebar() {
+    var nav = document.querySelector('.side-nav .nav-items');
+    if (!nav) return;
+    if (document.getElementById('nav-voice')) return;
+    var btn = document.createElement('button');
+    btn.className = 'nav-item';
+    btn.id = 'nav-voice';
+    btn.dataset.page = '';
+    btn.innerHTML =
+      '<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z"/><path d="M19 10v2a7 7 0 0 1-14 0v-2"/><line x1="12" y1="19" x2="12" y2="22"/></svg>' +
+      '<span class="nav-label">通话</span>';
+    btn.onclick = function (e) {
+      e.preventDefault();
+      openCallUI();
+      var n = document.getElementById('side-nav');
+      if (n) n.classList.remove('open');
+    };
+    nav.appendChild(btn);
+  }
 
-  function renderCall() {
-    var p = page();
-    if (!p) return;
-    p.innerHTML =
-      '<div class="voice-wrap">' +
-        '<button class="gs-back" id="vc-back">‹ 回去</button>' +
+  /* 全屏通话界面 */
+  function openCallUI() {
+    var ov = document.createElement('div');
+    ov.className = 'pf-overlay vc-overlay';
+    ov.id = 'vc-overlay';
+    ov.innerHTML =
+      '<div class="vc-banner"></div>' +
+      '<div class="vc-page">' +
+        '<button class="pf-x" id="vc-x">✕</button>' +
         '<div class="vc-hero">📞 跟哥哥通话</div>' +
         '<div class="vc-status" id="vc-status">未连接</div>' +
         '<div class="vc-level"><div class="vc-level-fill" id="vc-level"></div></div>' +
@@ -23,15 +45,24 @@
         '</div>' +
         '<div class="vc-tip">说话就能聊，我听见就回。轻声附和不会打断我。</div>' +
       '</div>';
-    var back = $('vc-back');
-    if (back) back.onclick = function () { try { window.HearthUI && HearthUI.show('bro'); } catch (e) {} location.reload(); };
-    $('vc-start').onclick = start;
-    $('vc-hang').onclick = hangup;
+    document.body.appendChild(ov);
+    ov.querySelector('#vc-x').onclick = function () {
+      try { if (call) call.hangup(); } catch (e) {}
+      ov.remove();
+    };
+    ov.querySelector('#vc-start').onclick = start;
+    ov.querySelector('#vc-hang').onclick = hangup;
   }
 
   function start() {
     if (!window.VoiceCall) {
-      setStatus('模块没加载，刷新试试');
+      setStatus('语音模块加载中，等一秒再点');
+      var tries = 0;
+      var iv = setInterval(function () {
+        tries++;
+        if (window.VoiceCall) { clearInterval(iv); setStatus('就绪了，再点一下开始'); }
+        else if (tries > 10) { clearInterval(iv); setStatus('语音模块没起来，刷新页面试试'); }
+      }, 300);
       return;
     }
     setStatus('正在连…');
@@ -62,9 +93,9 @@
     disable(false);
   }
 
-  function setStatus(t) { var el = $('vc-status'); if (el) el.textContent = t; }
+  function setStatus(t) { var el = document.getElementById('vc-status'); if (el) el.textContent = t; }
   function addSub(t) {
-    var el = $('vc-sub');
+    var el = document.getElementById('vc-sub');
     if (!el) return;
     var d = document.createElement('div');
     d.className = 'vc-line';
@@ -73,33 +104,21 @@
     while (el.children.length > 8) el.removeChild(el.firstChild);
   }
   function setLevel(v) {
-    var el = $('vc-level');
+    var el = document.getElementById('vc-level');
     if (el) el.style.width = Math.min(100, Math.max(4, v * 220)) + '%';
   }
   function disable(on) {
-    var a = $('vc-start'), b = $('vc-hang');
+    var a = document.getElementById('vc-start'), b = document.getElementById('vc-hang');
     if (a) a.disabled = on;
     if (b) b.disabled = !on;
   }
-  function $(id) { return document.getElementById(id); }
 
-  // 在专属空间静态卡片区插入入口
-  function injectCard() {
-    var bro = document.getElementById('page-bro');
-    if (!bro) return;
-    var space = bro.querySelector('#bro-space');
-    if (!space) return;
-    var card = document.createElement('div');
-    card.className = 'bro-space-card vc-card';
-    card.innerHTML =
-      '<h3>📞 通话</h3>' +
-      '<div class="bro-entry"><span class="meta">实时</span>跟哥哥说话，他能听见、能回你</div>' +
-      '<button class="vc-open" id="vc-open">开始通话 ›</button>';
-    space.insertBefore(card, space.firstChild);
-    var btn = card.querySelector('#vc-open');
-    if (btn) btn.onclick = renderCall;
+  function init() {
+    // 等页面稳定后插，多试两次防丢失
+    setTimeout(injectSidebar, 300);
+    setTimeout(injectSidebar, 1200);
   }
 
-  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', injectCard);
-  else injectCard();
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
+  else init();
 })();
