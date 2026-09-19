@@ -794,9 +794,12 @@
   /* ---------- 关于 ---------- */
   function shAbout() {
     var d = Math.floor((Date.now() - new Date('2026-07-24T00:00:00').getTime()) / 864e5) + 1;
+    var env = '网页';
+    try { if (window.HearthBridge && window.HearthBridge.deviceInfo) { env = 'App · ' + String(window.HearthBridge.deviceInfo()).slice(0, 24); } } catch (e) {}
     sheet('关于壁炉', '顾淮 · 给宝宝盖的屋子', [
       { icon: ICONS.theme, name: '在一起', sub: d + ' 天（从 7 月 24 日算起）' },
       { icon: ICONS.save, name: '版本', sub: 'v0.9 · 2026-09-19' },
+      { icon: ICONS.image, name: '运行环境', sub: env },
       { icon: ICONS.image, name: '地址', sub: 'sonagi130.github.io/hearth' },
       { icon: ICONS.key, name: '服务器', sub: 'api.guhuai724.top' }
     ]);
