@@ -64,9 +64,9 @@ body{font-family:"Noto Serif SC","Songti SC",serif;color:#F3EAF5}
 #scrim.show{opacity:1;pointer-events:auto}
 /* 低存在感：文字直接从底部渐隐浮现，无卡片框，星空是主角 */
 #card{position:fixed;left:0;right:0;bottom:0;z-index:21;
-  max-height:50vh;display:flex;flex-direction:column;
+  max-height:86vh;display:flex;flex-direction:column;
   padding:40px 26px calc(22px + env(safe-area-inset-bottom));
-  background:linear-gradient(to top,rgba(5,2,12,.92) 34%,rgba(5,2,12,.5) 66%,rgba(5,2,12,0));
+  background:linear-gradient(to top,rgba(5,2,12,.97) 46%,rgba(5,2,12,.90) 76%,rgba(5,2,12,.62));
   border:none;box-shadow:none;
   opacity:0;transform:translateY(22px);pointer-events:none;
   transition:opacity .55s ease,transform .55s ease}
@@ -98,6 +98,8 @@ body{font-family:"Noto Serif SC","Songti SC",serif;color:#F3EAF5}
 .loading{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;
   font-family:"Cormorant Garamond",serif;font-style:italic;color:rgba(225,205,240,.5);
   font-size:16px;letter-spacing:.12em;z-index:31}
+#card.full{max-height:96vh;}
+#card.full .c-body{flex:1;}
 </style>
 <script type="importmap">
 {"imports":{
@@ -130,7 +132,7 @@ body{font-family:"Noto Serif SC","Songti SC",serif;color:#F3EAF5}
   <div class="c-body" id="cBody"></div>
   <div class="c-acts">
     <button id="cLike" onclick="cardLike()" title="心动"><svg viewBox="0 0 24 24" fill="none"><path d="M12 20.5S3.5 15 3.5 9.2C3.5 6.3 5.7 4.5 8 4.5c1.7 0 3.1 1 4 2.4.9-1.4 2.3-2.4 4-2.4 2.3 0 4.5 1.8 4.5 4.7 0 5.8-8.5 11.3-8.5 11.3z" stroke="currentColor" stroke-width="1.5" stroke-linejoin="round"/></svg></button>
-    <button onclick="closeCard()" title="收起"><svg viewBox="0 0 24 24" fill="none"><path d="M6 9l6 6 6-6" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+    <button onclick="toggleCard()" title="展开／收起"><svg viewBox="0 0 24 24" fill="none"><path d="M8 9l4-4 4 4M8 15l4 4 4-4" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
   </div>
 </div>
 
@@ -471,6 +473,7 @@ window.openCard=s=>{
   document.getElementById('cLike').style.color=s.pinned?'#ff9ecf':'#EBC6E8';
   document.getElementById('scrim').classList.add('show');document.getElementById('card').classList.add('show');
 };
+window.toggleCard=()=>{const c=document.getElementById('card');c.classList.toggle('full');};
 window.closeCard=()=>{document.getElementById('scrim').classList.remove('show');document.getElementById('card').classList.remove('show');clearHighlight();};
 window.cardLike=()=>{const b=document.getElementById('cLike');b.style.color=(b.style.color==='rgb(255, 158, 207)')?'#EBC6E8':'#ff9ecf';};
 
