@@ -65,6 +65,9 @@
   function esc(s) {
     return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '"');
   }
+  function banner(data, k) {
+    return data[k].banner || ('linear-gradient(160deg,' + (k === 'me' ? '#f2a2b0' : '#4a6cf7') + ',rgba(20,20,30,.0) 70%)');
+  }
   function avatar(data, k) {
     return data[k].avatar || ('data:image/svg+xml;utf8,' + encodeURIComponent(
       '<svg xmlns="http://www.w3.org/2000/svg" width="200" height="200"><rect width="200" height="200" rx="100" fill="' + (k === 'me' ? '#f2a2b0' : '#4a6cf7') + '"/><text x="100" y="126" font-size="72" text-anchor="middle">' + (k === 'me' ? '宝' : '顾') + '</text></svg>'));
@@ -136,6 +139,7 @@
           '<div class="pf-stat"><b>' + esc(w.mbti || '—') + '</b><span>MBTI</span></div>' +
         '</div>' +
         '<div class="pf-info">' +
+          infoRow('相识', daysSince(w.days_from) + ' 天') +
           infoRow('感情状况', esc(w.relation)) +
           infoRow('性格', esc(w.chars)) +
           infoRow('生日', esc(w.birthday)) +
@@ -146,6 +150,14 @@
     ov.querySelector('#pf-set').onclick = function () { editProfile(k, ov); };
   }
 
+  function daysSince(from) {
+    if (!from) return '—';
+    try {
+      var t = new Date(String(from).replace(/\./g, '/')).getTime();
+      if (isNaN(t)) return '—';
+      return Math.max(1, Math.floor((Date.now() - t) / 86400000));
+    } catch (e) { return '—'; }
+  }
   function infoRow(k, v) {
     return '<div class="pf-row"><span class="pf-row-k">' + k + '</span><span class="pf-row-v">' + v + '</span></div>';
   }
@@ -155,6 +167,7 @@
     var d = get(), w = d[k];
     var keys = [
       ['name', '名字'], ['identity', '身份'], ['tag', '个性签名'], ['birthday', '生日'],
+      ['days_from', '相识日（算天数）'],
       ['status', '状态'], ['mood', '心情'], ['bio', '个人简介'],
       ['mbti', 'MBTI'], ['relation', '感情状况'], ['chars', '性格']
     ];
@@ -162,20 +175,49 @@
     keys.forEach(function (kv) {
       h += '<label>' + kv[1] + '<input class="pf-in" data-k="' + kv[0] + '" value="' + esc(w[kv[0]] || '') + '"></label>';
     });
-    h += '<button class="pf-e-save" id="pf-e-save">保存</button></div>';
+    h += '<label>头像<input type="file" id="pf-av" accept="image/*"></label>' +
+      '<label>主页背景图<input type="file" id="pf-bg" accept="image/*"></label>' +
+      '<button class="pf-e-save" id="pf-e-save">保存</button></div>';
     var old = ov.querySelector('.pf-page');
     var wrap = document.createElement('div');
     wrap.className = 'pf-edit-wrap';
     wrap.innerHTML = h;
     old.replaceWith(wrap);
+    function readImg(input, cb) {
+      var f0 = input.files && input.files[0];
+      if (!f0) return cb('');
+      var rd = new FileReader();
+      rd.onload = function () {
+        var img = new Image();
+        img.onload = function () {
+          var c = document.createElement('canvas');
+          var MAX = 400;
+          var w = img.width, h = img.height;
+          if (w > MAX) { h = Math.round(h * MAX / w); w = MAX; }
+          if (h > MAX) { w = Math.round(w * MAX / h); h = MAX; }
+          c.width = w; c.height = h;
+          c.getContext('2d').drawImage(img, 0, 0, w, h);
+          cb(c.toDataURL('image/jpeg', 0.8));
+        };
+        img.src = rd.result;
+      };
+      rd.readAsDataURL(f0);
+    }
     wrap.querySelector('#pf-e-save').onclick = function () {
       var dd = get();
       wrap.querySelectorAll('.pf-in').forEach(function (i) {
         dd[k][i.dataset.k] = i.value;
       });
-      save(dd);
-      document.body.removeChild(ov);
-      openProfile();
+      var av = wrap.querySelector('#pf-av'), bg = wrap.querySelector('#pf-bg');
+      var done = function () {
+        save(dd);
+        document.body.removeChild(ov);
+        openProfile();
+      };
+      var n = 0;
+      var finish = function () { if (++n >= 2) done(); };
+      if (av && av.files && av.files[0]) { readImg(av, function (d) { if (d) dd[k].avatar = d; finish(); }); } else finish();
+      if (bg && bg.files && bg.files[0]) { readImg(bg, function (d) { if (d) dd[k].banner = 'url(' + d + ')'; finish(); }); } else finish();
     };
   }
 
