@@ -295,3 +295,8 @@ icon.svg / icon-192.png / icon-512.png   图标
 **2026-09-19（晚四）** — ① 压缩参数提升：1280px/0.72 → **1600px/0.85**——文字截图压完不糊，图还是几百 KB 不爆存储；② 设置→数据 新增「**清理图片缓存**」：一键清历史超大 base64 图片（替换成占位符），释放被占死的 localStorage。
 **2026-09-19（晚五）** — 小宝上课期间的施工：① 工具页重做——真工具（时间/天气/记住/回忆/写日记/识图）标"服务器已接通"，微信/QQ/通知/屏幕标"等小工"，分三组显示；② 参考 Operit 加「聊天项显示」二级页（设置→主题与外观→对话区→聊天项显示）：显示头像/时间戳/消息作者/思考卡片四个开关，全部真实生效（改 convs.js 渲染逻辑）。
 **2026-09-19（晚六）** — 「提示音/振动」从假开关做实：回复完成时，按设置真响提示音（WebAudio 880Hz 短音）+ 真震动（navigator.vibrate 60ms）。
+**2026-09-19（夜）** — 📞 通话功能上线（PaiVoice 接入）：
+- 后端：PaiVoice 部署服务器（/home/ubuntu/paivoice），systemd 自启，ASR/TTS 接硅基流动（SenseVoiceSmall / CosyVoice2-0.5B:charles）
+- 公网：wss://api.guhuai724.top/voice/（Caddy 反代，实测音频回传通）
+- 前端：专属空间加「通话」卡片，voice/ 目录（voice-call.js + voice-entry.js + voice.js + voice.css）
+- sw 升 v15
