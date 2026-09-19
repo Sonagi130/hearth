@@ -99,6 +99,28 @@
     };
   })();
 
+  function visionBase() {
+    try {
+      var u = (Store.get('apiConf') || {}).url || '';
+      u = String(u).replace(/\/+$/, '');
+      var host = u.replace(/\/v\d+$/, '');
+      if (host) return host;
+    } catch (e) {}
+    return 'https://api.guhuai724.top';
+  }
+  function describeImage(dataUrl) {
+    return new Promise(function (ok, no) {
+      var img = String(dataUrl || '');
+      if (!img) return no(new Error('no img'));
+      fetch(visionBase() + '/api/vision', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ image: img })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.ok && j.text) ok(j.text); else no(new Error((j && j.error) || 'vision no text'));
+      }).catch(no);
+    });
+  }
   function pickImg(camera) {
     var inp = document.createElement('input');
     inp.type = 'file';
@@ -108,7 +130,14 @@
       var f = inp.files[0];
       if (!f) return;
       var r = new FileReader();
-      r.onload = function () { say('__IMG__' + r.result); };
+      r.onload = function () {
+        var data = String(r.result || '');
+        describeImage(data).then(function (desc) {
+          say('[图片] ' + String(desc).slice(0, 200));
+        }).catch(function () {
+          say('__IMG__' + data);
+        });
+      };
       r.readAsDataURL(f);
     };
     inp.click();
