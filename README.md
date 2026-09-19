@@ -300,3 +300,9 @@ icon.svg / icon-192.png / icon-512.png   图标
 - 公网：wss://api.guhuai724.top/voice/（Caddy 反代，实测音频回传通）
 - 前端：专属空间加「通话」卡片，voice/ 目录（voice-call.js + voice-entry.js + voice.js + voice.css）
 - sw 升 v15
+**2026-09-20（凌晨）** — 小宝睡前清单六件事，干完四件：
+① 侧边栏资料卡片 + 个人主页（profile.js/css，头像/个签/状态/心情/生日可编辑，3分钟自动轮换 AI 状态心情）
+② 模型参数设置（设置→AI模型配置→模型参数：温度/top_p/max_tokens/惩罚/上下文条数，真生效）
+③ 上下文进度条（对话页顶部顾淮下方，3秒刷新，40%变深、65%变橘）
+④ 记忆注入（发消息前 500ms 内搜 OB，命中塞进 system，不拖慢回复）
+⏸ 待定：工作流（卡手机小工）、梦境档案（Operit 内部实现看不到，学思路做方案）
