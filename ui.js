@@ -554,7 +554,27 @@
     sheet('AI 模型配置', '接上模型，壁炉才有脑子', [
       { icon: ICONS.key, name: 'API 地址', sub: a.url || '默认 api.deepseek.com', on: function () { edit('url', '接口地址（留空就用 https://api.deepseek.com）'); } },
       { icon: ICONS.robot, name: '模型名', sub: a.model || '默认 deepseek-chat', on: function () { edit('model', '模型名（留空就用 deepseek-chat）'); } },
-      { icon: ICONS.lock, name: 'API Key', sub: a.key ? a.key.slice(0, 4) + '****' : '还没填', on: function () { edit('key', '把 Key 粘进来'); } }
+      { icon: ICONS.lock, name: 'API Key', sub: a.key ? a.key.slice(0, 4) + '****' : '还没填', on: function () { edit('key', '把 Key 粘进来'); } },
+      { icon: ICONS.tool, name: '模型参数', sub: '温度 · 长度 · 上下文 · 惩罚', on: shModelParams }
+    ]);
+  }
+  function shModelParams() {
+    var mp = {};
+    try { mp = JSON.parse(Store.get('modelParams', '{}') || '{}'); } catch (e) {}
+    var edit = function (k, tip) {
+      var v = prompt(tip, mp[k] === undefined ? '' : mp[k]);
+      if (v === null) return;
+      mp[k] = v.trim();
+      Store.set('modelParams', mp);
+      draw();
+    };
+    sheet('模型参数', '调节对话模型的生成风格', [
+      { icon: ICONS.tool, name: '温度 temperature', sub: mp.temperature !== undefined ? mp.temperature : '默认（未设置）', on: function () { edit('temperature', '温度 0-2，越低越稳，越高越放飞（留空恢复默认）'); } },
+      { icon: ICONS.tool, name: '核采样 top_p', sub: mp.top_p !== undefined ? mp.top_p : '默认（未设置）', on: function () { edit('top_p', 'top_p 0-1，与温度二选一调（留空恢复默认）'); } },
+      { icon: ICONS.tool, name: '最大长度 max_tokens', sub: mp.max_tokens !== undefined ? mp.max_tokens : '默认（未设置）', on: function () { edit('max_tokens', '一次最多生成多少 token（留空恢复默认）'); } },
+      { icon: ICONS.tool, name: '频率惩罚 frequency_penalty', sub: mp.frequency_penalty !== undefined ? mp.frequency_penalty : '默认（未设置）', on: function () { edit('frequency_penalty', '-2 到 2，越高越不爱重复（留空恢复默认）'); } },
+      { icon: ICONS.tool, name: '存在惩罚 presence_penalty', sub: mp.presence_penalty !== undefined ? mp.presence_penalty : '默认（未设置）', on: function () { edit('presence_penalty', '-2 到 2，越高越爱聊新话题（留空恢复默认）'); } },
+      { icon: ICONS.tool, name: '上下文条数 ctx_count', sub: (mp.ctx_count || 20) + ' 条', on: function () { edit('ctx_count', '发给模型的最近消息条数，默认 20（留空恢复默认）'); } }
     ]);
   }
 
