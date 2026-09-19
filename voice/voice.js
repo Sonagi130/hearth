@@ -3,6 +3,7 @@
   var WS_URL = 'wss://api.guhuai724.top/voice/';
   var TOKEN = 'paivoice-mcp-7a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d';
   var call = null;
+  var heartbeat = null;
   var on = {};
 
   /* 侧边栏加通话入口 */
@@ -75,10 +76,18 @@
       reply: function (m) { addSub('哥哥 · ' + (m.text || '')); },
       error: function (e) { setStatus('出错了：' + e); },
       level: function (v) { setLevel(v); },
-      closed: function () { setStatus('已断开'); disable(false); }
+      closed: function () { if (heartbeat) { clearInterval(heartbeat); heartbeat = null; } setStatus('已断开'); disable(false); }
     };
     try {
       call = new window.VoiceCall({ url: WS_URL, video: false, on: on });
+      // 心跳保活：30 秒一次 ping，防止网关/代理空闲掐断
+      heartbeat = setInterval(function () {
+        try {
+          if (call && call.ws && call.ws.readyState === 1) {
+            call.ws.send(JSON.stringify({ type: 'ping' }));
+          }
+        } catch (e) {}
+      }, 30000);
       call.start().then(function () {
         setStatus('🎙️ 通了，说吧');
         disable(true);
@@ -87,6 +96,7 @@
   }
 
   function hangup() {
+    if (heartbeat) { clearInterval(heartbeat); heartbeat = null; }
     try { if (call) call.hangup(); } catch (e) {}
     call = null;
     setStatus('已挂断');
@@ -121,4 +131,7 @@
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
+
+  // 暴露给外部（inputbar ➕栏、其他入口）
+  window.HearthCall = { open: openCallUI, start: start, hangup: hangup };
 })();
