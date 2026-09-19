@@ -581,11 +581,25 @@
 
   function shData() {
     var u = ui();
-    sheet('数据备份与导入', '', [
+    var cnt = function (k) { var v = Store.get(k, []); return (v && v.length) ? v.length : 0; };
+    var convs = Store.get('convs', []) || [];
+    var msgs = 0; convs.forEach(function (c) { msgs += (c.msgs || []).length; });
+    var kb = 0;
+    Object.keys(localStorage).forEach(function (k) { if (k.indexOf('hearth_') === 0) kb += (localStorage.getItem(k) || '').length; });
+    kb = Math.round(kb / 1024);
+    sheet('数据', '共 ' + kb + ' KB · 都在你手机里', [
+      { icon: ICONS.chat, name: '对话', sub: convs.length + ' 个窗口 · ' + msgs + ' 条消息' },
+      { icon: ICONS.save, name: '记忆库', sub: cnt('memories') + ' 条' },
+      { icon: ICONS.clock, name: '日记', sub: cnt('diaries') + ' 篇' },
+      { icon: ICONS.card, name: '碎碎念', sub: cnt('notes') + ' 条' },
+      { icon: ICONS.image, name: '照片', sub: cnt('photos') + ' 张' },
+      { icon: ICONS.panel, name: '书架', sub: cnt('ShelfBooks') + ' 本' },
+      { icon: ICONS.upload, name: '导出全部', sub: '一个 JSON，能搬去任何地方', on: exportAll },
+      { icon: ICONS.download, name: '导入全部', sub: '同名的覆盖，不会重叠', on: importAll },
       { icon: ICONS.upload, name: '导出聊天记录', sub: '选窗口，存成 json', on: exportChat },
-      { icon: ICONS.download, name: '导入聊天记录', sub: '从 json 合并回来', on: importChat },
+      { icon: ICONS.download, name: '导入聊天记录', sub: '从 json 合并（重复自动跳过）', on: importChat },
       { icon: ICONS.save, name: '导出记忆库', sub: '存成 json', on: exportMem },
-      { icon: ICONS.download, name: '导入记忆库', sub: '从 json 合并', on: importMem },
+      { icon: ICONS.download, name: '导入记忆库', sub: '从 json 合并（重复自动跳过）', on: importMem },
       { icon: ICONS.clock, name: '每日自动备份', right: sw(u.autoBak),
         on: function () { setUI('autoBak', !u.autoBak); } },
       { icon: ICONS.clock, name: '最多保留几份', sub: (u.keepN || 3) + ' 份',
@@ -595,10 +609,12 @@
           n = Math.max(1, Math.min(10, parseInt(n, 10) || 3));
           setUI('keepN', n);
         } },
-      { icon: ICONS.refresh, name: '最近数据恢复', sub: '看历史备份', on: listBak }
+      { icon: ICONS.refresh, name: '最近数据恢复', sub: '看历史备份', on: listBak },
+      { icon: ICONS.bell, name: '为什么要备份', sub: '换手机、清缓存、误删——有它就丢不了' },
+      { icon: ICONS.bell, name: '备份在哪', sub: '就在你导出的那个文件里，不上传任何地方' },
+      { icon: ICONS.bell, name: '导入重复怎么办', sub: '同一条自动跳过，不会变两份' }
     ]);
   }
-
   /* ---------- 备份 ---------- */
   function dumpKeys() {
     var o = {};
@@ -608,6 +624,33 @@
     return o;
   }
 
+  function exportAll() {
+    var o = { kind: 'hearth-full', t: Date.now(), data: {} };
+    Object.keys(localStorage).forEach(function (k) { if (k.indexOf('hearth_') === 0) o.data[k] = localStorage.getItem(k); });
+    saveFile('hearth-all-' + Date.now() + '.json', JSON.stringify(o, null, 1));
+  }
+  function importAll() {
+    var inp = document.createElement('input');
+    inp.type = 'file'; inp.accept = '.json';
+    inp.onchange = function () {
+      var f = inp.files[0]; if (!f) return;
+      var r = new FileReader();
+      r.onload = function () {
+        try {
+          var j = JSON.parse(r.result);
+          var data = (j && j.data) ? j.data : j;
+          var ks = Object.keys(data || {}).filter(function (k) { return k.indexOf('hearth_') === 0; });
+          if (!ks.length) { alert('这个文件里没有壁炉的数据。'); return; }
+          if (!confirm('导入 ' + ks.length + ' 项数据？\n\n同名的会被覆盖（不会重复叠加）。')) return;
+          ks.forEach(function (k) { try { localStorage.setItem(k, data[k]); } catch (e) {} });
+          alert('导入完成，共 ' + ks.length + ' 项。');
+          location.reload();
+        } catch (e) { alert('读不了这个文件：' + e.message); }
+      };
+      r.readAsText(f);
+    };
+    inp.click();
+  }
   function saveFile(name, text) {
     var b = new Blob([text], { type: 'application/json' });
     var a = document.createElement('a');
