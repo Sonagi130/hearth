@@ -93,6 +93,30 @@
   }
 
   function sayHe(t) { if (baseAdd) baseAdd(t, 'he'); }
+  /* 回复完成：按设置响提示音/震动（Operit 风格，真生效） */
+  function notifDone() {
+    try {
+      var u = Store.get('uiSet', {}) || {};
+      if (navigator.vibrate && u.vibrate) { try { navigator.vibrate(60); } catch (e) {} }
+      if (u.toast) {
+        try {
+          var Ctx = window.AudioContext || window.webkitAudioContext;
+          if (Ctx) {
+            var ac = new Ctx();
+            var o = ac.createOscillator();
+            var g = ac.createGain();
+            o.type = 'sine'; o.frequency.value = 880;
+            g.gain.setValueAtTime(0.12, ac.currentTime);
+            g.gain.exponentialRampToValueAtTime(0.001, ac.currentTime + 0.18);
+            o.connect(g); g.connect(ac.destination);
+            o.start(); o.stop(ac.currentTime + 0.2);
+            setTimeout(function () { try { ac.close(); } catch (e2) {} }, 400);
+          }
+        } catch (e3) {}
+      }
+    } catch (e4) {}
+  }
+
 
   /* ---------- 她让我用语音说 ---------- */
   var VOICE_ASK = ['说句话', '发条语音', '发语音', '用语音', '念给我听', '听你说', '语音说', '说一句', '说话给我听', '想听你声音'];
@@ -213,6 +237,7 @@
       }
       return pump();
     }).then(function () {
+      notifDone();
       if (tm) tm.textContent = '顾淮 · ' + nowHM();
       if (thinkGot) {
         wrap.setAttribute('data-think', thinkGot);
