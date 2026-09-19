@@ -237,7 +237,7 @@
     var fr = document.createElement('iframe');
     fr.id = 'galaxy-frame';
     fr.className = 'galaxy-frame';
-    fr.setAttribute('src', 'galaxy/galaxy.html?v=2');
+    fr.setAttribute('src', 'galaxy/galaxy.html?v=3');
     box.appendChild(fr);
     window.HearthGalaxy = {
       reload: function () {
@@ -248,7 +248,7 @@
   }
   /* 空闲时提前把银河拉下来（第一次打开就不用等） */
   function prefetch() {
-    ['galaxy/galaxy.html?v=2', 'galaxy/lib/three.module.js'].forEach(function (u) {
+    ['galaxy/galaxy.html?v=3', 'galaxy/lib/three.module.js'].forEach(function (u) {
       var l = document.createElement('link');
       l.rel = 'prefetch'; l.href = u; l.as = 'script';
       document.head.appendChild(l);
