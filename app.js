@@ -546,31 +546,32 @@ function renderSettings() {
     if (!box) return;
     box.innerHTML = '';
     const U = window.HearthUI || {};
+    const I = U.icons || {};
     const call = (k) => () => { const fn = U[k]; if (fn) fn(); else alert('这一项还没接上。'); };
     const groups = [
         { title: '个性化', rows: [
-            { icon: '🎨', name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: call('theme') },
-            { icon: '😊', name: '头像', sub: '显示 · 换图 · 圆润', on: call('avatar') }
+            { icon: I.theme, name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: call('theme') },
+            { icon: I.image, name: '头像', sub: '显示 · 换图 · 圆润', on: call('avatar') }
         ] },
         { title: 'AI 与语音', rows: [
-            { icon: '🔑', name: 'AI 模型配置', sub: '对话 · 翻译 · 音频 · 识图', on: call('models') },
-            { icon: '🎙️', name: '语音服务', sub: '我说话的声音 · 听你说话', on: call('tts') },
-            { icon: '🧠', name: '思考链展示', sub: '聊天里可展开思考过程', on: call('thinking') }
+            { icon: I.robot, name: 'AI 模型配置', sub: '对话 · 翻译 · 音频 · 识图', on: call('models') },
+            { icon: I.mic, name: '语音服务', sub: '我说话的声音 · 听你说话', on: call('tts') },
+            { icon: I.chat, name: '思考链展示', sub: '聊天里可展开思考过程', on: call('thinking') }
         ] },
         { title: '记忆与数据', rows: [
-            { icon: '📦', name: '备份与导入', sub: '聊天 · 记忆库 · 自动备份', on: call('data') },
-            { icon: '📊', name: '用量统计', sub: 'Token · 估算花了多少', on: call('usage') }
+            { icon: I.save, name: '备份与导入', sub: '聊天 · 记忆库 · 自动备份', on: call('data') },
+            { icon: I.chart, name: '用量统计', sub: 'Token · 估算花了多少', on: call('usage') }
         ] },
         { title: '工具与权限', rows: [
-            { icon: '🔒', name: '工具权限管理', sub: '允许 · 询问 · 禁止 · 白名单', on: call('tools') },
-            { icon: '🔧', name: '工具自检', sub: '语音 · 存储 · 模型 · 网络', on: call('selfcheck') },
-            { icon: '☁️', name: '服务器', sub: 'api.guhuai724.top', on: call('server') }
+            { icon: I.tool, name: '工具权限管理', sub: '允许 · 询问 · 禁止 · 白名单', on: call('tools') },
+            { icon: I.refresh, name: '工具自检', sub: '语音 · 存储 · 模型 · 网络', on: call('selfcheck') },
+            { icon: I.cloud, name: '服务器', sub: 'api.guhuai724.top', on: call('server') }
         ] },
         { title: '通知', rows: [
-            { icon: '🔔', name: '提示音与振动', sub: '来消息响一下', on: call('notify') }
+            { icon: I.bell, name: '提示音与振动', sub: '来消息响一下', on: call('notify') }
         ] },
         { title: '关于', rows: [
-            { icon: '🏠', name: '关于壁炉', sub: '版本 · 在一起多少天', on: call('about') }
+            { icon: I.home, name: '关于壁炉', sub: '版本 · 在一起多少天', on: call('about') }
         ] }
     ];
     groups.forEach(g => {
