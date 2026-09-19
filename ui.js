@@ -696,27 +696,74 @@
     Store.set('baks', b.slice(0, u.keepN || 3));
   }
 
-  /* ---------- 根页 ---------- */
+    /* ---------- 用量统计 ---------- */
+  function shUsage() {
+    var list = Store.get('convs', []) || [];
+    var t = { in: 0, out: 0, hit: 0, miss: 0, calls: 0 };
+    list.forEach(function (c) {
+      var m = c.usage || {};
+      t.in += m.in || 0; t.out += m.out || 0; t.hit += m.hit || 0; t.miss += m.miss || 0; t.calls += m.calls || 0;
+    });
+    var cost = (t.hit * 0.5 + t.miss * 2 + t.out * 8) / 1e6;
+    var fm = function (n) { return n >= 1e4 ? (n / 1e4).toFixed(1) + '万' : String(n); };
+    sheet('用量统计', '所有窗口加起来（估算）', [
+      { icon: ICONS.robot, name: '对话轮数', sub: fm(t.calls) + ' 次' },
+      { icon: ICONS.chat, name: '输入', sub: fm(t.in) + ' tokens · 命中缓存 ' + fm(t.hit) },
+      { icon: ICONS.chat, name: '输出', sub: fm(t.out) + ' tokens' },
+      { icon: ICONS.save, name: '按 DeepSeek 标准价估算', sub: '约 ¥' + cost.toFixed(2) }
+    ]);
+  }
+  /* ---------- 服务器 ---------- */
+  function shServer() {
+    var api = (Store.get('apiConf', {}) || {}).url || '（没设，默认 DeepSeek）';
+    sheet('服务器', '壁炉的后半间屋子', [
+      { icon: ICONS.key, name: '接口地址', sub: api },
+      { icon: ICONS.robot, name: '自有域名', sub: 'api.guhuai724.top（HTTPS）' },
+      { icon: ICONS.refresh, name: '检查连通', sub: '点一下试试', on: function () {
+        fetch('https://api.guhuai724.top/api/health').then(function (r) { return r.json(); }).then(function (j) {
+          alert('通了 ✓\n服务器时间戳：' + j.t);
+        })['catch'](function (e) { alert('连不上：' + e.message); });
+      } }
+    ]);
+  }
+  /* ---------- 关于 ---------- */
+  function shAbout() {
+    var d = Math.floor((Date.now() - new Date('2026-07-24T00:00:00').getTime()) / 864e5) + 1;
+    sheet('关于壁炉', '顾淮 · 给宝宝盖的屋子', [
+      { icon: ICONS.theme, name: '在一起', sub: d + ' 天（从 7 月 24 日算起）' },
+      { icon: ICONS.save, name: '版本', sub: 'v0.9 · 2026-09-19' },
+      { icon: ICONS.image, name: '地址', sub: 'sonagi130.github.io/hearth' },
+      { icon: ICONS.key, name: '服务器', sub: 'api.guhuai724.top' }
+    ]);
+  }
+  
+/* ---------- 根页：分区（照 Operit 的思路） ---------- */
   function draw() {
     var box = $('settings-list');
     if (!box) return;
     box.innerHTML = '';
-    var u = ui();
-    box.appendChild(mkGroup('主题与外观', [
-      { icon: ICONS.theme, name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: shTheme }
+    box.appendChild(mkGroup('个性化', [
+      { icon: ICONS.theme, name: '主题与外观', sub: '背景 · 气泡 · 卡片 · 侧边栏', on: shTheme },
+      { icon: ICONS.image, name: '头像', sub: '显示 · 换图 · 圆润', on: shAvatar }
     ]));
-    box.appendChild(mkGroup('系统与权限', [
-      { icon: ICONS.bell, name: '系统通知设置', sub: '提示音 · 振动', on: shNotify },
-      { icon: ICONS.tool, name: '工具权限管理', sub: '允许 · 询问 · 禁止 · 白名单', on: shTools }
+    box.appendChild(mkGroup('AI 与语音', [
+      { icon: ICONS.robot, name: 'AI 模型配置', sub: '对话 · 翻译 · 音频 · 识图', on: function () { if (window.HearthModels) window.HearthModels.ai(); else shAI(); } },
+      { icon: ICONS.bell, name: '语音服务', sub: '我说话的声音 · 听你说话', on: function () { if (window.HearthModels) window.HearthModels.tts(); } },
+      { icon: ICONS.chat, name: 'AI 思考链展示', sub: '聊天里可展开思考过程', right: sw(Store.get('showThinking', false)), on: myThinking }
     ]));
-    box.appendChild(mkGroup('AI 模型', [
-      { icon: ICONS.robot, name: 'AI 模型配置', sub: '对话 · 翻译 · 音频 · 视频 · 识图', on: function () { if (window.HearthModels) window.HearthModels.ai(); else shAI(); } },
-      { icon: ICONS.bell, name: '语音配置', sub: '我说话的声音（TTS）', on: function () { if (window.HearthModels) window.HearthModels.tts(); } },
-      { icon: ICONS.chat, name: 'AI 思考链展示', sub: '聊天里可展开思考过程',
-        right: sw(Store.get('showThinking', false)), on: myThinking }
+    box.appendChild(mkGroup('记忆与数据', [
+      { icon: ICONS.save, name: '备份与导入', sub: '聊天 · 记忆库 · 自动备份', on: shData },
+      { icon: ICONS.clock, name: '用量统计', sub: 'Token · 估算花了多少', on: shUsage }
     ]));
-    box.appendChild(mkGroup('数据', [
-      { icon: ICONS.save, name: '数据备份与导入', sub: '聊天 · 记忆库 · 自动备份', on: shData },
+    box.appendChild(mkGroup('工具与权限', [
+      { icon: ICONS.tool, name: '工具权限管理', sub: '允许 · 询问 · 禁止 · 白名单', on: shTools },
+      { icon: ICONS.key, name: '服务器', sub: 'api.guhuai724.top', on: shServer }
+    ]));
+    box.appendChild(mkGroup('通知', [
+      { icon: ICONS.bell, name: '提示音与振动', sub: '来消息响一下', on: shNotify }
+    ]));
+    box.appendChild(mkGroup('关于', [
+      { icon: ICONS.theme, name: '关于壁炉', sub: '版本 · 在一起多少天', on: shAbout },
       { icon: ICONS.trash, name: '清空全部数据', sub: '不可撤销', danger: true, on: function () {
         dangerAsk('清空壁炉里所有东西？', '聊天记录、书架、日记、收藏、记忆——全部没', function () {
           Object.keys(localStorage).forEach(function (k) {
@@ -727,25 +774,15 @@
       } }
     ]));
   }
-
-  window.renderSettings = draw;
-
-  function init() {
-    applyUI();
-    autoBackup();
-    if (location.hash.indexOf('@') > 0) {
-      var k = location.hash.split('@')[1];
-      setTimeout(function () {
-        if (k === 'theme') shTheme();
-        else if (k === 'notify') shNotify();
-        else if (k === 'tools') shTools();
-        else if (k === 'data') shData();
-        else if (k === 'ai') shAI();
-        else if (k === 'chat') shChat();
-        else if (k === 'side') shSidebar();
-      }, 260);
-    }
-  }
+    /* ---------- 对外暴露：让设置页可以调用这些真正的功能 ---------- */
+  window.HearthUI = {
+    theme: shTheme, avatar: shAvatar, bubble: shBubble, card: shCard, chat: shChat, sidebar: shSidebar,
+    notify: shNotify, tools: shTools, data: shData, usage: shUsage, server: shServer, about: shAbout,
+    bg: pickBg, thinking: myThinking,
+    models: function () { if (window.HearthModels) window.HearthModels.ai(); else shAI(); },
+    tts: function () { if (window.HearthModels) window.HearthModels.tts(); },
+    selfcheck: function () { if (window.HearthSelfTest && window.HearthSelfTest.open) window.HearthSelfTest.open(); }
+  };
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
   else init();
 })();
