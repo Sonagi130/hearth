@@ -72,7 +72,10 @@
     var c = null;
     try { c = window.HearthConv.current(); } catch (e) {}
     if (!c) return [];
-    return (c.msgs || []).slice(-20).map(function (m) {
+    var mp = {};
+    try { mp = JSON.parse(Store.get('modelParams', '{}') || '{}'); } catch (e) {}
+    var ctxN = parseInt(mp.ctx_count || 20, 10) || 20;
+    return (c.msgs || []).slice(-ctxN).map(function (m) {
       var txt = String(m.text || '');
       if (txt.indexOf('__AUD__') === 0) {
         var bar = txt.indexOf('|');
@@ -157,9 +160,24 @@
     return String(d.getHours()).padStart(2, '0') + ':' + String(d.getMinutes()).padStart(2, '0');
   }
 
+  /* 记忆注入：发消息前搜 OB，命中塞进 system */
+  function fetchMem(q) {
+    var api = 'https://api.guhuai724.top';
+    var chain = fetch(api + '/ob/breath?query=' + encodeURIComponent(String(q || '').slice(0, 80)), { method: 'GET' })
+      .then(function (r) { return r.json(); })
+      .then(function (d) {
+        if (!d || !d.ok || !d.out) return '';
+        var txt = String(d.out).trim();
+        if (!txt || txt.indexOf('没有匹配') >= 0 || txt.indexOf('没找到') >= 0) return '';
+        return txt.slice(0, 600);
+      })
+      .catch(function () { return ''; });
+    // 最多等 500ms，超时就当没搜到，不拖慢回复
+    return Promise.race([chain, new Promise(function (r) { setTimeout(function () { r(''); }, 500); })]);
+  }
   var busy = false;
 
-  function ask() {
+  async function ask() {
     if (busy) return;
     var hint = wantHint();
     if (hint) { sayHe(hint); return; }
@@ -179,12 +197,27 @@
     var tm = wrap.querySelector('.time');
     var tb = wrap.querySelector('.think-b');
     var got = '', thinkGot = '';
+    var mp = {};
+    try { mp = JSON.parse(Store.get('modelParams', '{}') || '{}'); } catch (e) {}
+    try {
+      var _h = history();
+      var _q = _h.length ? String(_h[_h.length - 1].content || '') : '';
+      if (_q) {
+        var _mem = await fetchMem(_q);
+        if (_mem) msgs[0] = { role: 'system', content: SYS + '\n\n【此刻想起来的记忆】\n' + _mem };
+      }
+    } catch (e) {}
     var bodyData = {
       model: c.model || 'deepseek-chat',
       messages: msgs,
       stream: true,
       stream_options: { include_usage: true }
     };
+    if (mp.temperature !== undefined && mp.temperature !== '') bodyData.temperature = parseFloat(mp.temperature);
+    if (mp.top_p !== undefined && mp.top_p !== '') bodyData.top_p = parseFloat(mp.top_p);
+    if (mp.max_tokens !== undefined && mp.max_tokens !== '') bodyData.max_tokens = parseInt(mp.max_tokens, 10);
+    if (mp.frequency_penalty !== undefined && mp.frequency_penalty !== '') bodyData.frequency_penalty = parseFloat(mp.frequency_penalty);
+    if (mp.presence_penalty !== undefined && mp.presence_penalty !== '') bodyData.presence_penalty = parseFloat(mp.presence_penalty);
     if (thinkOn) bodyData.thinking = { type: 'enabled' };
     fetch(endpoint(c.url), {
       method: 'POST',
@@ -282,5 +315,23 @@
     return baseAdd.apply(null, arguments);
   };
 
+  window.HearthCtx = {
+    stat: function () {
+      try {
+        var list = Store.get('convs', []) || [];
+        var cur = null;
+        var curId = Store.get('curId');
+        for (var i = 0; i < list.length; i++) if (list[i].id === curId) { cur = list[i]; break; }
+        if (!cur && list.length) cur = list[list.length - 1];
+        var msgs = (cur && cur.msgs) || [];
+        var mp = {};
+        try { mp = JSON.parse(Store.get('modelParams', '{}') || '{}'); } catch (e) {}
+        var ctxN = parseInt(mp.ctx_count || 20, 10) || 20;
+        var n = msgs.length;
+        var used = Math.min(100, Math.round(n / ctxN * 100));
+        return { used: used, n: n, cap: ctxN };
+      } catch (e) { return { used: 0, n: 0, cap: 20 }; }
+    }
+  };
   window.HearthChat = { sys: SYS, conf: conf, ask: ask };
 })();
