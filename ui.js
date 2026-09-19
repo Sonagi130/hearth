@@ -45,7 +45,7 @@
       bg: '', glass: false, bubbleColor: '',
       cardBg: '', cardInk: '',
       sideGlass: false, sideBorder: false,
-      toast: true, vibrate: false, bgDim: 72, autoBak: false, keepN: 3
+      toast: true, vibrate: false, bgDim: 72, autoBak: false, keepN: 3, showTime: true, showWho: true, showThk: true
     });
   }
   function setUI(k, v) {
@@ -293,7 +293,21 @@
       { icon: ICONS.card, name: '对话卡片', right: sw(mode === 'card'),
         on: function () { myChatMode('card'); } },
       { icon: ICONS.glass, name: '气泡设置', sub: '磨砂玻璃 · 颜色', on: shBubble },
-      { icon: ICONS.palette, name: '卡片配色', sub: '默认 / 自定义', on: shCard }
+      { icon: ICONS.palette, name: '卡片配色', sub: '默认 / 自定义', on: shCard },
+      { icon: ICONS.tool, name: '聊天项显示', sub: '时间戳 · 名称 · 思考卡片', on: showItems }
+    ]);
+  }
+  function showItems() {
+    var u = ui();
+    sheet('聊天项显示', '控制聊天里显示哪些信息', [
+      { icon: ICONS.image, name: '显示头像', sub: u.showAvatar ? '开着' : '关着', right: sw(u.showAvatar),
+        on: function () { setUI('showAvatar', !u.showAvatar); showItems(); } },
+      { icon: ICONS.clock, name: '显示时间戳', sub: u.showTime ? '开着' : '关着', right: sw(u.showTime),
+        on: function () { setUI('showTime', !u.showTime); showItems(); } },
+      { icon: ICONS.chat, name: '显示消息作者', sub: u.showWho ? '开着' : '关着', right: sw(u.showWho),
+        on: function () { setUI('showWho', !u.showWho); showItems(); } },
+      { icon: ICONS.chat, name: '显示思考卡片', sub: Store.get('showThinking', false) ? '开着' : '关着', right: sw(Store.get('showThinking', false)),
+        on: function () { Store.set('showThinking', !Store.get('showThinking', false)); showItems(); } }
     ]);
   }
 
