@@ -44,8 +44,9 @@ registerProcessor('pcm-capture', PcmCapture);
 const MIC_CONSTRAINTS = { echoCancellation: true, noiseSuppression: true, autoGainControl: true, channelCount: 1 };
 
 export class VoiceCall {
-  constructor({ url, video = false, on = {}, vad = {} } = {}) {
+  constructor({ url, video = false, on = {}, vad = {}, token = null } = {}) {
     this.url = url;
+    this.token = token;
     this.wantVideo = video;
     this.on = on;
     this.vad = Object.assign({
@@ -126,7 +127,7 @@ export class VoiceCall {
     }
 
     await this._connect();
-    this._send({ type: 'start', video: this.wantVideo, sample_rate: 16000 });
+    this._send({ type: 'start', token: this.token, video: this.wantVideo, sample_rate: 16000 });
     this._setMode('listening');
     if (this.video) this._startFrames();
   }
