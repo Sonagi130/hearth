@@ -91,7 +91,7 @@ var retries = 0;
       closed: function () { if (heartbeat) { clearInterval(heartbeat); heartbeat = null; } setStatus('已断开'); disable(false); retry(); }
     };
     try {
-      call = new window.VoiceCall({ url: WS_URL, video: false, on: on });
+      call = new window.VoiceCall({ url: WS_URL, video: false, on: on, token: TOKEN });
       // 心跳保活：30 秒一次 ping，防止网关/代理空闲掐断
       heartbeat = setInterval(function () {
         try {
@@ -139,6 +139,15 @@ var retries = 0;
     // 等页面稳定后插，多试两次防丢失
     setTimeout(injectSidebar, 300);
     setTimeout(injectSidebar, 1200);
+    // 前后台切换检测：vivo 把 WebView 切后台会冻定时器，回前台主动检测连接，断了重连
+    document.addEventListener('visibilitychange', function () {
+      if (document.visibilityState !== 'visible') return;
+      if (window.HearthCall && call && call.ws && call.ws.readyState !== 1) {
+        setStatus('回前台，重连…');
+        hangup();
+        setTimeout(function () { if (document.getElementById('vc-overlay')) start(); }, 400);
+      }
+    });
   }
 
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', init);
