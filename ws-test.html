@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>WS 长连测试</title>
+<style>
+body{font-family:system-ui;padding:20px;background:#111;color:#eee}
+#log{white-space:pre-wrap;font-size:14px;line-height:1.7;margin-top:12px}
+button{font-size:18px;padding:12px 24px;border-radius:10px;border:0;background:#4a6cf7;color:#fff}
+.st{color:#8f8}
+.fail{color:#f66}
+</style>
+</head>
+<body>
+<h2>WebSocket 长连测试</h2>
+<button id="go">开始测试（连 60 秒）</button>
+<div id="log"></div>
+<script>
+const log = (t, c) => { const d = document.createElement('div'); d.textContent = t; if (c) d.className = c; document.getElementById('log').appendChild(d); };
+document.getElementById('go').onclick = () => {
+  const t0 = Date.now();
+  const ws = new WebSocket('wss://api.guhuai724.top/voice/');
+  log('连接中…');
+  ws.onopen = () => {
+    log('已连接，开始 60 秒保活测试');
+    ws.send(JSON.stringify({type:'start', token:'paivoice-mcp-7a1b2c3d4e5f6a7b8c9d0e1f2a3b4c5d'}));
+    let n = 0;
+    const iv = setInterval(() => {
+      n++;
+      const el = (Date.now() - t0) / 1000;
+      try { ws.send(JSON.stringify({type:'ping'})); log(`+${el.toFixed(0)}s ping 已发（${n}）`); }
+      catch(e) { log(`+${el.toFixed(0)}s 发送失败: ${e}`, 'fail'); clearInterval(iv); }
+    }, 10000);
+    setTimeout(() => {
+      clearInterval(iv);
+      log('60 秒到：连接还活着吗？state=' + ws.readyState, 'st');
+      try { ws.close(); } catch(e){}
+    }, 61000);
+  };
+  ws.onclose = (e) => { log('连接关闭 code=' + e.code + ' reason=' + e.reason, 'fail'); };
+  ws.onerror = (e) => { log('出错: ' + JSON.stringify(e), 'fail'); };
+  ws.onmessage = (m) => { log('收到: ' + String(m.data).slice(0, 80)); };
+};
+</script>
+</body>
+</html>
