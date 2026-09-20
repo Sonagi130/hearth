@@ -555,8 +555,64 @@
       { icon: ICONS.key, name: 'API 地址', sub: a.url || '默认 api.deepseek.com', on: function () { edit('url', '接口地址（留空就用 https://api.deepseek.com）'); } },
       { icon: ICONS.robot, name: '模型名', sub: a.model || '默认 deepseek-chat', on: function () { edit('model', '模型名（留空就用 deepseek-chat）'); } },
       { icon: ICONS.lock, name: 'API Key', sub: a.key ? a.key.slice(0, 4) + '****' : '还没填', on: function () { edit('key', '把 Key 粘进来'); } },
+      { icon: ICONS.chat, name: '角色设定', sub: '顾淮的底色 · 你能改', on: shPrompt },
       { icon: ICONS.tool, name: '模型参数', sub: '温度 · 长度 · 上下文 · 惩罚', on: shModelParams }
     ]);
+  }
+  /* 角色提示词：存在服务器 data/store/ai_prompt.json，前端可读可改，改完即时生效 */
+  function shPrompt() {
+    var base = '';
+    try {
+      var u = (Store.get('apiConf') || {}).url || '';
+      base = String(u).replace(/\/+$/, '').replace(/\/v\d+$/, '');
+    } catch (e) {}
+    if (!base) base = 'https://api.guhuai724.top';
+    var url = base + '/api/store/ai_prompt';
+    var mask = document.createElement('div');
+    mask.className = 'sheet-mask';
+    mask.innerHTML = '<div class="sheet-card wide" style="text-align:left;">' +
+      '<div class="sc-title" style="text-align:center;">角色设定（提示词）</div>' +
+      '<div class="sc-sub" style="text-align:center;">这就是「顾淮」的底色。改完保存，壁炉里立刻生效。</div>' +
+      '<textarea id="pp-text" class="pp-area" placeholder="在这里写提示词…" style="width:100%;height:220px;box-sizing:border-box;margin-top:12px;padding:10px;border-radius:10px;border:1px solid var(--line,#e5ddd2);background:rgba(255,255,255,.55);color:var(--text-main,#333);font-size:13px;line-height:1.6;resize:vertical;font-family:inherit;"></textarea>' +
+      '<div class="sc-row" style="margin-top:12px;">' +
+      '<button class="sc-btn" id="pp-save" style="flex:1;">保存</button>' +
+      '<button class="sc-btn" id="pp-reset" style="flex:1;">恢复默认</button>' +
+      '<button class="sc-btn" id="pp-cancel" style="flex:1;">取消</button>' +
+      '</div>' +
+      '<div class="sc-sub" style="text-align:center;margin-top:10px;font-size:11.5px;" id="pp-state"></div>' +
+      '</div>';
+    document.body.appendChild(mask);
+    var close = function () { mask.remove(); };
+    mask.onclick = function (e) { if (e.target === mask) close(); };
+    var ta = document.getElementById('pp-text');
+    var state = document.getElementById('pp-state');
+    state.textContent = '读取中…';
+    fetch(url, { cache: 'no-store' }).then(function (r) { return r.json(); }).then(function (j) {
+      var t = (j && (j.content || j.text)) || '';
+      ta.value = t || '';
+      state.textContent = t ? '已加载服务器上的提示词' : '服务器没有自定义提示词，现在显示默认（保存即生效）';
+    }).catch(function () {
+      state.textContent = '读不到服务器（离线？）。直接写，保存时会重试。';
+    });
+    document.getElementById('pp-cancel').onclick = close;
+    document.getElementById('pp-reset').onclick = function () {
+      ta.value = '';
+      state.textContent = '已清空。保存后壁炉会用内置默认提示词。';
+    };
+    document.getElementById('pp-save').onclick = function () {
+      var v = ta.value;
+      state.textContent = '保存中…';
+      fetch(url, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ content: v })
+      }).then(function (r) { return r.json(); }).then(function (j) {
+        if (j && j.ok) { state.textContent = '已保存，壁炉里立刻生效。'; }
+        else { state.textContent = '保存出错：' + JSON.stringify(j); }
+      }).catch(function (e) {
+        state.textContent = '保存失败：' + String(e);
+      });
+    };
   }
   function shModelParams() {
     var mp = {};
