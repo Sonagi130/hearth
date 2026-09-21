@@ -965,7 +965,7 @@
     icons: ICONS,
     theme: shTheme, avatar: shAvatar, bubble: shBubble, card: shCard, chat: shChat, sidebar: shSidebar,
     notify: shNotify, tools: shTools, data: shData, usage: shUsage, server: shServer, about: shAbout,
-    bg: pickBg, thinking: myThinking,
+    bg: pickBg, thinking: myThinking, prompt: shPrompt,
     models: function () { if (window.HearthModels) window.HearthModels.ai(); else shAI(); },
     tts: function () { if (window.HearthModels) window.HearthModels.tts(); },
     selfcheck: function () { if (window.HearthSelfTest && window.HearthSelfTest.open) window.HearthSelfTest.open(); }
