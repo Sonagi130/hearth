@@ -80,6 +80,15 @@
 .pf-x, .pf-set {
   position: fixed;
   top: 14px;
+}
+.pf-actions { margin-top: 18px; }
+.pf-act {
+  display: block; width: 100%; max-width: 400px; margin: 0 auto;
+  padding: 12px 16px; border: none; border-radius: 12px;
+  background: linear-gradient(160deg, #4a6cf7, #6a8cff);
+  color: #fff; font-size: 14px; font-weight: 600; cursor: pointer;
+  box-shadow: 0 4px 14px rgba(74,108,247,.25);
+}
   width: 34px; height: 34px;
   border-radius: 50%;
   border: none;
