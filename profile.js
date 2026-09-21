@@ -144,10 +144,25 @@
           infoRow('性格', esc(w.chars)) +
           infoRow('生日', esc(w.birthday)) +
         '</div>' +
+        '<div class="pf-actions">' +
+          '<button class="pf-act" id="pf-prompt">角色设定 · 改「顾淮」的底色</button>' +
+        '</div>' +
       '</div>';
     document.body.appendChild(ov);
     ov.querySelector('#pf-x').onclick = function () { ov.remove(); };
     ov.querySelector('#pf-set').onclick = function () { editProfile(k, ov); };
+    var pp = ov.querySelector('#pf-prompt');
+    if (pp) pp.onclick = function () {
+      var close = function () { try { ov.remove(); } catch (e) {} };
+      if (window.HearthUI && window.HearthUI.prompt) {
+        window.HearthUI.prompt();
+        setTimeout(function () {
+          var m = document.querySelector('.sheet-mask');
+          if (m) m.addEventListener('click', function (e) { if (e.target === m) close(); });
+        }, 50);
+      }
+      close();
+    };
   }
 
   function daysSince(from) {
